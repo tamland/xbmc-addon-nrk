@@ -17,7 +17,7 @@
 '''
 
 import urllib, re, time
-from lib.BeautifulSoup.BeautifulSoup import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 import xbmcaddon
 
 id = xbmcaddon.Addon(id="plugin.video.nrk").getSetting("quality")
