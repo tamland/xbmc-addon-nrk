@@ -6,4 +6,7 @@
 	<string id="30011">Low (300 kbps)</string>
 	<string id="30012">Medium (600 kbps)</string>
 	<string id="30013">High (1000 kbps)</string>
+	
+	<string id="30101">Live</string>
+	<string id="30102">New</string>
 </strings>

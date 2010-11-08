@@ -21,9 +21,11 @@ import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import data as Data
 from data import DataItem
 
+_ = xbmcaddon.Addon(id="plugin.video.nrk").getLocalizedString
+
 def nodes(baseUrl, handle):
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=live",    xbmcgui.ListItem("Direkte"), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=latest",  xbmcgui.ListItem("Nytt i nett-tv"), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=live",    xbmcgui.ListItem(_(30101)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=latest",  xbmcgui.ListItem(_(30102)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters", xbmcgui.ListItem("A-Å"), True);
     xbmcplugin.endOfDirectory(handle)
 

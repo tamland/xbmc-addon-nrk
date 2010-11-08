@@ -6,4 +6,7 @@
 	<string id="30011">Lav (300 kbps)</string>
 	<string id="30012">Medium (600 kbps)</string>
 	<string id="30013">Høy (1000 kbps)</string>
+	
+	<string id="30101">Direkte</string>
+	<string id="30102">Nytt i nett-tv</string>
 </strings>
