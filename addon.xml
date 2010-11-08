@@ -5,13 +5,16 @@
        provider-name="takoi">
   <requires>
     <import addon="xbmc.python" version="1.0"/>
+    <import addon="script.module.beautifulsoup">
   </requires>
   <extension point="xbmc.python.pluginsource" library="default.py">
     <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
-    <summary lang="en"></summary>
-    <description lang="en"></description>
+    <summary lang="en">Norwegian Broadcasting Corporation</summary>
+    <summary lang="no">Norsk rikskringkasting</summary>
+    <description lang="en">NRKs Web TV give you the oportunity to watch live and recordings of many shows</description>
+    <description lang="no">NRKs Nett-TV gir deg muligheten til å se mange NRK-programmer direkte og i opptak.</description>
   </extension>
 </addon>
