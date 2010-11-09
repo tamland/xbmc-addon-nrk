@@ -54,13 +54,18 @@ def node_url(baseUrl, handle, url):
 def create(baseUrl, handle, dataItems):
     listItems = []
     for e in dataItems:
-        l = xbmcgui.ListItem(e.title)
+        l = xbmcgui.ListItem(e.title, thumbnailImage=e.image)
         l.setInfo( type="Video", infoLabels={"title": e.title} )
         l.setProperty("IsPlayable", str(e.isPlayable));
+        
         isdir = not(e.isPlayable)
-        if isdir: url = baseUrl + "?url=" + e.url
-        else: url = e.url
+        if isdir:
+            url = baseUrl + "?url=" + e.url
+        else:
+            url = e.url
+        
         listItems.append( (url, l, isdir) )
+        
     xbmcplugin.addDirectoryItems(handle=handle, items=listItems)
     xbmcplugin.endOfDirectory(handle)
     

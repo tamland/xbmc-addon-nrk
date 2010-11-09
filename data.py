@@ -17,18 +17,23 @@
 '''
 
 import urllib, re, time
-from BeautifulSoup import BeautifulSoup
 import xbmcaddon
+from BeautifulSoup import BeautifulSoup
+from DataItem import DataItem
+from dataStatic import *
 
 id = xbmcaddon.Addon(id="plugin.video.nrk").getSetting("quality")
 QUALITY = {'0' : '400', '1' : '800', '2' : '1200' }[id]
 QUALITY_STR = {'0' : 'l', '1' : 'm', '2' : 'h' }[id]
 
 def getLive():
-    items = []
-    items.append(DataItem(title="NRK 1", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk1_"+QUALITY_STR+"?UseSilverlight=1", isPlayable=True))
-    items.append(DataItem(title="NRK 2", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk2_"+QUALITY_STR+"?UseSilverlight=1", isPlayable=True))
-    items.append(DataItem(title="NRK 3", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk3_"+QUALITY_STR+"?UseSilverlight=1", isPlayable=True))
+    items = [
+    DataItem(title="NRK 1", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk1_"+QUALITY_STR+"?UseSilverlight=1",
+             image=os.path.join(R_PATH, "nrk1.jpg"), isPlayable=True),
+    DataItem(title="NRK 2", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk2_"+QUALITY_STR+"?UseSilverlight=1",
+             image=os.path.join(R_PATH, "nrk2.jpg"), isPlayable=True),
+    DataItem(title="NRK 3", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk3_"+QUALITY_STR+"?UseSilverlight=1",
+             image=os.path.join(R_PATH, "nrk3.jpg"), isPlayable=True) ]
     return items
 
 
@@ -40,27 +45,6 @@ def getLatest():
         anc = e.find('a', attrs={'href' : re.compile('^/nett-tv/klipp/[0-9]+')})
         items.append( _getVideoById(anc['href'].split('/').pop()) )
     return items
-
-
-def getGenres():
-    genres = [('Barn', '2'), ('Distrikt', '13'), ('Dokumentar', '20'),
-              ('Drama', '3'), ('Fakta', '4'), ('Kultur', '5'),
-              ('Livssyn', '9'), ('Mat', '17'), ('Musikk', '6'),
-              ('Natur', '7'), ('Nyheter', '8'), ('På samisk', '19'),
-              ('På tegnspråk', '22'), ('Sport', '10'), ('Underholdning', '11'),
-              ('Ung', '21')]
-    items = []
-    for (name, id) in genres:
-        items.append(DataItem(title=name, url="/nett-tv/tema/" + id))
-    return items
-
-
-def getLetters():
-    letters = [ord('1'), ord('2'), ord('3'), ord('7')]
-    letters.extend(range(ord('a'), ord('w')))
-    letters.extend([ ord('y'), 216, 229 ])
-    enc = lambda ch: urllib.quote(unichr(ch).encode('latin-1'))
-    return [ DataItem(title=unichr(ch).upper(), url="/nett-tv/bokstav/"+enc(ch)) for ch in letters ]
 
 
 def getByUrl(url):
@@ -86,10 +70,11 @@ def _getAllKlipp(soup):
     items = soup.findAll('a', attrs={'class':re.compile('icon-video-black.*'), 'href':re.compile('.*nett-tv/klipp/[0-9]+$')})
     return [ _getVideoById(e['href'].split('/').pop()) for e in items ]
 
-    
+
 def _getAllKategori(soup):
     items = soup.findAll('a', attrs={'class':re.compile('icon-closed-black.*'), 'href':re.compile('^/nett-tv/kategori/[0-9]+')})
     return [ DataItem(title=e['title'], url=e['href']) for e in items ]
+
 
 def _getAllProsjekt(soup):
     items = []
@@ -98,7 +83,8 @@ def _getAllProsjekt(soup):
         anc = e.find('a', attrs={'href' : re.compile('^/nett-tv/prosjekt/[0-9]+')})
         title = anc['title']
         url   = anc['href']
-        items.append( DataItem(title=title, url=url) )
+        image = e.find('img')['src']
+        items.append( DataItem(title=title, image=image, url=url) )
     return items
 
 
@@ -107,6 +93,7 @@ def _getVideoById(id):
     soup = BeautifulSoup(urllib.urlopen(url))
     title = soup.find('title').string
     
+    img = soup.find('imageurl').string
     url = soup.find('mediaurl').string
     #some uri's contais illegal chars so need to fix this
     url = url.split("mms://", 1)[1]
@@ -114,50 +101,5 @@ def _getVideoById(id):
     url = urllib.quote(url)
     url = "mms://" + url + "?UseSilverlight=1"
     
-    return DataItem(title=title, url=url, isPlayable=True)
+    return DataItem(title=title, image=img, url=url, isPlayable=True)
 
-
-class DataItem:
-    def __init__(self, title="", description="", date="", author="", category="", image="", url="", isPlayable=False):
-        self._title = title
-        self._description = description
-        self._date = date
-        self._author = author
-        self._category = category
-        self._image = image
-        self._url = url
-        self._isPlayable = isPlayable
-    
-    @property
-    def isPlayable(self):
-        return self._isPlayable
-    
-    @property
-    def title(self):
-        return self._title
-    
-    @property
-    def description(self):
-        return self._description
-    
-    @property
-    def date(self):
-        return self._date
-    
-    @property
-    def author(self):
-        return self._author
-    
-    @property
-    def category(self):
-        return self._category
-    
-    @property
-    def image(self):
-        return self._image
-    
-    @property
-    def url(self):
-        return self._url
-
-    
