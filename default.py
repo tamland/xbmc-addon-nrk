@@ -27,6 +27,7 @@ def nodes(baseUrl, handle):
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=live",    xbmcgui.ListItem(_(30101)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=latest",  xbmcgui.ListItem(_(30102)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters", xbmcgui.ListItem("A-Å"), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=genres",  xbmcgui.ListItem("Kategorier"), True);
     xbmcplugin.endOfDirectory(handle)
 
 def node_live(baseUrl, handle):
@@ -35,6 +36,10 @@ def node_live(baseUrl, handle):
     
 def node_latest(baseUrl, handle):
     dataItems = Data.getLatest()
+    create(baseUrl, handle, dataItems)
+    
+def node_genres(baseUrl, handle):
+    dataItems = Data.getGenres()
     create(baseUrl, handle, dataItems)
 
 def node_url(baseUrl, handle, url):
@@ -89,6 +94,8 @@ if ( __name__ == "__main__" ):
             node_letters(sys.argv[0], int(sys.argv[1]))
         elif(arg[1] == "latest"):
             node_latest(sys.argv[0], int(sys.argv[1]))
+        elif(arg[1] == "genres"):
+            node_genres(sys.argv[0], int(sys.argv[1]))
     
     elif (arg[0] == "?letter"):
         node_letter(sys.argv[0], int(sys.argv[1]), arg[1])

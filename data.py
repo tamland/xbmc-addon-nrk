@@ -42,6 +42,20 @@ def getLatest():
     return items
 
 
+def getGenres():
+    genres = [('Barn', '2'), ('Distrikt', '13'), ('Dokumentar', '20'),
+              ('Drama', '3'), ('Fakta', '4'), ('Kultur', '5'),
+              ('Livssyn', '9'), ('Mat', '17'), ('Musikk', '6'),
+              ('Natur', '7'), ('Nyheter', '8'), ('På samisk', '19'),
+              ('På tegnspråk', '22'), ('Sport', '10'), ('Underholdning', '11'),
+              ('Ung', '21')]
+    items = []
+    for (name, id) in genres:
+        items.append(DataItem(title=name, url="/nett-tv/tema/" + id))
+    
+    return items
+
+
 def getByLetter(ch):
     url = "http://www.nrk.no/nett-tv/bokstav/" + urllib.quote(ch)
     soup = BeautifulSoup(urllib.urlopen(url))
@@ -57,8 +71,19 @@ def getByLetter(ch):
 
 
 def getByUrl(url):
-    if (url.startswith("/nett-tv/prosjekt")):
+    if (url.startswith("/nett-tv/bokstav")):
         url = "http://www.nrk.no" + url
+    
+    elif (url.startswith("/nett-tv/tema")):
+        url = "http://www.nrk.no" + url #urllib.quote(ch)
+        soup = BeautifulSoup(urllib.urlopen(url))
+        items = []
+        items.extend(_getAllProsjekt(soup))
+        return items
+    
+    elif (url.startswith("/nett-tv/prosjekt")):
+        url = "http://www.nrk.no" + url
+        
     elif url.startswith("/nett-tv/kategori"):
         url = "http://www.nrk.no/nett-tv/menyfragment.aspx?type=category&id=" + url.split('/').pop()
     
@@ -78,6 +103,16 @@ def _getAllKlipp(soup):
 def _getAllKategori(soup):
     items = soup.findAll('a', attrs={'class':re.compile('icon-closed-black.*'), 'href':re.compile('^/nett-tv/kategori/[0-9]+')})
     return [ DataItem(title=e['title'], url=e['href']) for e in items ]
+
+def _getAllProsjekt(soup):
+    items = []
+    li = soup.find('div', attrs={'class' : 'nettv-category clearfix'}).findAll('li') 
+    for e in li:
+        anc = e.find('a', attrs={'href' : re.compile('^/nett-tv/prosjekt/[0-9]+')})
+        title = anc['title']
+        url   = anc['href']
+        items.append( DataItem(title=title, url=url) )
+    return items
 
 
 def _getVideoById(id):
