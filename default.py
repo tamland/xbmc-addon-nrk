@@ -38,6 +38,10 @@ def node_latest(baseUrl, handle):
     dataItems = Data.getLatest()
     create(baseUrl, handle, dataItems)
     
+def node_letters(baseUrl, handle):
+    dataItems = Data.getLetters()
+    create(baseUrl, handle, dataItems)
+    
 def node_genres(baseUrl, handle):
     dataItems = Data.getGenres()
     create(baseUrl, handle, dataItems)
@@ -46,29 +50,6 @@ def node_url(baseUrl, handle, url):
     dataItems = Data.getByUrl(url)
     create(baseUrl, handle, dataItems)
     
-def node_letter(baseUrl, handle, letter):
-    dataItems = Data.getByLetter(letter)
-    create(baseUrl, handle, dataItems)
-    
-def node_letters(baseUrl, handle):
-    #TODO: move this to data layer
-    letters = range(ord('a'), ord('z'))
-    letters.append(ord('1'))
-    letters.append(ord('2'))
-    letters.append(ord('3'))
-    letters.append(ord('7'))
-    letters.append(230) #æ
-    letters.append(216) #ø
-    letters.append(229) #å
-      
-    listItems = []
-    for l in letters:
-        ch = unichr(l)
-        url = baseUrl + "?letter=" + ch
-        listItems.append( (url, xbmcgui.ListItem(ch.upper()), True) )
-    
-    xbmcplugin.addDirectoryItems(handle=handle, items=listItems)
-    xbmcplugin.endOfDirectory(handle)
     
 def create(baseUrl, handle, dataItems):
     listItems = []
@@ -97,9 +78,6 @@ if ( __name__ == "__main__" ):
         elif(arg[1] == "genres"):
             node_genres(sys.argv[0], int(sys.argv[1]))
     
-    elif (arg[0] == "?letter"):
-        node_letter(sys.argv[0], int(sys.argv[1]), arg[1])
-        
     elif (arg[0] == "?url"):
         node_url(sys.argv[0], int(sys.argv[1]), arg[1])
     

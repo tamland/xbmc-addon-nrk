@@ -52,43 +52,30 @@ def getGenres():
     items = []
     for (name, id) in genres:
         items.append(DataItem(title=name, url="/nett-tv/tema/" + id))
-    
     return items
 
 
-def getByLetter(ch):
-    url = "http://www.nrk.no/nett-tv/bokstav/" + urllib.quote(ch)
-    soup = BeautifulSoup(urllib.urlopen(url))
-    
-    items = []
-    li = soup.find('div', attrs={'class' : 'nettv-category clearfix'}).findAll('li') 
-    for e in li:
-        anc = e.find('a', attrs={'href' : re.compile('^/nett-tv/prosjekt/[0-9]+')})
-        title = anc['title']
-        url   = anc['href']
-        items.append( DataItem(title=title, url=url) )
-    return items
+def getLetters():
+    letters = [ord('1'), ord('2'), ord('3'), ord('7')]
+    letters.extend(range(ord('a'), ord('w')))
+    letters.extend([ ord('y'), 216, 229 ])
+    enc = lambda ch: urllib.quote(unichr(ch).encode('latin-1'))
+    return [ DataItem(title=unichr(ch).upper(), url="/nett-tv/bokstav/"+enc(ch)) for ch in letters ]
 
 
 def getByUrl(url):
-    if (url.startswith("/nett-tv/bokstav")):
-        url = "http://www.nrk.no" + url
-    
-    elif (url.startswith("/nett-tv/tema")):
-        url = "http://www.nrk.no" + url #urllib.quote(ch)
+    if (url.startswith("/nett-tv/tema") or url.startswith("/nett-tv/bokstav")):
+        url = "http://www.nrk.no" + url 
         soup = BeautifulSoup(urllib.urlopen(url))
-        items = []
-        items.extend(_getAllProsjekt(soup))
-        return items
+        return _getAllProsjekt(soup)
     
     elif (url.startswith("/nett-tv/prosjekt")):
         url = "http://www.nrk.no" + url
         
-    elif url.startswith("/nett-tv/kategori"):
+    elif (url.startswith("/nett-tv/kategori")):
         url = "http://www.nrk.no/nett-tv/menyfragment.aspx?type=category&id=" + url.split('/').pop()
     
     soup = BeautifulSoup(urllib.urlopen(url))
-        
     items = []
     items.extend(_getAllKlipp(soup))
     items.extend(_getAllKategori(soup))
