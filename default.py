@@ -26,8 +26,8 @@ _ = xbmcaddon.Addon(id="plugin.video.nrk").getLocalizedString
 def nodes(baseUrl, handle):
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=live",    xbmcgui.ListItem(_(30101)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=latest",  xbmcgui.ListItem(_(30102)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters", xbmcgui.ListItem("A-Å"), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=genres",  xbmcgui.ListItem("Kategorier"), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters", xbmcgui.ListItem(_(30103)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=genres",  xbmcgui.ListItem(_(30104)), True);
     xbmcplugin.endOfDirectory(handle)
 
 def node_live(baseUrl, handle):
