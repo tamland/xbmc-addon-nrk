@@ -29,11 +29,11 @@ QUALITY_STR = {'0' : 'l', '1' : 'm', '2' : 'h' }[id]
 def getLive():
     items = [
     DataItem(title="NRK 1", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk1_"+QUALITY_STR+"?UseSilverlight=1",
-             image=os.path.join(R_PATH, "nrk1.jpg"), isPlayable=True),
+             thumb=os.path.join(R_PATH, "nrk1.jpg"), isPlayable=True),
     DataItem(title="NRK 2", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk2_"+QUALITY_STR+"?UseSilverlight=1",
-             image=os.path.join(R_PATH, "nrk2.jpg"), isPlayable=True),
+             thumb=os.path.join(R_PATH, "nrk2.jpg"), isPlayable=True),
     DataItem(title="NRK 3", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk3_"+QUALITY_STR+"?UseSilverlight=1",
-             image=os.path.join(R_PATH, "nrk3.jpg"), isPlayable=True) ]
+             thumb=os.path.join(R_PATH, "nrk3.jpg"), isPlayable=True) ]
     return items
 
 
@@ -83,8 +83,8 @@ def _getAllProsjekt(soup):
         anc = e.find('a', attrs={'href' : re.compile('^/nett-tv/prosjekt/[0-9]+')})
         title = anc['title']
         url   = anc['href']
-        image = e.find('img')['src']
-        items.append( DataItem(title=title, image=image, url=url) )
+        img   = e.find('img')['src']
+        items.append( DataItem(title=title, thumb=img, url=url) )
     return items
 
 
@@ -101,5 +101,15 @@ def _getVideoById(id):
     url = urllib.quote(url)
     url = "mms://" + url + "?UseSilverlight=1"
     
-    return DataItem(title=title, image=img, url=url, isPlayable=True)
+    return DataItem(title=title, thumb=img, url=url, isPlayable=True)
+
+def _getSizeBig(url):
+    _150 = re.sub("^(.*cropid.*)w[0-9]+$", "\\1w150", url)
+    _480 = re.sub("^(.*cropid.*)w[0-9]+$", "\\1w480", url)
+    
+    p = urllib.urlopen(_480)
+    size = p.info().getheaders("Content-Length")
+    if (size and size[0] > 0):
+        return _480
+    return url
 

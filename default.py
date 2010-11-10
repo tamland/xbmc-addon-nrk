@@ -54,7 +54,7 @@ def node_url(baseUrl, handle, url):
 def create(baseUrl, handle, dataItems):
     listItems = []
     for e in dataItems:
-        l = xbmcgui.ListItem(e.title, thumbnailImage=e.image)
+        l = xbmcgui.ListItem(e.title, thumbnailImage=e.thumb)
         l.setInfo( type="Video", infoLabels={"title": e.title} )
         l.setProperty("IsPlayable", str(e.isPlayable));
         

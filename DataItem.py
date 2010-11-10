@@ -1,11 +1,12 @@
 class DataItem:
-    def __init__(self, title="", description="", date="", author="", category="", image="", url="", isPlayable=False):
+    def __init__(self, title="", description="", date="", author="", category="", thumb="", thumbBig="", url="", isPlayable=False):
         self._title = title
         self._description = description
         self._date = date
         self._author = author
         self._category = category
-        self._image = image
+        self._thumb = thumb
+        self._thumbBig = thumbBig
         self._url = url
         self._isPlayable = isPlayable
     
@@ -34,8 +35,12 @@ class DataItem:
         return self._category
     
     @property
-    def image(self):
-        return self._image
+    def thumb(self):
+        return self._thumb
+    
+    @property
+    def thumbBig(self):
+        return self._thumbBig
     
     @property
     def url(self):
