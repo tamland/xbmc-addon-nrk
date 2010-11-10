@@ -71,6 +71,9 @@ def create(baseUrl, handle, dataItems):
     
 
 if ( __name__ == "__main__" ):
+    #using episodes because most skins expects 16/9 thumbs for this
+    xbmcplugin.setContent(int(sys.argv[1]), "episodes")
+    
     arg = sys.argv[2].split('=', 1)
 
     if (arg[0] == "?node"):
