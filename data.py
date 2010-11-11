@@ -67,7 +67,7 @@ def getByUrl(url):
 
 
 def _getAllKlipp(soup):
-    items = soup.findAll('a', attrs={'class':re.compile('icon-video-black.*'), 'href':re.compile('.*nett-tv/klipp/[0-9]+$')})
+    items = soup.findAll('a', attrs={'class':re.compile('icon-(video|sound)-black.*'), 'href':re.compile('.*nett-tv/klipp/[0-9]+$')})
     return [ _getVideoById(e['href'].split('/').pop()) for e in items ]
 
 
