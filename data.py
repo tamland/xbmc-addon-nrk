@@ -84,7 +84,9 @@ def _getAllProsjekt(soup):
         title = anc['title']
         url   = anc['href']
         img   = e.find('img')['src']
-        items.append( DataItem(title=title, thumb=img, url=url) )
+        descr = str(e.find('div', attrs={'class':'summary'}).find('p').string)
+        
+        items.append( DataItem(title=title, description=descr, thumb=img, url=url) )
     return items
 
 
@@ -92,6 +94,7 @@ def _getVideoById(id):
     url = "http://www.nrk.no/nett-tv/silverlight/getmediaxml.ashx?id=" + id + "&hastighet=" + QUALITY
     soup = BeautifulSoup(urllib.urlopen(url))
     title = soup.find('title').string
+    descr = str(soup.find('description').string)
     
     img = soup.find('imageurl').string
     url = soup.find('mediaurl').string
@@ -101,7 +104,7 @@ def _getVideoById(id):
     url = urllib.quote(url)
     url = "mms://" + url + "?UseSilverlight=1"
     
-    return DataItem(title=title, thumb=img, url=url, isPlayable=True)
+    return DataItem(title=title, description=descr, thumb=img, url=url, isPlayable=True)
 
 def _getSizeBig(url):
     _150 = re.sub("^(.*cropid.*)w[0-9]+$", "\\1w150", url)
