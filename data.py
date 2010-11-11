@@ -83,8 +83,7 @@ def _getAllProsjekt(soup):
         anc = e.find('a', attrs={'href' : re.compile('^/nett-tv/prosjekt/[0-9]+')})
         title = anc['title']
         url   = anc['href']
-        img   = e.find('img')['src']
-        img   = re.sub("^(.*cropid.*)w[0-9]+$", "\\1w650", img)
+        img   = _getImg(e.find('img')['src'])
         descr = str(e.find('div', attrs={'class':'summary'}).find('p').string)
         
         items.append( DataItem(title=title, description=descr, thumb=img, url=url) )
@@ -97,7 +96,7 @@ def _getVideoById(id):
     title = soup.find('title').string
     descr = str(soup.find('description').string)
     
-    img = soup.find('imageurl').string
+    img = _getImg(soup.find('imageurl').string)
     url = soup.find('mediaurl').string
     #some uri's contais illegal chars so need to fix this
     url = url.split("mms://", 1)[1]
@@ -107,13 +106,6 @@ def _getVideoById(id):
     
     return DataItem(title=title, description=descr, thumb=img, url=url, isPlayable=True)
 
-def _getSizeBig(url):
-    _150 = re.sub("^(.*cropid.*)w[0-9]+$", "\\1w150", url)
-    _480 = re.sub("^(.*cropid.*)w[0-9]+$", "\\1w480", url)
-    
-    p = urllib.urlopen(_480)
-    size = p.info().getheaders("Content-Length")
-    if (size and size[0] > 0):
-        return _480
-    return url
+def _getImg(url):
+    return re.sub("^(.*cropid.*)w[0-9]+$", "\\1w650", url)
 
