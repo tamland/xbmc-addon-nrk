@@ -40,7 +40,7 @@ def getGenres():
               ('Ung',           '21',   'thm_teen.png')]
     items = []
     for (name, id, icon) in genres:
-        items.append(DataItem(title=name, image=os.path.join(R_PATH, icon) , url="/nett-tv/tema/" + id))
+        items.append(DataItem(title=name, thumb=os.path.join(R_PATH, icon) , url="/nett-tv/tema/" + id))
     return items
 
 
