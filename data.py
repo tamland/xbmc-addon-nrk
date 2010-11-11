@@ -84,6 +84,7 @@ def _getAllProsjekt(soup):
         title = anc['title']
         url   = anc['href']
         img   = e.find('img')['src']
+        img   = re.sub("^(.*cropid.*)w[0-9]+$", "\\1w650", img)
         descr = str(e.find('div', attrs={'class':'summary'}).find('p').string)
         
         items.append( DataItem(title=title, description=descr, thumb=img, url=url) )
