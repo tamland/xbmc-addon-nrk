@@ -17,14 +17,17 @@
 '''
 
 import urllib, re, time
-import xbmcaddon
 from BeautifulSoup import BeautifulSoup
 from DataItem import DataItem
 from dataStatic import *
 
-id = xbmcaddon.Addon(id="plugin.video.nrk").getSetting("quality")
-QUALITY = {'0' : '400', '1' : '800', '2' : '1200' }[id]
-QUALITY_STR = {'0' : 'l', '1' : 'm', '2' : 'h' }[id]
+
+global QUALITY, QUALITY_STR
+def setQuality(id):
+    global QUALITY, QUALITY_STR
+    QUALITY = {'0' : '400', '1' : '800', '2' : '1200' }[id]
+    QUALITY_STR = {'0' : 'l', '1' : 'm', '2' : 'h' }[id]
+
 
 def getLive():
     items = [

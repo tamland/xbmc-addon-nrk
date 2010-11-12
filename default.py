@@ -21,7 +21,9 @@ import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import data as Data
 from data import DataItem
 
-_ = xbmcaddon.Addon(id="plugin.video.nrk").getLocalizedString
+addon = xbmcaddon.Addon(id="plugin.video.nrk")
+Data.setQuality(addon.getSetting("quality"))
+_ = addon.getLocalizedString
 
 def nodes(baseUrl, handle):
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=live",    xbmcgui.ListItem(_(30101)), True);
