@@ -69,7 +69,7 @@ def create(baseUrl, handle, dataItems):
     for e in dataItems:
         l = xbmcgui.ListItem(e.title, thumbnailImage=e.thumb)
         l.setInfo( type="Video", infoLabels={"title": e.title, "plot":e.description, "tvshowtitle":e.title} )
-        l.setProperty("IsPlayable", str(e.isPlayable));
+        l.setProperty("IsPlayable", str(e.isPlayable))
         
         isdir = not(e.isPlayable)
         if isdir:

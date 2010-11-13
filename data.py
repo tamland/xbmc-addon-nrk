@@ -57,7 +57,7 @@ def getSearchResults(query):
     li = soup.find('div', attrs={'id' : 'search-results'}).findAll('li')
     items = []
     for e in li:
-        url   = e.find('em').string
+        url = e.find('em').string
         if contains(url, "klipp"):
             items.append( _getVideo(url) )
         elif contains(url, "prosjekt"):
