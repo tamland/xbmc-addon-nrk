@@ -104,7 +104,7 @@ def _getAllProsjekt(soup):
         title = decodeHtml(anc['title'])
         url   = anc['href']
         img   = _getImg(e.find('img')['src'])
-        descr = decodeHtml(e.find('div', attrs={'class':'summary'}).find('p').string)
+        descr = decodeHtml(str(e.find('div', attrs={'class':'summary'}).find('p').string))
         
         items.append( DataItem(title=title, description=descr, thumb=img, url=url) )
     return items
