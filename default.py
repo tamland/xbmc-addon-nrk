@@ -32,6 +32,7 @@ def nodes(baseUrl, handle):
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters", xbmcgui.ListItem(_(30103)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=genres",  xbmcgui.ListItem(_(30104)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=search",  xbmcgui.ListItem(_(30105)), True);
+    xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.endOfDirectory(handle)
 
 def node_live(baseUrl, handle):
@@ -79,6 +80,8 @@ def create(baseUrl, handle, dataItems):
         listItems.append( (url, l, isdir) )
         
     xbmcplugin.addDirectoryItems(handle=handle, items=listItems)
+    xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_UNSORTED)
+    xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.endOfDirectory(handle)
     
 
