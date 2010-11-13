@@ -32,14 +32,10 @@ def setQuality(id):
 
 
 def getLive():
-    items = [
-    DataItem(title="NRK 1", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk1_"+QUALITY_STR+"?UseSilverlight=1",
-             thumb=os.path.join(R_PATH, "nrk1.jpg"), isPlayable=True),
-    DataItem(title="NRK 2", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk2_"+QUALITY_STR+"?UseSilverlight=1",
-             thumb=os.path.join(R_PATH, "nrk2.jpg"), isPlayable=True),
-    DataItem(title="NRK 3", url="mms://straumv.nrk.no/nrk_tv_direkte_nrk3_"+QUALITY_STR+"?UseSilverlight=1",
-             thumb=os.path.join(R_PATH, "nrk3.jpg"), isPlayable=True) ]
-    return items
+    url = "mms://straumv.nrk.no/nrk_tv_direkte_nrk%s_%s?UseSilverlight=1"
+    return [DataItem(title="NRK 1", url=url % (1,QUALITY_STR), thumb=os.path.join(R_PATH, "nrk1.jpg"), isPlayable=True),
+            DataItem(title="NRK 2", url=url % (2,QUALITY_STR), thumb=os.path.join(R_PATH, "nrk2.jpg"), isPlayable=True),
+            DataItem(title="NRK 3", url=url % (3,QUALITY_STR), thumb=os.path.join(R_PATH, "nrk3.jpg"), isPlayable=True)]
 
 
 def getLatest():
@@ -68,10 +64,9 @@ def getSearchResults(query):
 
 
 def getMostWatched(days):
-    url = "http://www.nrk.no/nett-tv/ml/topp12.aspx?dager=" + str(days)
+    url = "http://www.nrk.no/nett-tv/ml/topp12.aspx?dager=%s" % days
     soup = BeautifulSoup(urllib.urlopen(url))
     li = soup.findAll('li')
-    print "LILILILI:" + str(li[0].find('a')['href'])
     items = []
     for e in li:
         url = e.find('a')['href']
@@ -125,7 +120,7 @@ def _getAllProsjekt(soup):
 
 def _getVideo(url):
     id = getId(url)
-    url = "http://www.nrk.no/nett-tv/silverlight/getmediaxml.ashx?id=" + id + "&hastighet=" + QUALITY
+    url = "http://www.nrk.no/nett-tv/silverlight/getmediaxml.ashx?id=%s&hastighet=%s" % (id, QUALITY)
     soup = BeautifulSoup(urllib.urlopen(url))
     title = decodeHtml(soup.find('title').string)
     descr = decodeHtml(str(soup.find('description').string))
@@ -136,7 +131,7 @@ def _getVideo(url):
     url = url.split("mms://", 1)[1]
     url = url.encode('latin-1') #urllib cant unicode
     url = urllib.quote(url)
-    url = "mms://" + url + "?UseSilverlight=1"
+    url = "mms://%s?UseSilverlight=1" % url
     
     return DataItem(title=title, description=descr, thumb=img, url=url, isPlayable=True)
 
