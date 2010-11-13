@@ -27,11 +27,14 @@ Data.setQuality(addon.getSetting("quality"))
 _ = addon.getLocalizedString
 
 def nodes(baseUrl, handle):
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=live",    xbmcgui.ListItem(_(30101)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=latest",  xbmcgui.ListItem(_(30102)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters", xbmcgui.ListItem(_(30103)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=genres",  xbmcgui.ListItem(_(30104)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=search",  xbmcgui.ListItem(_(30105)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=live",     xbmcgui.ListItem(_(30101)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters",  xbmcgui.ListItem(_(30103)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=genres",   xbmcgui.ListItem(_(30104)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=latest",   xbmcgui.ListItem(_(30102)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=topweek",  xbmcgui.ListItem(_(30106)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=topmonth", xbmcgui.ListItem(_(30107)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=toptotal", xbmcgui.ListItem(_(30108)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=search",   xbmcgui.ListItem(_(30105)), True);
     xbmcplugin.endOfDirectory(handle)
 
 def node_live(baseUrl, handle):
@@ -48,6 +51,18 @@ def node_letters(baseUrl, handle):
     
 def node_genres(baseUrl, handle):
     dataItems = Data.getGenres()
+    create(baseUrl, handle, dataItems)
+    
+def node_topWeek(baseUrl, handle):
+    dataItems = Data.getMostWatched(7)
+    create(baseUrl, handle, dataItems)
+    
+def node_topMonth(baseUrl, handle):
+    dataItems = Data.getMostWatched(30)
+    create(baseUrl, handle, dataItems)
+    
+def node_topTotal(baseUrl, handle):
+    dataItems = Data.getMostWatched(9999)
     create(baseUrl, handle, dataItems)
     
 def node_search(baseUrl, handle):
@@ -75,7 +90,6 @@ def create(baseUrl, handle, dataItems):
             url = baseUrl + "?url=" + e.url
         else:
             url = e.url
-        
         listItems.append( (url, l, isdir) )
         
     xbmcplugin.addDirectoryItems(handle=handle, items=listItems)
@@ -101,10 +115,15 @@ if ( __name__ == "__main__" ):
             node_genres(sys.argv[0], int(sys.argv[1]))
         elif(arg[1] == "search"):
             node_search(sys.argv[0], int(sys.argv[1]))
+        elif(arg[1] == "topweek"):
+            node_topWeek(sys.argv[0], int(sys.argv[1]))
+        elif(arg[1] == "topmonth"):
+            node_topMonth(sys.argv[0], int(sys.argv[1]))
+        elif(arg[1] == "toptotal"):
+            node_topTotal(sys.argv[0], int(sys.argv[1]))
     
     elif (arg[0] == "?url"):
         node_url(sys.argv[0], int(sys.argv[1]), arg[1])
     
     else:
         nodes(sys.argv[0], int(sys.argv[1]))
-    

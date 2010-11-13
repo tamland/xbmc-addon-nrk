@@ -67,6 +67,19 @@ def getSearchResults(query):
     return items
 
 
+def getMostWatched(days):
+    url = "http://www.nrk.no/nett-tv/ml/topp12.aspx?dager=" + str(days)
+    soup = BeautifulSoup(urllib.urlopen(url))
+    li = soup.findAll('li')
+    print "LILILILI:" + str(li[0].find('a')['href'])
+    items = []
+    for e in li:
+        url = e.find('a')['href']
+        if contains(url, "klipp"):
+            items.append( _getVideo(url))
+    return items
+
+
 def getByUrl(url):
     if (url.startswith("/nett-tv/tema") or url.startswith("/nett-tv/bokstav")):
         url = "http://www.nrk.no" + url 
