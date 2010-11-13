@@ -30,6 +30,7 @@ def nodes(baseUrl, handle):
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=latest",  xbmcgui.ListItem(_(30102)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters", xbmcgui.ListItem(_(30103)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=genres",  xbmcgui.ListItem(_(30104)), True);
+    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=search",  xbmcgui.ListItem(_(30105)), True);
     xbmcplugin.endOfDirectory(handle)
 
 def node_live(baseUrl, handle):
@@ -47,6 +48,14 @@ def node_letters(baseUrl, handle):
 def node_genres(baseUrl, handle):
     dataItems = Data.getGenres()
     create(baseUrl, handle, dataItems)
+    
+def node_search(baseUrl, handle):
+    kb = xbmc.Keyboard()
+    kb.doModal()
+    if (kb.isConfirmed()):
+        text = kb.getText()
+        dataItems = Data.getSearchResults(text)
+        create(baseUrl, handle, dataItems)
 
 def node_url(baseUrl, handle, url):
     dataItems = Data.getByUrl(url)
@@ -87,6 +96,8 @@ if ( __name__ == "__main__" ):
             node_latest(sys.argv[0], int(sys.argv[1]))
         elif(arg[1] == "genres"):
             node_genres(sys.argv[0], int(sys.argv[1]))
+        elif(arg[1] == "search"):
+            node_search(sys.argv[0], int(sys.argv[1]))
     
     elif (arg[0] == "?url"):
         node_url(sys.argv[0], int(sys.argv[1]), arg[1])

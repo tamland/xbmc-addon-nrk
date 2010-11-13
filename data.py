@@ -20,6 +20,7 @@ import urllib, re, time
 from BeautifulSoup import BeautifulSoup
 from DataItem import DataItem
 from dataStatic import *
+from utils import *
 
 
 global QUALITY, QUALITY_STR
@@ -47,6 +48,21 @@ def getLatest():
     for e in li:
         anc = e.find('a', attrs={'href' : re.compile('^/nett-tv/klipp/[0-9]+')})
         items.append( _getVideoById(anc['href'].split('/').pop()) )
+    return items
+
+
+def getSearchResults(query):
+    soup = BeautifulSoup(urllib.urlopen("http://www.nrk.no/nett-tv/sok/" + urllib.quote(query)))
+    li = soup.find('div', attrs={'id' : 'search-results'}).findAll('li')
+    items = []
+    for e in li:
+        url   = e.find('em').string
+        if contains(url, "klipp"):
+            items.append( _getVideoById(url.split('/').pop()) )
+        elif contains(url, "prosjekt"):
+            title = e.find('a').string
+            descr = e.find('p').string
+            items.append( DataItem(title=title, description=descr, url="/nett-tv/prosjekt/"+url.split('/').pop()) )
     return items
 
 
