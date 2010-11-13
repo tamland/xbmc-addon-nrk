@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
     NRK plugin for XBMC
     Copyright (C) 2010 Thomas Amland
