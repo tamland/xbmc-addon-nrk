@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import os, sys
+import sys
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import data as Data
 from data import DataItem

@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import urllib, re, time
+import urllib, re
 from BeautifulSoup import BeautifulSoup
 from DataItem import DataItem
 from dataStatic import *
