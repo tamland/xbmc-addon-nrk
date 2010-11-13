@@ -32,7 +32,6 @@ def nodes(baseUrl, handle):
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters", xbmcgui.ListItem(_(30103)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=genres",  xbmcgui.ListItem(_(30104)), True);
     xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=search",  xbmcgui.ListItem(_(30105)), True);
-    xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.endOfDirectory(handle)
 
 def node_live(baseUrl, handle):
@@ -80,14 +79,14 @@ def create(baseUrl, handle, dataItems):
         listItems.append( (url, l, isdir) )
         
     xbmcplugin.addDirectoryItems(handle=handle, items=listItems)
-    xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_UNSORTED)
-    xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_LABEL)
     xbmcplugin.endOfDirectory(handle)
     
 
 if ( __name__ == "__main__" ):
     #using episodes because most skins expects 16/9 thumbs for this
     xbmcplugin.setContent(int(sys.argv[1]), "episodes")
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
+    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_LABEL)
     
     arg = sys.argv[2].split('=', 1)
 
