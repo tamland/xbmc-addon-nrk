@@ -47,7 +47,7 @@ def getLatest():
     items = []
     for e in li:
         anc = e.find('a', attrs={'href' : re.compile('^/nett-tv/klipp/[0-9]+')})
-        items.append( _getVideoById(anc['href'].split('/').pop()) )
+        items.append( _getVideo(anc['href']) )
     return items
 
 
@@ -58,11 +58,11 @@ def getSearchResults(query):
     for e in li:
         url   = e.find('em').string
         if contains(url, "klipp"):
-            items.append( _getVideoById(url.split('/').pop()) )
+            items.append( _getVideo(url) )
         elif contains(url, "prosjekt"):
             title = decodeHtml(e.find('a').string)
             descr = decodeHtml(e.find('p').string)
-            items.append( DataItem(title=title, description=descr, url="/nett-tv/prosjekt/"+url.split('/').pop()) )
+            items.append( DataItem(title=title, description=descr, url="/nett-tv/prosjekt/"+getId(url)) )
     return items
 
 
@@ -76,7 +76,7 @@ def getByUrl(url):
         url = "http://www.nrk.no" + url
         
     elif (url.startswith("/nett-tv/kategori")):
-        url = "http://www.nrk.no/nett-tv/menyfragment.aspx?type=category&id=" + url.split('/').pop()
+        url = "http://www.nrk.no/nett-tv/menyfragment.aspx?type=category&id=" + getId(url)
     
     soup = BeautifulSoup(urllib.urlopen(url))
     items = []
@@ -87,7 +87,7 @@ def getByUrl(url):
 
 def _getAllKlipp(soup):
     items = soup.findAll('a', attrs={'class':re.compile('icon-(video|sound)-black.*'), 'href':re.compile('.*nett-tv/klipp/[0-9]+$')})
-    return [ _getVideoById(e['href'].split('/').pop()) for e in items ]
+    return [ _getVideo(e['href']) for e in items ]
 
 
 def _getAllKategori(soup):
@@ -109,7 +109,8 @@ def _getAllProsjekt(soup):
     return items
 
 
-def _getVideoById(id):
+def _getVideo(url):
+    id = getId(url)
     url = "http://www.nrk.no/nett-tv/silverlight/getmediaxml.ashx?id=" + id + "&hastighet=" + QUALITY
     soup = BeautifulSoup(urllib.urlopen(url))
     title = decodeHtml(soup.find('title').string)
