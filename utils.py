@@ -18,3 +18,6 @@
 
 def contains(string, search):
     return string.find(search) > -1
+
+def decodeHtml(string):
+    return str(string).replace('&amp;', '&');

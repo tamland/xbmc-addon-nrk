@@ -60,8 +60,8 @@ def getSearchResults(query):
         if contains(url, "klipp"):
             items.append( _getVideoById(url.split('/').pop()) )
         elif contains(url, "prosjekt"):
-            title = e.find('a').string
-            descr = e.find('p').string
+            title = decodeHtml(e.find('a').string)
+            descr = decodeHtml(e.find('p').string)
             items.append( DataItem(title=title, description=descr, url="/nett-tv/prosjekt/"+url.split('/').pop()) )
     return items
 
@@ -92,7 +92,7 @@ def _getAllKlipp(soup):
 
 def _getAllKategori(soup):
     items = soup.findAll('a', attrs={'class':re.compile('icon-closed-black.*'), 'href':re.compile('^/nett-tv/kategori/[0-9]+')})
-    return [ DataItem(title=e['title'], url=e['href']) for e in items ]
+    return [ DataItem(title=decodeHtml(e['title']), url=e['href']) for e in items ]
 
 
 def _getAllProsjekt(soup):
@@ -100,10 +100,10 @@ def _getAllProsjekt(soup):
     li = soup.find('div', attrs={'class' : 'nettv-category clearfix'}).findAll('li') 
     for e in li:
         anc = e.find('a', attrs={'href' : re.compile('^/nett-tv/prosjekt/[0-9]+')})
-        title = anc['title']
+        title = decodeHtml(anc['title'])
         url   = anc['href']
         img   = _getImg(e.find('img')['src'])
-        descr = str(e.find('div', attrs={'class':'summary'}).find('p').string)
+        descr = decodeHtml(e.find('div', attrs={'class':'summary'}).find('p').string)
         
         items.append( DataItem(title=title, description=descr, thumb=img, url=url) )
     return items
@@ -112,8 +112,8 @@ def _getAllProsjekt(soup):
 def _getVideoById(id):
     url = "http://www.nrk.no/nett-tv/silverlight/getmediaxml.ashx?id=" + id + "&hastighet=" + QUALITY
     soup = BeautifulSoup(urllib.urlopen(url))
-    title = soup.find('title').string
-    descr = str(soup.find('description').string)
+    title = decodeHtml(soup.find('title').string)
+    descr = decodeHtml(str(soup.find('description').string))
     
     img = _getImg(soup.find('imageurl').string)
     url = soup.find('mediaurl').string
