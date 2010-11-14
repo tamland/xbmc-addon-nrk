@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
     NRK plugin for XBMC
     Copyright (C) 2010 Thomas Amland
@@ -50,5 +51,4 @@ def getLetters():
     letters.extend([ ord('y'), 216, 229 ])
     enc = lambda ch: urllib.quote(unichr(ch).encode('latin-1'))
     return [ DataItem(title=unichr(ch).upper(), url="/nett-tv/bokstav/"+enc(ch)) for ch in letters ]
-
 

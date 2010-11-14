@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 import unittest
 import data
-
 
 class Test(unittest.TestCase):
     
@@ -10,11 +10,9 @@ class Test(unittest.TestCase):
                       data.DataItem(title="S", url="/nett-tv/bokstav/s") ]
         data.setQuality('2')
         
-
     def test(self):
         self._rec(self.nodes, 0)
 
-        
     def _rec(self, dataset, lvl):
         for d in dataset:
             assert d.title.strip() is not ""

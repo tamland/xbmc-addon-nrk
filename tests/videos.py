@@ -2,7 +2,6 @@
 import unittest
 import data
 
-
 class Test(unittest.TestCase):
 
     def test(self):
@@ -10,7 +9,6 @@ class Test(unittest.TestCase):
             print "Testing quality=" + str(q)
             data.setQuality(q)
             self._testLetters()
-
 
     def _testLetters(self):
         letters = data.getLetters()
@@ -20,7 +18,6 @@ class Test(unittest.TestCase):
                    data.DataItem(title="S", url="/nett-tv/bokstav/s") ]
         
         self._rec(letters, 0)
-        
         
     def _rec(self, dataset, lvl):
         assert dataset > 0 #data module uses dom so >0 implies all was found
