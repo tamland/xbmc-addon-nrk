@@ -24,18 +24,19 @@ from dataStatic import *
 from utils import *
 
 
-global QUALITY, QUALITY_STR
+global BITRATES, BITRATE_ID
 def setQuality(id):
-    global QUALITY, QUALITY_STR
-    QUALITY = {'0' : '400', '1' : '800', '2' : '1200' }[id]
-    QUALITY_STR = {'0' : 'l', '1' : 'm', '2' : 'h' }[id]
+    global BITRATES, BITRATE_ID
+    BITRATE_ID = id
+    BITRATES = ['400', '800', '1200']
 
 
 def getLive():
     url = "mms://straumv.nrk.no/nrk_tv_direkte_nrk%s_%s?UseSilverlight=1"
-    return [DataItem(title="NRK 1", url=url % (1,QUALITY_STR), thumb=os.path.join(R_PATH, "nrk1.jpg"), isPlayable=True),
-            DataItem(title="NRK 2", url=url % (2,QUALITY_STR), thumb=os.path.join(R_PATH, "nrk2.jpg"), isPlayable=True),
-            DataItem(title="NRK 3", url=url % (3,QUALITY_STR), thumb=os.path.join(R_PATH, "nrk3.jpg"), isPlayable=True)]
+    quality = ['l', 'm', 'h' ][BITRATE_ID]
+    return [DataItem(title="NRK 1", url=url % (1,quality), thumb=os.path.join(R_PATH, "nrk1.jpg"), isPlayable=True),
+            DataItem(title="NRK 2", url=url % (2,quality), thumb=os.path.join(R_PATH, "nrk2.jpg"), isPlayable=True),
+            DataItem(title="NRK 3", url=url % (3,quality), thumb=os.path.join(R_PATH, "nrk3.jpg"), isPlayable=True)]
 
 
 def getLatest():
@@ -120,20 +121,28 @@ def _getAllProsjekt(soup):
 
 def _getVideo(url):
     id = getId(url)
-    url = "http://www.nrk.no/nett-tv/silverlight/getmediaxml.ashx?id=%s&hastighet=%s" % (id, QUALITY)
-    soup = BeautifulSoup(urllib.urlopen(url))
-    title = decodeHtml(soup.find('title').string)
-    descr = decodeHtml(str(soup.find('description').string))
-    
-    img = _getImg(soup.find('imageurl').string)
-    url = soup.find('mediaurl').string
-    #some uri's contais illegal chars so need to fix this
-    url = url.split("mms://", 1)[1]
+    (soup, url) = _findVideoUrl(id, BITRATE_ID)
+    url = url.split("mms://", 1)[1] #some uri's contais illegal chars so need to fix this
     url = url.encode('latin-1') #urllib cant unicode
     url = urllib.quote(url)
     url = "mms://%s?UseSilverlight=1" % url
     
+    title = decodeHtml(soup.find('title').string)
+    descr = decodeHtml(str(soup.find('description').string))
+    img   = _getImg(soup.find('imageurl').string)
     return DataItem(title=title, description=descr, thumb=img, url=url, isPlayable=True)
+
+
+def _findVideoUrl(id, bitrate):
+    if bitrate >= len(BITRATES):
+        return (None, None)
+    url = "http://www.nrk.no/nett-tv/silverlight/getmediaxml.ashx?id=%s&hastighet=%s" % (id, BITRATES[bitrate])
+    soup = BeautifulSoup(urllib.urlopen(url))
+    url = soup.find('mediaurl').string
+    if not url:
+        return _findVideoUrl(id, bitrate+1)
+    return (soup, url)
+     
 
 def _getImg(url):
     return re.sub("^(.*cropid.*)w[0-9]+$", "\\1w650", url)

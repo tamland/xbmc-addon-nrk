@@ -23,7 +23,7 @@ import data as Data
 from data import DataItem
 
 addon = xbmcaddon.Addon(id="plugin.video.nrk")
-Data.setQuality(addon.getSetting("quality"))
+Data.setQuality(int(addon.getSetting("quality")))
 _ = addon.getLocalizedString
 
 def nodes(baseUrl, handle):

@@ -6,8 +6,8 @@ import data
 class Test(unittest.TestCase):
 
     def test(self):
-        for q in ['0','1','2']:
-            print "Testing quality=" + q
+        for q in range(0,2):
+            print "Testing quality=" + str(q)
             data.setQuality(q)
             self._testLetters()
 
