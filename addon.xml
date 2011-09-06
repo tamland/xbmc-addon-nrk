@@ -4,7 +4,7 @@
        version="3.1.1"
        provider-name="takoi">
   <requires>
-    <import addon="xbmc.python" version="1.0"/>
+    <import addon="xbmc.python" version="2.0"/>
     <import addon="script.module.beautifulsoup"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="default.py">
