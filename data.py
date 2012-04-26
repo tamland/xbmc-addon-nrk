@@ -68,9 +68,10 @@ def parse_episodes(arg):
   
   html = urllib2.urlopen(url).read()
   html = parseDOM(html, 'table', {'class':'episodeTable'})
-  titles = parseDOM(html, 'a', {'class':'p-link'})
+  trs = parseDOM(html, 'tr', {'class':'has-programtooltip episode-row js-click *'})
+  titles = [ parseDOM(tr, 'a', {'class':'p-link'})[0] for tr in trs ]
   titles = map(html_decode, titles)
-  urls = parseDOM(html, 'a', {'class':'p-link'}, ret='href')
+  urls = [ parseDOM(tr, 'a', {'class':'p-link'}, ret='href')[0] for tr in trs ]
   ids = [ e.split('http://tv.nrk.no/')[1] for e in urls ]
   return titles, ids
 
