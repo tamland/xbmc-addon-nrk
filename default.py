@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 '''
-    NRK plugin for XBMC
-    Copyright (C) 2010 Thomas Amland
-
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -19,52 +16,47 @@
 
 import sys
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
-import data as Data
-from data import DataItem
+import data
+import CommonFunctions as common
+
+from itertools import repeat
+from xbmcplugin import addDirectoryItem
+from xbmcplugin import endOfDirectory
+from xbmcgui import ListItem
 
 addon = xbmcaddon.Addon(id="plugin.video.nrk")
-Data.setQuality(int(addon.getSetting("quality")))
-_ = addon.getLocalizedString
+#data.setQuality(int(addon.getSetting("quality")))
 
-def nodes(baseUrl, handle):
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=live",     xbmcgui.ListItem(_(30101)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=letters",  xbmcgui.ListItem(_(30103)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=genres",   xbmcgui.ListItem(_(30104)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=latest",   xbmcgui.ListItem(_(30102)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=topweek",  xbmcgui.ListItem(_(30106)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=topmonth", xbmcgui.ListItem(_(30107)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=toptotal", xbmcgui.ListItem(_(30108)), True);
-    xbmcplugin.addDirectoryItem(handle, baseUrl+"?node=search",   xbmcgui.ListItem(_(30105)), True);
-    xbmcplugin.endOfDirectory(handle)
 
-def node_live(baseUrl, handle):
-    dataItems = Data.getLive()
-    create(baseUrl, handle, dataItems)
-    
-def node_latest(baseUrl, handle):
-    dataItems = Data.getLatest()
-    create(baseUrl, handle, dataItems)
-    
-def node_letters(baseUrl, handle):
-    dataItems = Data.getLetters()
-    create(baseUrl, handle, dataItems)
-    
-def node_genres(baseUrl, handle):
-    dataItems = Data.getGenres()
-    create(baseUrl, handle, dataItems)
-    
-def node_topWeek(baseUrl, handle):
-    dataItems = Data.getMostWatched(7)
-    create(baseUrl, handle, dataItems)
-    
-def node_topMonth(baseUrl, handle):
-    dataItems = Data.getMostWatched(30)
-    create(baseUrl, handle, dataItems)
-    
-def node_topTotal(baseUrl, handle):
-    dataItems = Data.getMostWatched(9999)
-    create(baseUrl, handle, dataItems)
-    
+def view_top(handle, base_url):
+  addDirectoryItem(handle, base_url+"?node=live",     ListItem("Direkte"), True)
+  addDirectoryItem(handle, base_url+"?node=letters",  ListItem("A-Å"), True)
+  #addDirectoryItem(handle, base_url+"?node=genres",   ListItem(""), True)
+  #addDirectoryItem(handle, base_url+"?node=latest",   xbmcgui.ListItem(_(30102)), True)
+  #addDirectoryItem(handle, base_url+"?node=topweek",  xbmcgui.ListItem(_(30106)), True)
+  #addDirectoryItem(handle, base_url+"?node=topmonth", xbmcgui.ListItem(_(30107)), True)
+  #addDirectoryItem(handle, base_url+"?node=toptotal", xbmcgui.ListItem(_(30108)), True)
+  #addDirectoryItem(handle, base_url+"?node=search",   xbmcgui.ListItem(_(30105)), True)
+  endOfDirectory(handle)
+
+def view_live(handle, base_url):
+  bitrate = 3
+  addDirectoryItem(handle, "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate, ListItem("NRK 1"), False)
+  addDirectoryItem(handle, "http://nrk2-i.akamaihd.net/hls/live/201544/nrk2/master_Layer%s.m3u8" % bitrate, ListItem("NRK 2"), False)
+  addDirectoryItem(handle, "http://nrk3-i.akamaihd.net/hls/live/201545/nrk3/master_Layer%s.m3u8" % bitrate, ListItem("NRK 3"), False)
+  endOfDirectory(handle)
+
+def view_dir(handle, base_url, nodes, args, titles):
+  items = []
+  for node, arg, title in zip(nodes, args, titles):
+    li = ListItem(title, thumbnailImage="")
+    li.setInfo( type="Video", infoLabels={"title": title, "plot":"e.description", "tvshowtitle":"e.title"} )
+    url = "%s?node=%s&arg=%s" % (base_url, node, arg)
+    isdir = False if node == 'play' else True
+    items.append((url, li, isdir))
+  xbmcplugin.addDirectoryItems(handle=handle, items=items)
+  xbmcplugin.endOfDirectory(handle)
+
 def node_search(baseUrl, handle):
     kb = xbmc.Keyboard()
     kb.doModal()
@@ -72,59 +64,49 @@ def node_search(baseUrl, handle):
         text = kb.getText()
         dataItems = Data.getSearchResults(text)
         create(baseUrl, handle, dataItems)
+    
 
-def node_url(baseUrl, handle, url):
-    dataItems = Data.getByUrl(url)
-    create(baseUrl, handle, dataItems)
-    
-    
-def create(baseUrl, handle, dataItems):
-    listItems = []
-    for e in dataItems:
-        l = xbmcgui.ListItem(e.title, thumbnailImage=e.thumb)
-        l.setInfo( type="Video", infoLabels={"title": e.title, "plot":e.description, "tvshowtitle":e.title} )
-        l.setProperty("IsPlayable", str(e.isPlayable))
-        
-        isdir = not(e.isPlayable)
-        if isdir:
-            url = baseUrl + "?url=" + e.url
-        else:
-            url = e.url
-        listItems.append( (url, l, isdir) )
-        
-    xbmcplugin.addDirectoryItems(handle=handle, items=listItems)
-    xbmcplugin.endOfDirectory(handle)
-    
+def controller(handle, base_url, node, arg):
+  if node == 'live':
+    view_live(handle, base_url)
+  
+  elif node == 'letters':
+    common = ['0-9'] + map(chr, range(97, 123))
+    titles = common + [ u'æ', u'ø', u'å' ]
+    titles = [ e.upper() for e in titles ]
+    args = common + [ 'ae', 'oe', 'aa' ]
+    view_dir(handle, base_url, repeat('letter'), args, titles)
+  
+  elif node == 'letter':
+    titles, args = data.parse_by_letter(arg)
+    nodes = ( 'seasons' if arg.startswith('/serie') else 'play' for arg in args )
+    view_dir(handle, base_url, nodes, args, titles)
+  
+  elif node == 'mostpopular':
+    titles, args = data.parse_most_popular()
+    view_dir(handle, base_url, repeat('play'), args, titles)
+  
+  elif node == 'seasons':
+    titles, args = data.parse_seasons(arg)
+    view_dir(handle, base_url, repeat('episodes'), args, titles)
+  
+  elif node == 'episodes':
+    titles, args = data.parse_episodes(arg)
+    view_dir(handle, base_url, repeat('play'), args, titles)
+  
+  elif node == 'play':
+    url = data.parse_media_url(arg)
+    xbmc.Player().play(url)
+  
+  else:
+    view_top(handle, base_url)
 
 if ( __name__ == "__main__" ):
-    #using episodes because most skins expects 16/9 thumbs for this
-    xbmcplugin.setContent(int(sys.argv[1]), "episodes")
-    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
-    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_LABEL)
-    
-    arg = sys.argv[2].split('=', 1)
+  base_url = sys.argv[0]
+  handle   = int(sys.argv[1])
+  params   = common.getParameters(sys.argv[2])
 
-    if (arg[0] == "?node"):
-        if(arg[1] == "live"):
-            node_live(sys.argv[0], int(sys.argv[1]))
-        elif(arg[1] == "letters"):
-            node_letters(sys.argv[0], int(sys.argv[1]))
-        elif(arg[1] == "latest"):
-            node_latest(sys.argv[0], int(sys.argv[1]))
-        elif(arg[1] == "genres"):
-            node_genres(sys.argv[0], int(sys.argv[1]))
-        elif(arg[1] == "search"):
-            node_search(sys.argv[0], int(sys.argv[1]))
-        elif(arg[1] == "topweek"):
-            node_topWeek(sys.argv[0], int(sys.argv[1]))
-        elif(arg[1] == "topmonth"):
-            node_topMonth(sys.argv[0], int(sys.argv[1]))
-        elif(arg[1] == "toptotal"):
-            node_topTotal(sys.argv[0], int(sys.argv[1]))
-    
-    elif (arg[0] == "?url"):
-        node_url(sys.argv[0], int(sys.argv[1]), arg[1])
-    
-    else:
-        xbmcplugin.setContent(int(sys.argv[1]), "files")
-        nodes(sys.argv[0], int(sys.argv[1]))
+  node = params['node'] if 'node' in params else ""
+  arg = params['arg'] if 'arg' in params else ""
+  controller(handle, base_url, node, arg)
+
