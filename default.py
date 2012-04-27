@@ -52,7 +52,8 @@ def view_dir(handle, base_url, nodes, args, titles):
     li = ListItem(title, thumbnailImage="")
     li.setInfo( type="Video", infoLabels={"title": title, "plot":"e.description", "tvshowtitle":"e.title"} )
     url = "%s?node=%s&arg=%s" % (base_url, node, arg)
-    isdir = False if node == 'play' else True
+    isdir = node != 'play'
+    li.setProperty('IsPlayable',str(not isdir))
     items.append((url, li, isdir))
   xbmcplugin.addDirectoryItems(handle=handle, items=items)
   xbmcplugin.endOfDirectory(handle)
@@ -96,7 +97,7 @@ def controller(handle, base_url, node, arg):
   
   elif node == 'play':
     url = data.parse_media_url(arg)
-    xbmc.Player().play(url)
+    xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
   
   else:
     view_top(handle, base_url)
