@@ -14,6 +14,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import os
 import sys
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import data
@@ -24,7 +25,8 @@ from xbmcplugin import addDirectoryItem
 from xbmcplugin import endOfDirectory
 from xbmcgui import ListItem
 
-addon = xbmcaddon.Addon(id="plugin.video.nrk")
+ADDON = xbmcaddon.Addon()
+ADDON_PATH = ADDON.getAddonInfo('path')
 #data.setQuality(int(addon.getSetting("quality")))
 
 
@@ -41,9 +43,19 @@ def view_top(handle, base_url):
 
 def view_live(handle, base_url):
   bitrate = 3
-  addDirectoryItem(handle, "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate, ListItem("NRK 1"), False)
-  addDirectoryItem(handle, "http://nrk2-i.akamaihd.net/hls/live/201544/nrk2/master_Layer%s.m3u8" % bitrate, ListItem("NRK 2"), False)
-  addDirectoryItem(handle, "http://nrk3-i.akamaihd.net/hls/live/201545/nrk3/master_Layer%s.m3u8" % bitrate, ListItem("NRK 3"), False)
+  img_path = os.path.join(ADDON_PATH, "resources/images")
+  addDirectoryItem(handle,
+      "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
+      ListItem("NRK 1", thumbnailImage=os.path.join(img_path, "nrk1.png")), False)
+  
+  addDirectoryItem(handle,
+      "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
+      ListItem("NRK 2", thumbnailImage=os.path.join(img_path, "nrk2.png")), False)
+  
+  addDirectoryItem(handle,
+      "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
+      ListItem("NRK 3", thumbnailImage=os.path.join(img_path, "nrk3.png")), False)
+  
   endOfDirectory(handle)
 
 def view_dir(handle, base_url, nodes, args, titles):
