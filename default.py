@@ -47,28 +47,24 @@ def view_live(handle, base_url):
   addDirectoryItem(handle,
       "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
       ListItem("NRK 1", thumbnailImage=os.path.join(img_path, "nrk1.png")), False)
-  
   addDirectoryItem(handle,
       "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
       ListItem("NRK 2", thumbnailImage=os.path.join(img_path, "nrk2.png")), False)
-  
   addDirectoryItem(handle,
       "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
       ListItem("NRK 3", thumbnailImage=os.path.join(img_path, "nrk3.png")), False)
-  
   endOfDirectory(handle)
 
-def view_dir(handle, base_url, nodes, args, titles):
-  items = []
-  for node, arg, title in zip(nodes, args, titles):
-    li = ListItem(title, thumbnailImage="")
-    li.setInfo( type="Video", infoLabels={"title": title, "plot":"e.description", "tvshowtitle":"e.title"} )
+def view_dir(handle, base_url, nodes, args, titles, getthumbs=repeat(lambda: "")):
+  total = len(titles)
+  for node, arg, title, getthumb in zip(nodes, args, titles, getthumbs):
+    li = ListItem(title, thumbnailImage=getthumb())
+    li.setInfo(type="Video", infoLabels={"title": title, "tvshowtitle":"e.title"})
     url = "%s?node=%s&arg=%s" % (base_url, node, arg)
     isdir = node != 'play'
-    li.setProperty('IsPlayable',str(not isdir))
-    items.append((url, li, isdir))
-  xbmcplugin.addDirectoryItems(handle=handle, items=items)
-  xbmcplugin.endOfDirectory(handle)
+    li.setProperty('IsPlayable', str(not isdir))
+    addDirectoryItem(handle, url, li, isdir, total)
+  endOfDirectory(handle)
 
 def node_search(baseUrl, handle):
     kb = xbmc.Keyboard()
