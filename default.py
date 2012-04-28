@@ -32,6 +32,7 @@ ADDON_PATH = ADDON.getAddonInfo('path')
 
 def view_top(handle, base_url):
   addDirectoryItem(handle, base_url+"?node=live",     ListItem("Direkte"), True)
+  addDirectoryItem(handle, base_url+"?node=recommended", ListItem("Aktuelt"), True)
   addDirectoryItem(handle, base_url+"?node=letters",  ListItem("A-Å"), True)
   #addDirectoryItem(handle, base_url+"?node=genres",   ListItem(""), True)
   #addDirectoryItem(handle, base_url+"?node=latest",   xbmcgui.ListItem(_(30102)), True)
@@ -55,14 +56,17 @@ def view_live(handle, base_url):
       ListItem("NRK 3", thumbnailImage=os.path.join(img_path, "nrk3.png")), False)
   endOfDirectory(handle)
 
-def view_dir(handle, base_url, nodes, args, titles, getthumbs=repeat(lambda: "")):
+def view_dir(handle, base_url, nodes, args, titles, thumbs=repeat(''), bgs=repeat('')):
   total = len(titles)
-  for node, arg, title, getthumb in zip(nodes, args, titles, getthumbs):
-    li = ListItem(title, thumbnailImage=getthumb())
+  for node, arg, title, thumb, bg in zip(nodes, args, titles, thumbs, bgs):
+    thumb = thumb() if callable(thumb) else thumb
+    bg = bg() if callable(bg) else bg
+    li = ListItem(title, thumbnailImage=thumb)
     li.setInfo(type="Video", infoLabels={"title": title, "tvshowtitle":"e.title"})
     url = "%s?node=%s&arg=%s" % (base_url, node, arg)
     isdir = node != 'play'
     li.setProperty('IsPlayable', str(not isdir))
+    li.setProperty('fanart_image', bg)
     addDirectoryItem(handle, url, li, isdir, total)
   endOfDirectory(handle)
 
@@ -78,6 +82,10 @@ def node_search(baseUrl, handle):
 def controller(handle, base_url, node, arg):
   if node == 'live':
     view_live(handle, base_url)
+  
+  elif node == 'recommended':
+    titles, args, imgs = data.parse_recommended()
+    view_dir(handle, base_url, repeat('play'), args, titles, imgs, imgs)
   
   elif node == 'letters':
     common = ['0-9'] + map(chr, range(97, 123))

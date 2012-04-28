@@ -13,6 +13,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import re
 import urllib2
 import CommonFunctions as common
 from BeautifulSoup import BeautifulSoup
@@ -33,6 +34,21 @@ def parse_by_letter(arg):
   titles = map(html_decode, titles)
   urls = parseDOM(html, 'a', {'class':''}, ret='href')
   return titles, urls
+
+
+def parse_recommended():
+  url = "http://tv.nrk.no/"
+  html = urllib2.urlopen(url).read()
+  html = parseDOM(html, 'ul', {'id':'introSlider'})[0]
+  
+  titles1 = parseDOM(html, 'a')
+  titles2 = parseDOM(html, 'strong')
+  titles = [ "%s - %s" % (t1, t2) for t1, t2 in zip(titles1, titles2) ]
+  titles = map(html_decode, titles)
+  
+  urls = parseDOM(html, 'a', ret='href')
+  imgs = re.findall(r'1900":"([^"]+)', html)
+  return titles, urls, imgs
 
 
 def parse_most_popular():
