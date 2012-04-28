@@ -51,14 +51,16 @@ def parse_recommended():
   return titles, urls, imgs
 
 
-def parse_most_popular():
-  url = "http://tv.nrk.no/listobjects/mostpopular/Week"
+def parse_most_recent():
+  url = "http://tv.nrk.no/listobjects/recentlysent"
   html = urllib2.urlopen(url).read()
   urls = parseDOM(html, 'a', {'class':'listobject-link'}, ret='href')
   urls = [ e.split('http://tv.nrk.no/')[1] for e in urls ]
-  ancs = parseDOM(html, 'a', {'class':'listobject-link'})
-  titles = [ parseDOM(a, 'strong')[0] for a in ancs ]
-  return titles, urls
+  thumbs = parseDOM(html, 'img', ret='data-src')
+  dates = parseDOM(html, 'time')
+  titles = parseDOM(html, 'img', ret='alt')
+  titles = [ "%s %s" % (t,d) for t,d in zip(titles, dates) ]
+  return titles, urls, thumbs
 
 
 def parse_seasons(arg):

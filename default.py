@@ -32,13 +32,8 @@ ADDON_PATH = ADDON.getAddonInfo('path')
 def view_top(handle, base_url):
   addDirectoryItem(handle, base_url+"?node=live", ListItem("Direkte"), True)
   addDirectoryItem(handle, base_url+"?node=recommended", ListItem("Aktuelt"), True)
+  addDirectoryItem(handle, base_url+"?node=mostrecent", ListItem("Siste"), True)
   addDirectoryItem(handle, base_url+"?node=letters", ListItem("A-Å"), True)
-  #addDirectoryItem(handle, base_url+"?node=genres",   ListItem(""), True)
-  #addDirectoryItem(handle, base_url+"?node=latest",   xbmcgui.ListItem(_(30102)), True)
-  #addDirectoryItem(handle, base_url+"?node=topweek",  xbmcgui.ListItem(_(30106)), True)
-  #addDirectoryItem(handle, base_url+"?node=topmonth", xbmcgui.ListItem(_(30107)), True)
-  #addDirectoryItem(handle, base_url+"?node=toptotal", xbmcgui.ListItem(_(30108)), True)
-  #addDirectoryItem(handle, base_url+"?node=search",   xbmcgui.ListItem(_(30105)), True)
   endOfDirectory(handle)
 
 def view_live(handle, base_url):
@@ -85,6 +80,10 @@ def controller(handle, base_url, node, arg):
     titles, args, imgs = data.parse_recommended()
     view_dir(handle, base_url, repeat('play'), args, titles, imgs, imgs)
   
+  elif node == 'mostrecent':
+    titles, args, thumbs = data.parse_most_recent()
+    view_dir(handle, base_url, repeat('play'), args, titles, thumbs)
+  
   elif node == 'letters':
     common = ['0-9'] + map(chr, range(97, 123))
     titles = common + [ u'æ', u'ø', u'å' ]
@@ -96,10 +95,6 @@ def controller(handle, base_url, node, arg):
     titles, args = data.parse_by_letter(arg)
     nodes = ( 'seasons' if arg.startswith('/serie') else 'play' for arg in args )
     view_dir(handle, base_url, nodes, args, titles)
-  
-  elif node == 'mostpopular':
-    titles, args = data.parse_most_popular()
-    view_dir(handle, base_url, repeat('play'), args, titles)
   
   elif node == 'seasons':
     titles, args = data.parse_seasons(arg)
