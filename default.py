@@ -27,13 +27,12 @@ from xbmcgui import ListItem
 
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
-#data.setQuality(int(addon.getSetting("quality")))
 
 
 def view_top(handle, base_url):
-  addDirectoryItem(handle, base_url+"?node=live",     ListItem("Direkte"), True)
+  addDirectoryItem(handle, base_url+"?node=live", ListItem("Direkte"), True)
   addDirectoryItem(handle, base_url+"?node=recommended", ListItem("Aktuelt"), True)
-  addDirectoryItem(handle, base_url+"?node=letters",  ListItem("A-Å"), True)
+  addDirectoryItem(handle, base_url+"?node=letters", ListItem("A-Å"), True)
   #addDirectoryItem(handle, base_url+"?node=genres",   ListItem(""), True)
   #addDirectoryItem(handle, base_url+"?node=latest",   xbmcgui.ListItem(_(30102)), True)
   #addDirectoryItem(handle, base_url+"?node=topweek",  xbmcgui.ListItem(_(30106)), True)
@@ -62,10 +61,9 @@ def view_dir(handle, base_url, nodes, args, titles, thumbs=repeat(''), bgs=repea
     thumb = thumb() if callable(thumb) else thumb
     bg = bg() if callable(bg) else bg
     li = ListItem(title, thumbnailImage=thumb)
-    li.setInfo(type="Video", infoLabels={"title": title, "tvshowtitle":"e.title"})
     url = "%s?node=%s&arg=%s" % (base_url, node, arg)
     isdir = node != 'play'
-    li.setProperty('IsPlayable', str(not isdir))
+    li.setProperty('isplayable', str(not isdir))
     li.setProperty('fanart_image', bg)
     addDirectoryItem(handle, url, li, isdir, total)
   endOfDirectory(handle)
@@ -122,7 +120,7 @@ if ( __name__ == "__main__" ):
   base_url = sys.argv[0]
   handle   = int(sys.argv[1])
   params   = common.getParameters(sys.argv[2])
-
+  
   node = params['node'] if 'node' in params else ""
   arg = params['arg'] if 'arg' in params else ""
   controller(handle, base_url, node, arg)
