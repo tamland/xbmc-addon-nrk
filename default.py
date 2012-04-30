@@ -63,14 +63,6 @@ def view_dir(handle, base_url, nodes, args, titles, thumbs=repeat(''), bgs=repea
     addDirectoryItem(handle, url, li, isdir, total)
   endOfDirectory(handle)
 
-def node_search(baseUrl, handle):
-    kb = xbmc.Keyboard()
-    kb.doModal()
-    if (kb.isConfirmed()):
-        text = kb.getText()
-        dataItems = Data.getSearchResults(text)
-        create(baseUrl, handle, dataItems)
-    
 
 def controller(handle, base_url, node, arg):
   if node == 'live':
