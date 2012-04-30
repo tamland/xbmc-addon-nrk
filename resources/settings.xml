@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-	<category label="30000">
-		<setting id="quality" type="enum" label="30001" lvalues="30011|30012|30013" default="2"/>
-	</category>
+	<setting id="quality" type="enum" label="30001" values="320x180|480x270|640x360|960x540|1280x720" default="4"/>
 </settings>

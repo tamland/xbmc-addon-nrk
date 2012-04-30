@@ -27,6 +27,7 @@ from xbmcgui import ListItem
 
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
+BITRATE = ADDON.getSetting('quality')
 
 
 def view_top(handle, base_url):
@@ -37,7 +38,7 @@ def view_top(handle, base_url):
   endOfDirectory(handle)
 
 def view_live(handle, base_url):
-  bitrate = 3
+  bitrate = 3 if BITRATE > 3 else 1 if BITRATE < 1 else BITRATE
   img_path = os.path.join(ADDON_PATH, "resources/images")
   addDirectoryItem(handle,
       "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
@@ -101,7 +102,7 @@ def controller(handle, base_url, node, arg):
     view_dir(handle, base_url, repeat('play'), args, titles)
   
   elif node == 'play':
-    url = data.parse_media_url(arg)
+    url = data.parse_media_url(arg, BITRATE)
     xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
   
   else:
