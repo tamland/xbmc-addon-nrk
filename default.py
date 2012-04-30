@@ -44,12 +44,13 @@ def view_live(handle, base_url):
       "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
       ListItem("NRK 1", thumbnailImage=os.path.join(img_path, "nrk1.png")), False)
   addDirectoryItem(handle,
-      "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
+      "http://nrk2-i.akamaihd.net/hls/live/201544/nrk2/master_Layer%s.m3u8" % bitrate,
       ListItem("NRK 2", thumbnailImage=os.path.join(img_path, "nrk2.png")), False)
   addDirectoryItem(handle,
-      "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate,
+      "http://nrk3-i.akamaihd.net/hls/live/201545/nrk3/master_Layer%s.m3u8" % bitrate,
       ListItem("NRK 3", thumbnailImage=os.path.join(img_path, "nrk3.png")), False)
   endOfDirectory(handle)
+
 
 def view_dir(handle, base_url, nodes, args, titles, thumbs=repeat(''), bgs=repeat('')):
   total = len(titles)
