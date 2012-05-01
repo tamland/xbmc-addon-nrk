@@ -60,6 +60,7 @@ def parse_most_recent():
   dates = parseDOM(html, 'time')
   titles = parseDOM(html, 'img', ret='alt')
   titles = [ "%s %s" % (t,d) for t,d in zip(titles, dates) ]
+  titles = map(html_decode, titles)
   return titles, urls, thumbs
 
 
@@ -70,6 +71,7 @@ def parse_seasons(arg):
   html = urllib2.urlopen(url).read()
   html = parseDOM(html, 'div', {'id':'oldSeasons'})
   titles = parseDOM(html, 'a', {'id':'seasonLink-.*?'})
+  titles = map(html_decode, titles)
   season_ids = parseDOM(html, 'a', {'id':'seasonLink-.*?'}, ret='id')
   season_ids = [ e.split('-')[-1] for e in season_ids ]
   
