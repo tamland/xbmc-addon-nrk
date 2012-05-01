@@ -13,6 +13,7 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
+    <language>no</language>
     <summary lang="en">Watch NRK Web TV</summary>
     <summary lang="no">Se NRK Nett-TV</summary>
     <description lang="en">NRK Web TV gives you the opportunity to watch live TV as well as recordings of many shows.</description>
