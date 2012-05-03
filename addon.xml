@@ -12,6 +12,7 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
+    <language>no</language>
     <summary lang="en">Norwegian Broadcasting Corporation</summary>
     <summary lang="no">Norsk rikskringkasting</summary>
     <description lang="en">NRK's Web TV gives you the opportunity to watch live TV as well as recordings of many shows.</description>
