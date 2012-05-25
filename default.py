@@ -109,7 +109,7 @@ def controller(handle, base_url, node, arg):
   
   elif node == 'play':
     url = data.parse_media_url(arg, BITRATE)
-    
+    print url
     player = xbmc.Player();
     xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
     subtitle = subs.getSubtitles(arg)

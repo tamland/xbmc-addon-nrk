@@ -16,42 +16,53 @@
 import re
 import urllib2
 import CommonFunctions as common
-from datetime import datetime, timedelta
 from data import parse_media_url
 import xbmc
 import os
+import sys
+
+
 
 parseDOM = common.parseDOM
 
-
 def getSubtitles(path):
+
+
     url = 'http://tv.nrk.no/%s' % path
     html = urllib2.urlopen(url).read()
+    xbmc.log('NRK: '+url)
     url = 'http://tv.nrk.no%s' % re.findall('data-subtitlesurl = "(.*?)"',html)[0]
-    xbmc.log('NRK:'+url)
+    
     title =  re.findall('og:title" content="(.*?)"',html)[0]
     episodenr = re.findall('episodenumber" content="(.*?)"',html)
     if episodenr:
-        title += ' '+episodenr
+        title += ' '+episodenr[0]
     filename = os.path.join(xbmc.translatePath("special://temp"), title+'.no.srt') 
     f = open(filename, 'w')
     html = urllib2.urlopen(url).read()
     parts  = parseDOM(html, 'p',ret={'begin'})
     i = 0
     for p in parts:
-        i += 1
-        f.write(str(i))
-        begint = parseDOM(p,'p',ret='begin')
-        dur = parseDOM(p,'p',ret='dur')
-        begin = datetime.strptime(begint[0],'%H:%M:%S.%f')
-        dur = datetime.strptime(dur[0],'%H:%M:%S.%f')
-        dur = timedelta(0,dur.hour*3600+dur.minute*60+dur.second,dur.microsecond)
-        end = begin+dur
-        f.write('\n%02d:%02d:%02d,%03d' % (begin.hour,begin.minute,begin.second,begin.microsecond/1000))
-        f.write(' --> %02d:%02d:%02d,%03d\n' % (end.hour,end.minute,end.second,end.microsecond/1000))
-        f.write(re.sub('<br></br>\s*','\n',' '.join(parseDOM(p,'p')[0].replace('<span style="italic">','<i>').replace('</span>','</i>').split())))
-        f.write('\n\n')
+        begint = parseDOM(p,'p',ret='begin')[0]
+        dur = parseDOM(p,'p',ret='dur')[0]
+        xbmc.log('NRK: '+begint)
+        begin = stringToTime(begint)
+        begin -= 12
+        if begin >= 0:
+            dur = stringToTime(dur)
+            end = begin+dur
+            i += 1
+            f.write(str(i))
+            f.write('\n%s' % timeToString(begin))
+            f.write(' --> %s\n' % timeToString(end))
+            f.write(re.sub('<br></br>\s*','\n',' '.join(parseDOM(p,'p')[0].replace('<span style="italic">','<i>').replace('</span>','</i>').split())))
+            f.write('\n\n')
 
     return filename
 
-print getSubtitles('serie/funny-or-die-presents/koif60002110/sesong-1/episode-1')
+def stringToTime(txt):
+    p = txt.split(':')
+    return int(p[0])*3600+int(p[1])*60+float(p[2])
+
+def timeToString(time):
+    return '%02d:%02d:%02d,%03d' % (time/3600,(time%3600)/60,time%60,(time%1)*1000)
