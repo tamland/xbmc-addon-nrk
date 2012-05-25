@@ -18,7 +18,9 @@ import os
 import sys
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import data
+import time
 import CommonFunctions as common
+import subs
 
 from itertools import repeat
 from xbmcplugin import addDirectoryItem
@@ -29,6 +31,8 @@ ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
 BITRATE = ADDON.getSetting('quality')
 
+common.dbg = False # Default
+common.dbglevel = 0 # Default
 
 def view_top(handle, base_url):
   addDirectoryItem(handle, base_url+"?node=live", ListItem("Direkte"), True)
@@ -105,7 +109,16 @@ def controller(handle, base_url, node, arg):
   
   elif node == 'play':
     url = data.parse_media_url(arg, BITRATE)
+    
+    player = xbmc.Player();
     xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
+    subtitle = subs.getSubtitles(arg)
+    start_time = time.time()
+    while not player.isPlaying() and time.time() - start_time < 30:
+        time.sleep(1)
+    if player.isPlaying():
+        player.setSubtitles(subtitle)
+    xbmc.log('NRK:All done')
   
   else:
     view_top(handle, base_url)
