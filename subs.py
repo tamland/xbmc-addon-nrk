@@ -20,7 +20,10 @@ from data import parse_media_url
 import xbmc
 import os
 import sys
+import xbmcaddon
 
+ADDON = xbmcaddon.Addon()
+SUB_DELAY = float(ADDON.getSetting('subtitlesdelay'))
 
 
 parseDOM = common.parseDOM
@@ -45,9 +48,8 @@ def getSubtitles(path):
     for p in parts:
         begint = parseDOM(p,'p',ret='begin')[0]
         dur = parseDOM(p,'p',ret='dur')[0]
-        xbmc.log('NRK: '+begint)
         begin = stringToTime(begint)
-        begin -= 12
+        begin += SUB_DELAY
         if begin >= 0:
             dur = stringToTime(dur)
             end = begin+dur
@@ -57,7 +59,7 @@ def getSubtitles(path):
             f.write(' --> %s\n' % timeToString(end))
             f.write(re.sub('<br></br>\s*','\n',' '.join(parseDOM(p,'p')[0].replace('<span style="italic">','<i>').replace('</span>','</i>').split())))
             f.write('\n\n')
-
+    f.close()
     return filename
 
 def stringToTime(txt):

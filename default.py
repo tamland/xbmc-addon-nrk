@@ -30,6 +30,7 @@ from xbmcgui import ListItem
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
 BITRATE = ADDON.getSetting('quality')
+ENABLE_SUBS = xbmcaddon.Addon().getSetting('subtitles')
 
 common.dbg = False # Default
 common.dbglevel = 0 # Default
@@ -109,19 +110,24 @@ def controller(handle, base_url, node, arg):
   
   elif node == 'play':
     url = data.parse_media_url(arg, BITRATE)
-    print url
     player = xbmc.Player();
     xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
-    subtitle = subs.getSubtitles(arg)
-    start_time = time.time()
-    while not player.isPlaying() and time.time() - start_time < 30:
-        time.sleep(1)
-    if player.isPlaying():
-        player.setSubtitles(subtitle)
-    xbmc.log('NRK:All done')
+    if ENABLE_SUBS:
+        subtitle = subs.getSubtitles(arg)
+        print 'GOT Subs'
+        start_time = time.time()
+        while not player.isPlaying() and time.time() - start_time < 10:
+            time.sleep(1)
+            print 'waiting'
+        
+        print 'done waiting'
+        if player.isPlaying():
+            player.setSubtitles(subtitle)
   
   else:
     view_top(handle, base_url)
+
+  print 'done'
 
 if ( __name__ == "__main__" ):
   base_url = sys.argv[0]

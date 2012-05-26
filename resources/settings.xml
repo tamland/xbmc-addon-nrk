@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<setting id="quality" type="enum" label="30001" values="320x180|480x270|640x360|960x540|1280x720" default="4"/>
+    <setting id="subtitles" type="bool" label="30003" default="true"/>
+    <setting id="subtitlesdelay" label="30004" enable="eq(-1,true)" subsetting="true" default="-12" range="-30,.1,30" type="slider" />
 </settings>
