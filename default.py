@@ -30,7 +30,7 @@ from xbmcgui import ListItem
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
 BITRATE = ADDON.getSetting('quality')
-ENABLE_SUBS = xbmcaddon.Addon().getSetting('subtitles')
+ENABLE_SUBS = xbmcaddon.Addon().getSetting('subtitles')=="true"
 
 common.dbg = False # Default
 common.dbglevel = 0 # Default
@@ -111,7 +111,9 @@ def controller(handle, base_url, node, arg):
   elif node == 'play':
     url = data.parse_media_url(arg, BITRATE)
     player = xbmc.Player();
-    xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
+    print url
+    #xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
+    xbmcplugin.setResolvedUrl(handle, True, ListItem(path="/home/torstein/index_5_av.m3u8"))
     if ENABLE_SUBS:
         subtitle = subs.getSubtitles(arg)
         print 'GOT Subs'
@@ -126,8 +128,6 @@ def controller(handle, base_url, node, arg):
   
   else:
     view_top(handle, base_url)
-
-  print 'done'
 
 if ( __name__ == "__main__" ):
   base_url = sys.argv[0]
