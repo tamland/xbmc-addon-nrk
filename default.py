@@ -112,19 +112,42 @@ def controller(handle, base_url, node, arg):
     url = data.parse_media_url(arg, BITRATE)
     player = xbmc.Player();
     print url
-    #xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
-    xbmcplugin.setResolvedUrl(handle, True, ListItem(path="/home/torstein/index_5_av.m3u8"))
+    xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
+    #xbmcplugin.setResolvedUrl(handle, True, ListItem(path="/home/torstein/index_4_av.m3u8"))
+    
+    start_time = time.time()
+    while not player.isPlaying() and time.time() - start_time < 10:
+        time.sleep(1)
+    # remove bug with stream starting after 10 seconds    
+    while player.getTotalTime() <= 0:
+        time.sleep(.1)
+    
+    player.seekTime(0.)
+    
     if ENABLE_SUBS:
-        subtitle = subs.getSubtitles(arg)
-        print 'GOT Subs'
-        start_time = time.time()
-        while not player.isPlaying() and time.time() - start_time < 10:
-            time.sleep(1)
-            print 'waiting'
+        last = player.getTime()
+        timeDelay = None
+        for i in range(100000):
+            if not player.isPlaying():
+                return
+            now = player.getTime()
+            print i
+            if (last - now>0):
+                timeDelay = -last
+                print 'Time delay is %f' % timeDelay
+                break
+            else:
+                time.sleep(.01)
+                last = now
+
+        print 'Time delay found.............................'
+        if timeDelay is not None:
+            subtitle = subs.getSubtitles(arg,timeDelay)
+            if player.isPlaying():
+                player.setSubtitles(subtitle)
+                print 'Sub.......................'
         
-        print 'done waiting'
-        if player.isPlaying():
-            player.setSubtitles(subtitle)
+        print 'Done.............................'
   
   else:
     view_top(handle, base_url)

@@ -28,7 +28,7 @@ SUB_DELAY = float(ADDON.getSetting('subtitlesdelay'))
 
 parseDOM = common.parseDOM
 
-def getSubtitles(path):
+def getSubtitles(path,timeDelay):
 
 
     url = 'http://tv.nrk.no/%s' % path
@@ -49,7 +49,7 @@ def getSubtitles(path):
         begint = parseDOM(p,'p',ret='begin')[0]
         dur = parseDOM(p,'p',ret='dur')[0]
         begin = stringToTime(begint)
-        begin += SUB_DELAY
+        begin += timeDelay
         if begin >= 0:
             dur = stringToTime(dur)
             end = begin+dur
