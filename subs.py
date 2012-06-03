@@ -28,7 +28,7 @@ SUB_DELAY = float(ADDON.getSetting('subtitlesdelay'))
 
 parseDOM = common.parseDOM
 
-def getSubtitles(url,timeDelay):
+def getSubtitles(url):
     filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt') 
     f = open(filename, 'w')
     html = urllib2.urlopen(url).read()
@@ -38,16 +38,14 @@ def getSubtitles(url,timeDelay):
         begint = parseDOM(p,'p',ret='begin')[0]
         dur = parseDOM(p,'p',ret='dur')[0]
         begin = stringToTime(begint)
-        begin += timeDelay + SUB_DELAY
-        if begin >= 0:
-            dur = stringToTime(dur)
-            end = begin+dur
-            i += 1
-            f.write(str(i))
-            f.write('\n%s' % timeToString(begin))
-            f.write(' --> %s\n' % timeToString(end))
-            f.write(re.sub('<br></br>\s*','\n',' '.join(parseDOM(p,'p')[0].replace('<span style="italic">','<i>').replace('</span>','</i>').split())))
-            f.write('\n\n')
+        dur = stringToTime(dur)
+        end = begin+dur
+        i += 1
+        f.write(str(i))
+        f.write('\n%s' % timeToString(begin))
+        f.write(' --> %s\n' % timeToString(end))
+        f.write(re.sub('<br></br>\s*','\n',' '.join(parseDOM(p,'p')[0].replace('<span style="italic">','<i>').replace('</span>','</i>').split())))
+        f.write('\n\n')
     f.close()
     return filename
 
