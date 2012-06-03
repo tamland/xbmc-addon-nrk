@@ -28,19 +28,8 @@ SUB_DELAY = float(ADDON.getSetting('subtitlesdelay'))
 
 parseDOM = common.parseDOM
 
-def getSubtitles(path,timeDelay):
-
-
-    url = 'http://tv.nrk.no/%s' % path
-    html = urllib2.urlopen(url).read()
-    xbmc.log('NRK: '+url)
-    url = 'http://tv.nrk.no%s' % re.findall('data-subtitlesurl = "(.*?)"',html)[0]
-    
-    title =  re.findall('og:title" content="(.*?)"',html)[0]
-    episodenr = re.findall('episodenumber" content="(.*?)"',html)
-    if episodenr:
-        title += ' '+episodenr[0]
-    filename = os.path.join(xbmc.translatePath("special://temp"), title+'.no.srt') 
+def getSubtitles(url,timeDelay):
+    filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt') 
     f = open(filename, 'w')
     html = urllib2.urlopen(url).read()
     parts  = parseDOM(html, 'p',ret={'begin'})
@@ -49,7 +38,7 @@ def getSubtitles(path,timeDelay):
         begint = parseDOM(p,'p',ret='begin')[0]
         dur = parseDOM(p,'p',ret='dur')[0]
         begin = stringToTime(begint)
-        begin += timeDelay
+        begin += timeDelay + SUB_DELAY
         if begin >= 0:
             dur = stringToTime(dur)
             end = begin+dur
