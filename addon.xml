@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.nrk"
-       name="NRK Nett-TV"
+<addon id="plugin.video.nrk.beta"
+       name="NRK Nett-TV (beta)"
        version="3.1.5"
        provider-name="takoi">
   <requires>
