@@ -16,41 +16,13 @@
 import re
 import urllib2
 import CommonFunctions as common
-from xbmcgui import ListItem
 from BeautifulSoup import BeautifulSoup
-import re, htmlentitydefs
+import htmlentitydefs
 
 parseDOM = common.parseDOM
 
 html_decode = lambda string: BeautifulSoup(string,
     convertEntities=BeautifulSoup.HTML_ENTITIES).contents[0]
-
-##
-# Removes HTML or XML character references and entities from a text string.
-# from: http://effbot.org/zone/re-sub.htm#unescape-html
-# @param text The HTML (or XML) source text.
-# @return The plain text, as a Unicode string, if necessary.
-
-def unescape(text):
-    def fixup(m):
-        text = m.group(0)
-        if text[:2] == "&#":
-            # character reference
-            try:
-                if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
-                else:
-                    return unichr(int(text[2:-1]))
-            except ValueError:
-                pass
-        else:
-            # named entity
-            try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
-            except KeyError:
-                pass
-        return text # leave as is
-    return re.sub("&#?\w+;", fixup, text)
 
 def parse_by_letter(arg):
   """ in: <n> """
@@ -122,7 +94,6 @@ def parse_episodes(arg):
 def parse_media_url(arg, bitrate=4):
   url = "http://tv.nrk.no/%s" % arg
   html = urllib2.urlopen(url).read()
-  info = {}
   #title = parseDOM(html, 'meta', {'name':'seriestitle'}, ret='content')[0]
   url = parseDOM(html, 'div', {'id':'player'}, ret='\tdata-media')[0]
   url = url.replace('/z/', '/i/', 1)
@@ -130,26 +101,25 @@ def parse_media_url(arg, bitrate=4):
   url = url + '/index_%s_av.m3u8' % bitrate
   title = re.findall('<h1>(.*?)</h1>',html,re.DOTALL)[0].strip()
   title = title.replace('<span class="small">',"").replace('</span>',"").replace("\n","").replace("\t","")
-  title = unescape(title)
-  li = ListItem(label=title,path=url)
+  title = html_decode(title)
+  infoLabel = {'title':title}
+  info = {'url':url,'title':title}
   try:
     img = parseDOM(html, 'meta', {'name':'og:image'}, ret='content')[0]
-    li.setIconImage(img)
-    li.setThumbnailImage(img)
-  except IndexError:
-    print 'No imgage'
-  info = {'title':title}
-  try:
-    info['plot'] = parseDOM(html, 'meta', {'name':'og:description'}, ret='content')[0]
+    info['icon'] = img
+    info['thumbnail'] = img
   except IndexError:
     pass
-  
-  li.setInfo('video',info)
-  subtitle = None
   try:
-    subtitle = 'http://tv.nrk.no%s' % re.findall('data-subtitlesurl = "(.*?)"',html)[0]
+    infoLabel['plot'] = parseDOM(html, 'meta', {'name':'og:description'}, ret='content')[0]
   except IndexError:
     pass
-  return li, subtitle
+  info['info']=infoLabel
+  try:
+    # Check if there are subtitles for show
+    info['subtitle'] = 'http://tv.nrk.no%s' % re.findall(r'data-subtitlesurl = "(.*?)"',html)[0]
+  except IndexError:
+    pass
+  return info
 
 

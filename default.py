@@ -109,18 +109,21 @@ def controller(handle, base_url, node, arg):
     view_dir(handle, base_url, repeat('play'), args, titles)
   
   elif node == 'play':
-    li, subtitle = data.parse_media_url(arg, BITRATE)
+    info = data.parse_media_url(arg, BITRATE)
+    li = ListItem(label=info['title'],path=info['url'])
+    li.setIconImage(info['icon'])
+    li.setThumbnailImage(info['thumbnail'])
+    li.setInfo('video',info['info'])
     player = xbmc.Player();
     xbmcplugin.setResolvedUrl(handle, True, li)
+    if ENABLE_SUBS and info.has_key('subtitle'):
+      subtitle = subs.getSubtitles(info['subtitle'])
+      # Waiting for stream to start
+      start_time = time.time()
+      while not player.isPlaying() and time.time() - start_time < 10:
+          time.sleep(1.)
     
-    if ENABLE_SUBS and subtitle is not None:
-        subtitle = subs.getSubtitles(subtitle)
-        # Waiting for stream to start
-        start_time = time.time()
-        while not player.isPlaying() and time.time() - start_time < 10:
-            time.sleep(1.)
-      
-        player.setSubtitles(subtitle)
+      player.setSubtitles(subtitle)
         
   
   else:

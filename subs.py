@@ -15,43 +15,31 @@
 
 import re
 import urllib2
-import CommonFunctions as common
-from data import parse_media_url
 import xbmc
 import os
-import sys
-import xbmcaddon
-
-ADDON = xbmcaddon.Addon()
-SUB_DELAY = float(ADDON.getSetting('subtitlesdelay'))
-
-
-parseDOM = common.parseDOM
 
 def getSubtitles(url):
-    filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt') 
-    f = open(filename, 'w')
-    html = urllib2.urlopen(url).read()
-    parts  = parseDOM(html, 'p',ret={'begin'})
-    i = 0
-    for p in parts:
-        begint = parseDOM(p,'p',ret='begin')[0]
-        dur = parseDOM(p,'p',ret='dur')[0]
-        begin = stringToTime(begint)
-        dur = stringToTime(dur)
-        end = begin+dur
-        i += 1
-        f.write(str(i))
-        f.write('\n%s' % timeToString(begin))
-        f.write(' --> %s\n' % timeToString(end))
-        f.write(re.sub('<br></br>\s*','\n',' '.join(parseDOM(p,'p')[0].replace('<span style="italic">','<i>').replace('</span>','</i>').split())))
-        f.write('\n\n')
-    f.close()
-    return filename
+  filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt') 
+  f = open(filename, 'w')
+  html = urllib2.urlopen(url).read()
+  parts = re.compile(r'<p begin="(.*?)" dur="(.*?)".*?>(.*?)</p>').findall(html)
+  i = 0
+  for begint, dur, contents in parts:
+    begin = stringToTime(begint)
+    dur = stringToTime(dur)
+    end = begin+dur
+    i += 1
+    f.write(str(i))
+    f.write('\n%s' % timeToString(begin))
+    f.write(' --> %s\n' % timeToString(end))
+    f.write(re.sub('<br></br>\s*','\n',' '.join(contents.replace('<span style="italic">','<i>').replace('</span>','</i>').split())))
+    f.write('\n\n')
+  f.close()
+  return filename
 
 def stringToTime(txt):
-    p = txt.split(':')
-    return int(p[0])*3600+int(p[1])*60+float(p[2])
+  p = txt.split(':')
+  return int(p[0])*3600+int(p[1])*60+float(p[2])
 
 def timeToString(time):
-    return '%02d:%02d:%02d,%03d' % (time/3600,(time%3600)/60,time%60,(time%1)*1000)
+  return '%02d:%02d:%02d,%03d' % (time/3600,(time%3600)/60,time%60,(time%1)*1000)
