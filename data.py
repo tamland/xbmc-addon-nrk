@@ -69,10 +69,10 @@ def parse_recommended():
   html = urllib2.urlopen(url).read()
   html = parseDOM(html, 'ul', {'id':'introSlider'})[0]
   
-  titles1 = parseDOM(html, 'a')
-  titles2 = parseDOM(html, 'strong')
+  titles1 = parseDOM(html, 'strong')
+  titles2 = parseDOM(html, 'a')
   titles = [ "%s - %s" % (t1, t2) for t1, t2 in zip(titles1, titles2) ]
-  titles = map(html_decode, titles)
+  #titles = map(html_decode, titles)
   
   urls = parseDOM(html, 'a', ret='href')
   imgs = re.findall(r'1900":"([^"]+)', html)
@@ -84,7 +84,7 @@ def parse_most_recent():
   html = urllib2.urlopen(url).read()
   urls = parseDOM(html, 'a', {'class':'listobject-link'}, ret='href')
   urls = [ e.split('http://tv.nrk.no/')[1] for e in urls ]
-  thumbs = parseDOM(html, 'img', ret='data-src')
+  thumbs = parseDOM(html, 'img', ret='src')
   dates = parseDOM(html, 'time')
   titles = parseDOM(html, 'img', ret='alt')
   titles = [ "%s %s" % (t,d) for t,d in zip(titles, dates) ]
@@ -93,27 +93,22 @@ def parse_most_recent():
 
 
 def parse_seasons(arg):
-  """ in: </serie/nytt-paa-nytt> """
-  """ out: <nytt-paa-nytt 8246> """
+  """ in: </serie/aktuelt-tv> """
+  """ out: </program/Episodes/aktuelt-tv/11998> """
   url = "http://tv.nrk.no/%s" % arg
   html = urllib2.urlopen(url).read()
-  html = parseDOM(html, 'div', {'id':'oldSeasons'})
+  html = parseDOM(html, 'div', {'id':'seasons'})
+  html = parseDOM(html, 'noscript')
   titles = parseDOM(html, 'a', {'id':'seasonLink-.*?'})
-  titles = map(html_decode, titles)
-  season_ids = parseDOM(html, 'a', {'id':'seasonLink-.*?'}, ret='id')
-  season_ids = [ e.split('-')[-1] for e in season_ids ]
-  
-  series_id = url.split('/')[-1]
-  args = [ '%s %s' % (series_id, season) for season in season_ids ]
-  return titles, args
+  titles = [ "Sesong %s" % html_decode(t) for t in titles ]
+  ids = parseDOM(html, 'a', {'id':'seasonLink-.*?'}, ret='href')
+  return titles, ids
 
 
 def parse_episodes(arg):
-  """ in: <nytt-paa-nytt 8246> """
-  """ out: <serie/nytt-paa-nytt/muhh40001512> """
-  series_id, season_id = arg.split()
-  url = "http://tv.nrk.no/program/Episodes/%s/%s" % (series_id, season_id)
-  
+  """ in: </program/Episodes/aktuelt-tv/11998> """
+  """ out: </serie/aktuelt-tv/nnfa50051612/16-05-2012> """
+  url = "http://tv.nrk.no/%s" % arg
   html = urllib2.urlopen(url).read()
   html = parseDOM(html, 'table', {'class':'episodeTable'})
   trs = parseDOM(html, 'tr', {'class':'has-programtooltip episode-row js-click *'})
@@ -128,7 +123,8 @@ def parse_media_url(arg, bitrate=4):
   url = "http://tv.nrk.no/%s" % arg
   html = urllib2.urlopen(url).read()
   info = {}
-  url = parseDOM(html, 'div', {'id':'player'}, ret='data-media')[0]
+  #title = parseDOM(html, 'meta', {'name':'seriestitle'}, ret='content')[0]
+  url = parseDOM(html, 'div', {'id':'player'}, ret='\tdata-media')[0]
   url = url.replace('/z/', '/i/', 1)
   url = url.rsplit('/', 1)[0]
   url = url + '/index_%s_av.m3u8' % bitrate
