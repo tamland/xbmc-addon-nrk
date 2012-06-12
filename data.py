@@ -17,12 +17,12 @@ import re
 import urllib2
 import CommonFunctions as common
 from BeautifulSoup import BeautifulSoup
+import htmlentitydefs
 
 parseDOM = common.parseDOM
 
 html_decode = lambda string: BeautifulSoup(string,
     convertEntities=BeautifulSoup.HTML_ENTITIES).contents[0]
-
 
 def parse_by_letter(arg):
   """ in: <n> """
@@ -99,6 +99,27 @@ def parse_media_url(arg, bitrate=4):
   url = url.replace('/z/', '/i/', 1)
   url = url.rsplit('/', 1)[0]
   url = url + '/index_%s_av.m3u8' % bitrate
-  return url
+  title = re.findall('<h1>(.*?)</h1>',html,re.DOTALL)[0].strip()
+  title = title.replace('<span class="small">',"").replace('</span>',"").replace("\n","").replace("\t","")
+  title = html_decode(title)
+  infoLabel = {'title':title}
+  info = {'url':url,'title':title}
+  try:
+    img = parseDOM(html, 'meta', {'name':'og:image'}, ret='content')[0]
+    info['icon'] = img
+    info['thumbnail'] = img
+  except IndexError:
+    pass
+  try:
+    infoLabel['plot'] = parseDOM(html, 'meta', {'name':'og:description'}, ret='content')[0]
+  except IndexError:
+    pass
+  info['info']=infoLabel
+  try:
+    # Check if there are subtitles for show
+    info['subtitle'] = 'http://tv.nrk.no%s' % re.findall(r'data-subtitlesurl = "(.*?)"',html)[0]
+  except IndexError:
+    pass
+  return info
 
 

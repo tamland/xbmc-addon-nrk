@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
 	<string id="30001">Quality</string>
+    <string id="30002">Subtitles</string>
+    <string id="30003">Download subtitles</string>
+    <string id="30004">Default time delay of subtitles</string>
 </strings>

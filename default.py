@@ -18,7 +18,9 @@ import os
 import sys
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import data
+import time
 import CommonFunctions as common
+import subs
 
 from itertools import repeat
 from xbmcplugin import addDirectoryItem
@@ -28,7 +30,10 @@ from xbmcgui import ListItem
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
 BITRATE = ADDON.getSetting('quality')
+ENABLE_SUBS = xbmcaddon.Addon().getSetting('subtitles')=="true"
 
+common.dbg = False # Default
+common.dbglevel = 0 # Default
 
 def view_top(handle, base_url):
   addDirectoryItem(handle, base_url+"?node=live", ListItem("Direkte"), True)
@@ -104,8 +109,22 @@ def controller(handle, base_url, node, arg):
     view_dir(handle, base_url, repeat('play'), args, titles)
   
   elif node == 'play':
-    url = data.parse_media_url(arg, BITRATE)
-    xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
+    info = data.parse_media_url(arg, BITRATE)
+    li = ListItem(label=info['title'],path=info['url'])
+    li.setIconImage(info['icon'])
+    li.setThumbnailImage(info['thumbnail'])
+    li.setInfo('video',info['info'])
+    player = xbmc.Player();
+    xbmcplugin.setResolvedUrl(handle, True, li)
+    if ENABLE_SUBS and info.has_key('subtitle'):
+      subtitle = subs.getSubtitles(info['subtitle'])
+      # Waiting for stream to start
+      start_time = time.time()
+      while not player.isPlaying() and time.time() - start_time < 10:
+          time.sleep(1.)
+    
+      player.setSubtitles(subtitle)
+        
   
   else:
     view_top(handle, base_url)
