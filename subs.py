@@ -22,7 +22,7 @@ def getSubtitles(url):
   filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt') 
   f = open(filename, 'w')
   html = urllib2.urlopen(url).read()
-  parts = re.compile(r'<p begin="(.*?)" dur="(.*?)".*?>(.*?)</p>').findall(html)
+  parts = re.compile(r'<p begin="(.*?)" dur="(.*?)".*?>(.*?)</p>',re.DOTALL).findall(html)
   i = 0
   for begint, dur, contents in parts:
     begin = stringToTime(begint)
