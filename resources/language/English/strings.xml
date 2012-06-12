@@ -2,4 +2,6 @@
 <strings>
 	<string id="30001">Quality</string>
 	<string id="30002">Subtitles</string>
+	<string id="30003">Off</string>
+	<string id="30004">On</string>
 </strings>

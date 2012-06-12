@@ -30,7 +30,7 @@ from xbmcgui import ListItem
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
 BITRATE = ADDON.getSetting('quality')
-ENABLE_SUBS = ADDON.getSetting('subtitles')=="true"
+SHOW_SUBS = ADDON.getSetting('showsubtitles')
 
 
 def view_top(handle, base_url):
@@ -117,7 +117,7 @@ def controller(handle, base_url, node, arg):
       while not player.isPlaying() and time.time() - start_time < 10:
         time.sleep(1.)
       player.setSubtitles(subtitle)
-      if not ENABLE_SUBS:
+      if not SHOW_SUBS:
         player.showSubtitles(False)
   
   else:
