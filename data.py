@@ -94,11 +94,13 @@ def parse_episodes(arg):
 def parse_media_url(arg, bitrate=4):
   url = "http://tv.nrk.no/%s" % arg
   html = urllib2.urlopen(url).read()
-  #title = parseDOM(html, 'meta', {'name':'seriestitle'}, ret='content')[0]
+  subtitle_url = re.search(r'data-subtitlesurl = "(.*?)"', html)
+  if subtitle_url:
+    subtitle_url = 'http://tv.nrk.no%s' % subtitle_url.group(1)
   url = parseDOM(html, 'div', {'id':'player'}, ret='\tdata-media')[0]
   url = url.replace('/z/', '/i/', 1)
   url = url.rsplit('/', 1)[0]
   url = url + '/index_%s_av.m3u8' % bitrate
-  return url
+  return url, subtitle_url
 
 

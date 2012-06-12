@@ -16,8 +16,10 @@
 
 import os
 import sys
+import time
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import data
+import subs
 import CommonFunctions as common
 
 from itertools import repeat
@@ -28,6 +30,7 @@ from xbmcgui import ListItem
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
 BITRATE = ADDON.getSetting('quality')
+ENABLE_SUBS = ADDON.getSetting('subtitles')=="true"
 
 
 def view_top(handle, base_url):
@@ -104,8 +107,18 @@ def controller(handle, base_url, node, arg):
     view_dir(handle, base_url, repeat('play'), args, titles)
   
   elif node == 'play':
-    url = data.parse_media_url(arg, BITRATE)
+    url, subtitle_url = data.parse_media_url(arg, BITRATE)
     xbmcplugin.setResolvedUrl(handle, True, ListItem(path=url))
+    if subtitle_url:
+      player = xbmc.Player()
+      subtitle = subs.get_subtitles(subtitle_url)
+      # Waiting for stream to start
+      start_time = time.time()
+      while not player.isPlaying() and time.time() - start_time < 10:
+        time.sleep(1.)
+      player.setSubtitles(subtitle)
+      if not ENABLE_SUBS:
+        player.showSubtitles(False)
   
   else:
     view_top(handle, base_url)
