@@ -41,12 +41,12 @@ def parse_recommended():
   html = urllib2.urlopen(url).read()
   html = parseDOM(html, 'ul', {'id':'introSlider'})[0]
   
+  h1s = parseDOM(html, 'h1')
+  titles2 = parseDOM(h1s, 'a')
   titles1 = parseDOM(html, 'strong')
-  titles2 = parseDOM(html, 'a')
   titles = [ "%s - %s" % (t1, t2) for t1, t2 in zip(titles1, titles2) ]
-  #titles = map(html_decode, titles)
   
-  urls = parseDOM(html, 'a', ret='href')
+  urls = parseDOM(h1s, 'a', ret='href')
   imgs = re.findall(r'1900":"([^"]+)', html)
   return titles, urls, imgs
 
