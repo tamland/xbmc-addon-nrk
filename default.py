@@ -75,8 +75,8 @@ def controller(handle, base_url, node, arg):
     view_live(handle, base_url)
   
   elif node == 'recommended':
-    titles, args, imgs = data.parse_recommended()
-    view_dir(handle, base_url, repeat('play'), args, titles, imgs, imgs)
+    titles, args, bgs = data.parse_recommended()
+    view_dir(handle, base_url, repeat('play'), args, titles, bgs=bgs)
   
   elif node == 'mostrecent':
     titles, args, thumbs = data.parse_most_recent()
