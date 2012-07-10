@@ -97,7 +97,7 @@ def parse_media_url(arg, bitrate=4):
   subtitle_url = re.search(r'data-subtitlesurl = "(.*?)"', html)
   if subtitle_url:
     subtitle_url = 'http://tv.nrk.no%s' % subtitle_url.group(1)
-  url = parseDOM(html, 'div', {'id':'player'}, ret='\tdata-media')[0]
+  url = parseDOM(html, 'div', {'id':'playerelement'}, ret='\tdata-media')[0]
   url = url.replace('/z/', '/i/', 1)
   url = url.rsplit('/', 1)[0]
   url = url + '/index_%s_av.m3u8' % bitrate
