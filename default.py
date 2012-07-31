@@ -42,16 +42,24 @@ def view_top(handle, base_url):
 
 def view_live(handle, base_url):
   img_path = os.path.join(ADDON_PATH, "resources/images")
-  nrk1 = ListItem("NRK 1", thumbnailImage=os.path.join(img_path, "nrk1.png"))
-  nrk2 = ListItem("NRK 2", thumbnailImage=os.path.join(img_path, "nrk2.png"))
-  nrk3 = ListItem("NRK 3", thumbnailImage=os.path.join(img_path, "nrk3.png"))
-  for li in nrk1, nrk2, nrk3:
-    li.setProperty('mimetype', 'application/x-mpegURL')
+  add_item(handle, "NRK 1", "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % BITRATE, os.path.join(img_path, "nrk1.png"))
+  add_item(handle, "NRK 2", "http://nrk2-i.akamaihd.net/hls/live/201544/nrk2/master_Layer%s.m3u8" % BITRATE, os.path.join(img_path, "nrk2.png"))
+  add_item(handle, "NRK 3", "http://nrk3-i.akamaihd.net/hls/live/201545/nrk3/master_Layer%s.m3u8" % BITRATE, os.path.join(img_path, "nrk3.png"))
   
-  addDirectoryItem(handle, "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % BITRATE, nrk1, False)
-  addDirectoryItem(handle, "http://nrk2-i.akamaihd.net/hls/live/201544/nrk2/master_Layer%s.m3u8" % BITRATE, nrk2, False)
-  addDirectoryItem(handle, "http://nrk3-i.akamaihd.net/hls/live/201545/nrk3/master_Layer%s.m3u8" % BITRATE, nrk3, False)
+  olbitrate = BITRATE + 1
+  add_item(handle, "OL 1", "http://hlswebvid23-i.akamaihd.net/hls/live/204296/hlswebvid23/master_Layer%s.m3u8" % olbitrate)
+  add_item(handle, "OL 2", "http://hlswebvid24-i.akamaihd.net/hls/live/204297/hlswebvid24/master_Layer%s.m3u8" % olbitrate)
+  add_item(handle, "OL 3", "http://hlswebvid25-i.akamaihd.net/hls/live/204298/hlswebvid25/master_Layer%s.m3u8" % olbitrate)
+  add_item(handle, "OL 4", "http://hlswebvid26-i.akamaihd.net/hls/live/203761/hlswebvid26/master_Layer%s.m3u8" % olbitrate)
+  add_item(handle, "OL 5", "http://hlswebvid27-i.akamaihd.net/hls/live/203543/hlswebvid27/master_Layer%s.m3u8" % olbitrate)
+  add_item(handle, "OL 6", "http://hlswebvid28-i.akamaihd.net/hls/live/203544/hlswebvid28/master_Layer%s.m3u8" % olbitrate)
+  add_item(handle, "OL 7", "http://hlswebvid29-i.akamaihd.net/hls/live/203545/hlswebvid29/master_Layer%s.m3u8" % olbitrate)
   endOfDirectory(handle)
+
+def add_item(handle, title, url, thumb=""):
+  li =  ListItem(title, thumbnailImage=thumb)
+  li.setProperty('mimetype', 'application/x-mpegURL')
+  addDirectoryItem(handle, url, li, False)
 
 
 def view_dir(handle, base_url, nodes, args, titles, thumbs=repeat(''), bgs=repeat('')):
