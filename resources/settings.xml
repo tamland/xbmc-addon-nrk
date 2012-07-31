@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-	<setting id="quality" type="enum" label="30001" values="320x180|480x270|640x360|960x540|1280x720" default="4"/>
+	<setting id="bitrate" type="enum" label="30001" values="400 kbit/s|700 kbit/s|1400 kbit/s|2300 kbit/s|3500 kbit/s" default="4"/>
 	<setting id="showsubtitles" type="enum" label="30002" lvalues="30003|30004" default="1"/>
 </settings>

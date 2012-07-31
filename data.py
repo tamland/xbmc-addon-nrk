@@ -91,7 +91,8 @@ def parse_episodes(arg):
   return titles, ids
 
 
-def parse_media_url(arg, bitrate=4):
+def parse_media_url(arg, bitrate):
+  bitrate = 4 if bitrate > 4 else bitrate
   url = "http://tv.nrk.no/%s" % arg
   html = urllib2.urlopen(url).read()
   subtitle_url = re.search(r'data-subtitlesurl = "(.*?)"', html)

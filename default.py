@@ -29,7 +29,7 @@ from xbmcgui import ListItem
 
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
-BITRATE = ADDON.getSetting('quality')
+BITRATE = int(ADDON.getSetting('bitrate')) + 1
 SHOW_SUBS = ADDON.getSetting('showsubtitles')
 
 
@@ -41,18 +41,16 @@ def view_top(handle, base_url):
   endOfDirectory(handle)
 
 def view_live(handle, base_url):
-  bitrate = 3 if BITRATE > 3 else 1 if BITRATE < 1 else BITRATE
   img_path = os.path.join(ADDON_PATH, "resources/images")
-  
   nrk1 = ListItem("NRK 1", thumbnailImage=os.path.join(img_path, "nrk1.png"))
   nrk2 = ListItem("NRK 2", thumbnailImage=os.path.join(img_path, "nrk2.png"))
   nrk3 = ListItem("NRK 3", thumbnailImage=os.path.join(img_path, "nrk3.png"))
   for li in nrk1, nrk2, nrk3:
     li.setProperty('mimetype', 'application/x-mpegURL')
   
-  addDirectoryItem(handle, "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % bitrate, nrk1, False)
-  addDirectoryItem(handle, "http://nrk2-i.akamaihd.net/hls/live/201544/nrk2/master_Layer%s.m3u8" % bitrate, nrk2, False)
-  addDirectoryItem(handle, "http://nrk3-i.akamaihd.net/hls/live/201545/nrk3/master_Layer%s.m3u8" % bitrate, nrk3, False)
+  addDirectoryItem(handle, "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % BITRATE, nrk1, False)
+  addDirectoryItem(handle, "http://nrk2-i.akamaihd.net/hls/live/201544/nrk2/master_Layer%s.m3u8" % BITRATE, nrk2, False)
+  addDirectoryItem(handle, "http://nrk3-i.akamaihd.net/hls/live/201545/nrk3/master_Layer%s.m3u8" % BITRATE, nrk3, False)
   endOfDirectory(handle)
 
 
