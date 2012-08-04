@@ -37,6 +37,7 @@ def view_top(handle, base_url):
   addDirectoryItem(handle, base_url+"?node=live", ListItem("Direkte"), True)
   addDirectoryItem(handle, base_url+"?node=recommended", ListItem("Aktuelt"), True)
   addDirectoryItem(handle, base_url+"?node=mostrecent", ListItem("Siste"), True)
+  addDirectoryItem(handle, base_url+"?node=categories", ListItem("Kategorier"), True)
   addDirectoryItem(handle, base_url+"?node=letters", ListItem("A-Å"), True)
   endOfDirectory(handle)
 
@@ -87,6 +88,15 @@ def controller(handle, base_url, node, arg):
   elif node == 'mostrecent':
     titles, args, thumbs = data.parse_most_recent()
     view_dir(handle, base_url, repeat('play'), args, titles, thumbs)
+  
+  elif node == 'categories':
+    titles, args = data.parse_categories()
+    view_dir(handle, base_url, repeat('category'), args, titles)
+  
+  elif node == 'category':
+    titles, args = data.parse_by_category(arg)
+    nodes = ( 'seasons' if arg.startswith('/serie') else 'play' for arg in args )
+    view_dir(handle, base_url, nodes, args, titles)
   
   elif node == 'letters':
     common = ['0-9'] + map(chr, range(97, 123))

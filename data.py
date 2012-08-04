@@ -36,6 +36,18 @@ def parse_by_letter(arg):
   return titles, urls
 
 
+def parse_by_category(arg):
+  """ in: </kategori/barn> """
+  """ out: </serie/newton> or </program/koif45000708> """
+  url = "http://tv.nrk.no/%s" % arg
+  html = urllib2.urlopen(url).read()
+  html = parseDOM(html, 'div', {'id':'index-list'})
+  titles = parseDOM(html, 'a', {'class':''})
+  titles = map(html_decode, titles)
+  urls = parseDOM(html, 'a', {'class':''}, ret='href')
+  return titles, urls
+
+
 def parse_recommended():
   url = "http://tv.nrk.no/"
   html = urllib2.urlopen(url).read()
@@ -62,6 +74,16 @@ def parse_most_recent():
   titles = [ "%s %s" % (t,d) for t,d in zip(titles, dates) ]
   titles = map(html_decode, titles)
   return titles, urls, thumbs
+
+
+def parse_categories():
+  url = "http://tv.nrk.no/kategori/"
+  html = urllib2.urlopen(url).read()
+  html = parseDOM(html, 'ul', {'id':'categoryList'})
+  urls = parseDOM(html, 'a', ret='href')
+  titles = parseDOM(html, 'a')
+  titles = map(html_decode, titles)
+  return titles, urls
 
 
 def parse_seasons(arg):
