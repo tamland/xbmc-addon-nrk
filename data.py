@@ -15,6 +15,7 @@
 
 import re
 import urllib2
+import requests
 import CommonFunctions as common
 from BeautifulSoup import BeautifulSoup
 
@@ -103,7 +104,8 @@ def parse_episodes(arg):
   titles = map(html_decode, titles)
   urls = [ parseDOM(tr, 'a', {'class':'p-link'}, ret='href')[0] for tr in trs ]
   ids = [ e.split('http://tv.nrk.no/')[1] for e in urls ]
-  return titles, ids
+  descr = [lambda x=x: _get_descr(x) for x in ids ]
+  return titles, ids, descr
 
 
 def parse_media_url(arg, bitrate):
@@ -119,4 +121,8 @@ def parse_media_url(arg, bitrate):
   url = url + '/index_%s_av.m3u8' % bitrate
   return url, subtitle_url
 
+def _get_descr(url):
+  url = "http://nrk.no/serum/api/video/%s" % url.rsplit('/',2)[1]
+  descr = requests.get(url).json['description']
+  return descr
 

@@ -63,9 +63,10 @@ def add_item(handle, title, url, thumb=""):
   addDirectoryItem(handle, url, li, False)
 
 
-def view_dir(handle, base_url, nodes, args, titles, thumbs=repeat(''), bgs=repeat('')):
+def view_dir(handle, base_url, nodes, args, titles, descr=repeat(''), thumbs=repeat(''), bgs=repeat('')):
   total = len(titles)
-  for node, arg, title, thumb, bg in zip(nodes, args, titles, thumbs, bgs):
+  for node, arg, title, descr, thumb, bg in zip(nodes, args, titles, descr, thumbs, bgs):
+    descr = descr() if callable(descr) else descr
     thumb = thumb() if callable(thumb) else thumb
     bg = bg() if callable(bg) else bg
     li = ListItem(title, thumbnailImage=thumb)
@@ -73,6 +74,8 @@ def view_dir(handle, base_url, nodes, args, titles, thumbs=repeat(''), bgs=repea
     isdir = node != 'play'
     li.setProperty('isplayable', str(not isdir))
     li.setProperty('fanart_image', bg)
+    if not isdir:
+      li.setInfo('video', {'plot':descr})
     addDirectoryItem(handle, url, li, isdir, total)
   endOfDirectory(handle)
 
@@ -119,8 +122,8 @@ def controller(handle, base_url, node, arg):
     view_dir(handle, base_url, nodes, args, titles)
   
   elif node == 'episodes':
-    titles, args = data.parse_episodes(arg)
-    view_dir(handle, base_url, repeat('play'), args, titles)
+    titles, args, descr = data.parse_episodes(arg)
+    view_dir(handle, base_url, repeat('play'), args, titles, descr)
   
   elif node == 'play':
     url, subtitle_url = data.parse_media_url(arg, BITRATE)
