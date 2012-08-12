@@ -70,7 +70,7 @@ def parse_most_recent():
   url = "http://tv.nrk.no/listobjects/recentlysent"
   html = requests.get(url).text
   urls = parseDOM(html, 'a', {'class':'listobject-link'}, ret='href')
-  urls = [ e.split('http://tv.nrk.no/')[1] for e in urls ]
+  urls = [ e.split('http://tv.nrk.no')[1] for e in urls ]
   thumbs = parseDOM(html, 'img', ret='src')
   dates = parseDOM(html, 'time')
   titles = parseDOM(html, 'img', ret='alt')
@@ -102,7 +102,7 @@ def parse_episodes(arg):
   titles = [ parseDOM(tr, 'a', {'class':'p-link'})[0] for tr in trs ]
   titles = map(html_decode, titles)
   urls = [ parseDOM(tr, 'a', {'class':'p-link'}, ret='href')[0] for tr in trs ]
-  ids = [ e.split('http://tv.nrk.no/')[1] for e in urls ]
+  ids = [ e.split('http://tv.nrk.no')[1] for e in urls ]
   descr = [lambda x=x: _get_descr(x) for x in ids ]
   return titles, ids, descr
 
@@ -121,7 +121,7 @@ def parse_media_url(arg, bitrate):
   return url, subtitle_url
 
 def _get_descr(url):
-  url = "http://nrk.no/serum/api/video/%s" % url.rsplit('/',2)[1]
+  url = "http://nrk.no/serum/api/video/%s" % url.split('/')[3]
   descr = requests.get(url).json['description']
   return descr
 
