@@ -116,10 +116,11 @@ def controller(handle, base_url, node, arg):
   elif node == 'seasons':
     titles, args = data.parse_seasons(arg)
     nodes = repeat('episodes')
+    descr = repeat('')
     if len(titles) == 1:
-      titles, args = data.parse_episodes(args[0])
+      titles, args, descr = data.parse_episodes(args[0])
       nodes = repeat('play')
-    view_dir(handle, base_url, nodes, args, titles)
+    view_dir(handle, base_url, nodes, args, titles, descr)
   
   elif node == 'episodes':
     titles, args, descr = data.parse_episodes(arg)
