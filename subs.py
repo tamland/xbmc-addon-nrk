@@ -13,15 +13,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import re
-import urllib2
-import xbmc
 import os
+import re
+import requests
+import xbmc
 
 def get_subtitles(url):
   filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt') 
   f = open(filename, 'w')
-  html = urllib2.urlopen(url).read()
+  html = requests.get(url).text
   parts = re.compile(r'<p begin="(.*?)" dur="(.*?)".*?>(.*?)</p>',re.DOTALL).findall(html)
   i = 0
   for begint, dur, contents in parts:
@@ -32,7 +32,7 @@ def get_subtitles(url):
     f.write(str(i))
     f.write('\n%s' % _timeToString(begin))
     f.write(' --> %s\n' % _timeToString(end))
-    f.write(re.sub('<br></br>\s*','\n',' '.join(contents.replace('<span style="italic">','<i>').replace('</span>','</i>').split())))
+    f.write(re.sub('<br></br>\s*','\n',' '.join(contents.replace('<span style="italic">','<i>').replace('</span>','</i>').split())).encode('utf-8'))
     f.write('\n\n')
   f.close()
   return filename

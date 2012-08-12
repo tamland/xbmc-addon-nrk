@@ -14,7 +14,6 @@
 '''
 
 import re
-import urllib2
 import requests
 import CommonFunctions as common
 from BeautifulSoup import BeautifulSoup
@@ -29,19 +28,19 @@ def parse_by_letter(arg):
   """ in: <n> """
   """ out: </serie/newton> or </program/koif45000708> """
   url = "http://tv.nrk.no/programmer/%s?filter=rettigheter" % arg
-  html = urllib2.urlopen(url).read()
+  html = requests.get(url).text
   html = parseDOM(html, 'div', {'id':'programList'})
   return _parse_list(html)
 
 def parse_by_category(arg):
   url = "http://tv.nrk.no/%s" % arg
-  html = urllib2.urlopen(url).read()
+  html = requests.get(url).text
   html = parseDOM(html, 'div', {'id':'index-list'})
   return _parse_list(html)
 
 def parse_categories():
   url = "http://tv.nrk.no/kategori/"
-  html = urllib2.urlopen(url).read()
+  html = requests.get(url).text
   html = parseDOM(html, 'ul', {'id':'categoryList'})
   return _parse_list(html)
 
@@ -54,7 +53,7 @@ def _parse_list(html):
 
 def parse_recommended():
   url = "http://tv.nrk.no/"
-  html = urllib2.urlopen(url).read()
+  html = requests.get(url).text
   html = parseDOM(html, 'ul', {'id':'introSlider'})[0]
   
   h1s = parseDOM(html, 'h1')
@@ -69,7 +68,7 @@ def parse_recommended():
 
 def parse_most_recent():
   url = "http://tv.nrk.no/listobjects/recentlysent"
-  html = urllib2.urlopen(url).read()
+  html = requests.get(url).text
   urls = parseDOM(html, 'a', {'class':'listobject-link'}, ret='href')
   urls = [ e.split('http://tv.nrk.no/')[1] for e in urls ]
   thumbs = parseDOM(html, 'img', ret='src')
@@ -84,7 +83,7 @@ def parse_seasons(arg):
   """ in: </serie/aktuelt-tv> """
   """ out: </program/Episodes/aktuelt-tv/11998> """
   url = "http://tv.nrk.no/%s" % arg
-  html = urllib2.urlopen(url).read()
+  html = requests.get(url).text
   html = parseDOM(html, 'div', {'id':'seasons'})
   html = parseDOM(html, 'noscript')
   titles = parseDOM(html, 'a', {'id':'seasonLink-.*?'})
@@ -97,7 +96,7 @@ def parse_episodes(arg):
   """ in: </program/Episodes/aktuelt-tv/11998> """
   """ out: </serie/aktuelt-tv/nnfa50051612/16-05-2012> """
   url = "http://tv.nrk.no/%s" % arg
-  html = urllib2.urlopen(url).read()
+  html = requests.get(url).text
   html = parseDOM(html, 'table', {'class':'episodeTable'})
   trs = parseDOM(html, 'tr', {'class':'has-programtooltip episode-row js-click *'})
   titles = [ parseDOM(tr, 'a', {'class':'p-link'})[0] for tr in trs ]
@@ -111,7 +110,7 @@ def parse_episodes(arg):
 def parse_media_url(arg, bitrate):
   bitrate = 4 if bitrate > 4 else bitrate
   url = "http://tv.nrk.no/%s" % arg
-  html = urllib2.urlopen(url).read()
+  html = requests.get(url).text
   subtitle_url = re.search(r'data-subtitlesurl = "(.*?)"', html)
   if subtitle_url:
     subtitle_url = 'http://tv.nrk.no%s' % subtitle_url.group(1)
