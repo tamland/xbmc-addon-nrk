@@ -14,16 +14,17 @@
 '''
 
 import re
+
+import BeautifulSoup
+html_decode = lambda string: BeautifulSoup.BeautifulSoup(string,
+    convertEntities=BeautifulSoup.BeautifulSoup.HTML_ENTITIES).contents[0]
+
+import CommonFunctions
+parseDOM = CommonFunctions.parseDOM
+
 import requests
-import CommonFunctions as common
-from BeautifulSoup import BeautifulSoup
-
-parseDOM = common.parseDOM
-
-html_decode = lambda string: BeautifulSoup(string,
-    convertEntities=BeautifulSoup.HTML_ENTITIES).contents[0]
-
 requests = requests.session(headers={'User-Agent':'xbmc.org'})
+
 
 def parse_by_letter(arg):
   """ in: <n> """

@@ -15,9 +15,11 @@
 
 import os
 import re
-import requests
 import xbmc
+
+import requests
 requests = requests.session(headers={'User-Agent':'xbmc.org'})
+
 
 def get_subtitles(url):
   filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt') 
