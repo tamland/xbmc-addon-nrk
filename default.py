@@ -48,9 +48,9 @@ def view_top():
 @plugin.route('/live')
 def live():
   img_path = os.path.join(ADDON_PATH, "resources/images")
-  add_item("NRK 1", "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % BITRATE, os.path.join(img_path, "nrk1.png"))
-  add_item("NRK 2", "http://nrk2-i.akamaihd.net/hls/live/201544/nrk2/master_Layer%s.m3u8" % BITRATE, os.path.join(img_path, "nrk2.png"))
-  add_item("NRK 3", "http://nrk3-i.akamaihd.net/hls/live/201545/nrk3/master_Layer%s.m3u8" % BITRATE, os.path.join(img_path, "nrk3.png"))
+  add_item("NRK 1", "mms://a1377.l11673952706.c116739.g.lm.akamaistream.net/D/1377/116739/v0001/reflector:52706",os.path.join(img_path, "nrk1.png"))
+  add_item("NRK 2", "mms://a746.l11674151924.c116741.g.lm.akamaistream.net/D/746/116741/v0001/reflector:51924", os.path.join(img_path, "nrk2.png"))
+  add_item("NRK 3", "mms://a1372.l11674333102.c116743.g.lm.akamaistream.net/D/1372/116743/v0001/reflector:33102", os.path.join(img_path, "nrk3.png"))
   endOfDirectory(plugin.handle)
 
 def add_item(title, url, thumb=""):
