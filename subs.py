@@ -21,10 +21,10 @@ import requests
 requests = requests.session(headers={'User-Agent':'xbmc.org'})
 
 
-def get_subtitles(url):
+def get_subtitles(video_id):
   filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt') 
   f = open(filename, 'w')
-  html = requests.get(url).text
+  html = requests.get("http://tv.nrk.no/programsubtitles/%s" % video_id).text
   parts = re.compile(r'<p begin="(.*?)" dur="(.*?)".*?>(.*?)</p>',re.DOTALL).findall(html)
   i = 0
   for begint, dur, contents in parts:

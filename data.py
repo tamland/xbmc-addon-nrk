@@ -27,15 +27,14 @@ requests = requests.session(headers={'User-Agent':'xbmc.org'})
 
 
 def parse_by_letter(arg):
-  """ in: <n> """
-  """ out: </serie/newton> or </program/koif45000708> """
+  """ returns: </serie/newton> or </program/koif45000708> """
   url = "http://tv.nrk.no/programmer/%s?filter=rettigheter" % arg
   html = requests.get(url).text
   html = parseDOM(html, 'div', {'id':'programList'})
   return _parse_list(html)
 
 def parse_by_category(arg):
-  url = "http://tv.nrk.no/%s" % arg
+  url = "http://tv.nrk.no/kategori/%s" % arg
   html = requests.get(url).text
   html = parseDOM(html, 'div', {'id':'index-list'})
   return _parse_list(html)
@@ -82,9 +81,8 @@ def parse_most_recent():
 
 
 def parse_seasons(arg):
-  """ in: </serie/aktuelt-tv> """
-  """ out: </program/Episodes/aktuelt-tv/11998> """
-  url = "http://tv.nrk.no/%s" % arg
+  """ returns: </program/Episodes/aktuelt-tv/11998> """
+  url = "http://tv.nrk.no/serie/%s" % arg
   html = requests.get(url).text
   html = parseDOM(html, 'div', {'id':'seasons'})
   html = parseDOM(html, 'noscript')
@@ -94,33 +92,28 @@ def parse_seasons(arg):
   return titles, ids
 
 
-def parse_episodes(arg):
-  """ in: </program/Episodes/aktuelt-tv/11998> """
-  """ out: </serie/aktuelt-tv/nnfa50051612/16-05-2012> """
-  url = "http://tv.nrk.no/%s" % arg
+def parse_episodes(series_id, season_id):
+  """ returns: </serie/aktuelt-tv/nnfa50051612/16-05-2012..> """
+  url = "http://tv.nrk.no/program/Episodes/%s/%s" % (series_id, season_id)
   html = requests.get(url).text
   html = parseDOM(html, 'table', {'class':'episodeTable'})
   trs = parseDOM(html, 'tr', {'class':'has-programtooltip episode-row js-click *'})
   titles = [ parseDOM(tr, 'a', {'class':'p-link'})[0] for tr in trs ]
   titles = map(html_decode, titles)
-  urls = [ parseDOM(tr, 'a', {'class':'p-link'}, ret='href')[0] for tr in trs ]
-  ids = [ e.split('http://tv.nrk.no')[1] for e in urls ]
+  ids = [ parseDOM(tr, 'a', {'class':'p-link'}, ret='href')[0] for tr in trs ]
+  ids = [ e.split('http://tv.nrk.no')[1] for e in ids ]
   descr = [lambda x=x: _get_descr(x) for x in ids ]
   return titles, ids, descr
 
 
-def parse_media_url(arg, bitrate):
+def parse_media_url(video_id, bitrate):
   bitrate = 4 if bitrate > 4 else bitrate
-  url = "http://tv.nrk.no/%s" % arg
-  html = requests.get(url).text
-  subtitle_url = re.search(r'data-subtitlesurl = "(.*?)"', html)
-  if subtitle_url:
-    subtitle_url = 'http://tv.nrk.no%s' % subtitle_url.group(1)
-  url = parseDOM(html, 'div', {'id':'playerelement'}, ret='\tdata-media')[0]
+  url = "http://nrk.no/serum/api/video/%s" % video_id
+  url = requests.get(url).json['mediaURL']
   url = url.replace('/z/', '/i/', 1)
   url = url.rsplit('/', 1)[0]
   url = url + '/index_%s_av.m3u8' % bitrate
-  return url, subtitle_url
+  return url
 
 def _get_descr(url):
   url = "http://nrk.no/serum/api/video/%s" % url.split('/')[3]
