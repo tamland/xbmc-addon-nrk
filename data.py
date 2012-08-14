@@ -36,7 +36,7 @@ def parse_by_letter(arg):
 def parse_by_category(arg):
   url = "http://tv.nrk.no/kategori/%s" % arg
   html = requests.get(url).text
-  html = parseDOM(html, 'div', {'id':'index-list'})
+  html = parseDOM(html, 'div', {'class':'alpha-list clear'})
   return _parse_list(html)
 
 def parse_categories():
@@ -71,11 +71,9 @@ def parse_most_recent():
   url = "http://tv.nrk.no/listobjects/recentlysent"
   html = requests.get(url).text
   urls = parseDOM(html, 'a', {'class':'listobject-link'}, ret='href')
-  urls = [ e.split('http://tv.nrk.no')[1] for e in urls ]
-  thumbs = parseDOM(html, 'img', ret='src')
-  dates = parseDOM(html, 'time')
-  titles = parseDOM(html, 'img', ret='alt')
-  titles = [ "%s %s" % (t,d) for t,d in zip(titles, dates) ]
+  thumbs = parseDOM(html, 'img', ret='src')[::2] #extract even elements
+  html = ''.join(parseDOM(html, 'span', {'class':'listobject-title'}))
+  titles = parseDOM(html, 'strong')
   titles = map(html_decode, titles)
   return titles, urls, thumbs
 
@@ -86,9 +84,9 @@ def parse_seasons(arg):
   html = requests.get(url).text
   html = parseDOM(html, 'div', {'id':'seasons'})
   html = parseDOM(html, 'noscript')
-  titles = parseDOM(html, 'a', {'id':'seasonLink-.*?'})
+  titles = parseDOM(html, 'a', {'class':'seasonLink'})
   titles = [ "Sesong %s" % html_decode(t) for t in titles ]
-  ids = parseDOM(html, 'a', {'id':'seasonLink-.*?'}, ret='href')
+  ids = parseDOM(html, 'a', {'class':'seasonLink'}, ret='href')
   return titles, ids
 
 
