@@ -17,23 +17,20 @@
 import os
 import sys
 import time
-import xbmc, xbmcgui, xbmcaddon, xbmcplugin
+import xbmc, xbmcaddon, xbmcplugin
 import data
 import subs
-import CommonFunctions as common
 
 from itertools import repeat
 from xbmcplugin import addDirectoryItem
 from xbmcplugin import endOfDirectory
 from xbmcgui import ListItem
-
+from plugin import plugin
 
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
 BITRATE = int(ADDON.getSetting('bitrate')) + 1
 SHOW_SUBS = ADDON.getSetting('showsubtitles')
-
-from plugin import plugin
 
 
 @plugin.route('/')
