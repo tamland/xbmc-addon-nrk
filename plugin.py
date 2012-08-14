@@ -19,7 +19,7 @@ import xbmcaddon
 import xbmcswift
 
 addon = xbmcaddon.Addon()
-plugin = xbmcswift.Plugin("NRK Nett-Tv", addon.getAddonInfo('id'), 'default.py')
+plugin = xbmcswift.Plugin(addon.getAddonInfo('name'), addon.getAddonInfo('id'), '')
 
 def url_for(url):
   return 'plugin://%s%s' % (plugin._plugin_id, url)
