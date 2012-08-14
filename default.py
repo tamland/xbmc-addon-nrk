@@ -51,15 +51,6 @@ def live():
   add_item("NRK 1", "http://nrk1-i.akamaihd.net/hls/live/201543/nrk1/master_Layer%s.m3u8" % BITRATE, os.path.join(img_path, "nrk1.png"))
   add_item("NRK 2", "http://nrk2-i.akamaihd.net/hls/live/201544/nrk2/master_Layer%s.m3u8" % BITRATE, os.path.join(img_path, "nrk2.png"))
   add_item("NRK 3", "http://nrk3-i.akamaihd.net/hls/live/201545/nrk3/master_Layer%s.m3u8" % BITRATE, os.path.join(img_path, "nrk3.png"))
-  
-  olbitrate = BITRATE + 1
-  add_item("OL 1", "http://hlswebvid23-i.akamaihd.net/hls/live/204296/hlswebvid23/master_Layer%s.m3u8" % olbitrate)
-  add_item("OL 2", "http://hlswebvid24-i.akamaihd.net/hls/live/204297/hlswebvid24/master_Layer%s.m3u8" % olbitrate)
-  add_item("OL 3", "http://hlswebvid25-i.akamaihd.net/hls/live/204298/hlswebvid25/master_Layer%s.m3u8" % olbitrate)
-  add_item("OL 4", "http://hlswebvid26-i.akamaihd.net/hls/live/203761/hlswebvid26/master_Layer%s.m3u8" % olbitrate)
-  add_item("OL 5", "http://hlswebvid27-i.akamaihd.net/hls/live/203543/hlswebvid27/master_Layer%s.m3u8" % olbitrate)
-  add_item("OL 6", "http://hlswebvid28-i.akamaihd.net/hls/live/203544/hlswebvid28/master_Layer%s.m3u8" % olbitrate)
-  add_item("OL 7", "http://hlswebvid29-i.akamaihd.net/hls/live/203545/hlswebvid29/master_Layer%s.m3u8" % olbitrate)
   endOfDirectory(plugin.handle)
 
 def add_item(title, url, thumb=""):
