@@ -14,23 +14,22 @@
 '''
 
 import re
-
+import requests
 import BeautifulSoup
+import StorageServer
+import CommonFunctions
+from subs import get_subtitles
+
 html_decode = lambda string: BeautifulSoup.BeautifulSoup(string,
     convertEntities=BeautifulSoup.BeautifulSoup.HTML_ENTITIES).contents[0]
-
-import CommonFunctions
 parseDOM = CommonFunctions.parseDOM
-
-import requests
 requests = requests.session(headers={'User-Agent':'xbmc.org'})
-
-import StorageServer
 cache = StorageServer.StorageServer('nrk.no', 48)
 
 def _get_cached(url):
   f = lambda x: requests.get(x).json
   return cache.cacheFunction(f, url)
+
 
 def parse_by_letter(arg):
   """ returns: </serie/newton> or </program/koif45000708> """
