@@ -25,6 +25,12 @@ parseDOM = CommonFunctions.parseDOM
 import requests
 requests = requests.session(headers={'User-Agent':'xbmc.org'})
 
+import StorageServer
+cache = StorageServer.StorageServer('nrk.no', 48)
+
+def _get_cached(url):
+  f = lambda x: requests.get(x).json
+  return cache.cacheFunction(f, url)
 
 def parse_by_letter(arg):
   """ returns: </serie/newton> or </program/koif45000708> """
@@ -107,7 +113,7 @@ def parse_episodes(series_id, season_id):
 def parse_media_url(video_id, bitrate):
   bitrate = 4 if bitrate > 4 else bitrate
   url = "http://nrk.no/serum/api/video/%s" % video_id
-  url = requests.get(url).json['mediaURL']
+  url = _get_cached(url)['mediaURL']
   url = url.replace('/z/', '/i/', 1)
   url = url.rsplit('/', 1)[0]
   url = url + '/index_%s_av.m3u8' % bitrate
@@ -115,6 +121,6 @@ def parse_media_url(video_id, bitrate):
 
 def _get_descr(url):
   url = "http://nrk.no/serum/api/video/%s" % url.split('/')[3]
-  descr = requests.get(url).json['description']
+  descr = _get_cached(url)['description']
   return descr
 
