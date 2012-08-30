@@ -89,8 +89,8 @@ def categories():
 
 @plugin.route('/kategori/<arg>')
 def category(arg):
-  titles, urls = data.parse_by_category(arg)
-  view(titles, urls)
+  titles, urls, thumb = data.parse_by_category(arg)
+  view(titles, urls, thumbs=thumb)
 
 @plugin.route('/letters')
 def letters():

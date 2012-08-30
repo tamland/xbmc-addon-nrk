@@ -37,7 +37,9 @@ def parse_by_category(arg):
   url = "http://tv.nrk.no/kategori/%s" % arg
   html = requests.get(url).text
   html = parseDOM(html, 'div', {'class':'alpha-list clear'})
-  return _parse_list(html)
+  titles, urls = _parse_list(html)
+  thumbs = [lambda x=x: _get_thumb(x) for x in urls ]
+  return titles, urls, thumbs
 
 def parse_categories():
   url = "http://tv.nrk.no/kategori/"
@@ -118,3 +120,7 @@ def _get_descr(url):
   descr = requests.get(url).json['description']
   return descr
 
+def _get_thumb(url):
+  url = "http://tv.nrk.no%s" % url
+  html = requests.get(url).text
+  return parseDOM(html, 'img', {'class':'poster'}, ret='src')[0]
