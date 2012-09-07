@@ -24,7 +24,7 @@ html_decode = lambda string: BeautifulSoup.BeautifulSoup(string,
     convertEntities=BeautifulSoup.BeautifulSoup.HTML_ENTITIES).contents[0]
 parseDOM = CommonFunctions.parseDOM
 requests = requests.session(headers={'User-Agent':'xbmc.org'})
-cache = StorageServer.StorageServer('nrk.no', 48)
+cache = StorageServer.StorageServer('nrk.no', 336)
 
 def _get_cached(url):
   f = lambda x: requests.get(x).json
