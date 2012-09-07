@@ -72,12 +72,11 @@ def parse_recommended():
 
 
 def parse_most_recent():
-  url = "http://tv.nrk.no/listobjects/recentlysent"
-  html = requests.get(url).text
-  urls = parseDOM(html, 'a', {'class':'listobject-link'}, ret='href')
-  thumbs = parseDOM(html, 'img', ret='src')[::2] #extract even elements
-  html = ''.join(parseDOM(html, 'span', {'class':'listobject-title'}))
-  titles = parseDOM(html, 'strong')
+  url = "http://tv.nrk.no/listobjects/recentlysent.json/page/0"
+  elems = requests.get(url).json['ListObjectViewModels']
+  titles = [ e['Title'] for e in elems ]
+  thumbs = [ e['ImageUrl'] for e in elems ]
+  urls = [ e['Title'] for e in elems ]
   titles = map(html_decode, titles)
   return titles, urls, thumbs
 
