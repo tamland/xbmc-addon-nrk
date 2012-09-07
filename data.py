@@ -23,7 +23,7 @@ from subs import get_subtitles
 html_decode = lambda string: BeautifulSoup.BeautifulSoup(string,
     convertEntities=BeautifulSoup.BeautifulSoup.HTML_ENTITIES).contents[0]
 parseDOM = CommonFunctions.parseDOM
-requests = requests.session(headers={'User-Agent':'xbmc.org'})
+requests = requests.session(headers={'User-Agent':'xbmc.org','X-Requested-With':'XMLHttpRequest'})
 cache = StorageServer.StorageServer('nrk.no', 336)
 
 def _get_cached(url):
@@ -33,9 +33,8 @@ def _get_cached(url):
 
 def parse_by_letter(arg):
   """ returns: </serie/newton> or </program/koif45000708> """
-  url = "http://tv.nrk.no/programmer/%s?filter=rettigheter" % arg
+  url = "http://tv.nrk.no/programmer/%s?filter=rettigheter&ajax=true" % arg
   html = requests.get(url).text
-  html = parseDOM(html, 'div', {'id':'programList'})
   return _parse_list(html)
 
 def parse_by_category(arg):
@@ -99,7 +98,6 @@ def parse_episodes(series_id, season_id):
   """ returns: </serie/aktuelt-tv/nnfa50051612/16-05-2012..> """
   url = "http://tv.nrk.no/program/Episodes/%s/%s" % (series_id, season_id)
   html = requests.get(url).text
-  html = parseDOM(html, 'table', {'class':'episodeTable'})
   trs = parseDOM(html, 'tr', {'class':'has-programtooltip episode-row js-click *'})
   titles = [ parseDOM(tr, 'a', {'class':'p-link'})[0] for tr in trs ]
   titles = map(html_decode, titles)
