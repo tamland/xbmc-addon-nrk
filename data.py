@@ -76,7 +76,7 @@ def parse_most_recent():
   elems = requests.get(url).json['ListObjectViewModels']
   titles = [ e['Title'] for e in elems ]
   thumbs = [ e['ImageUrl'] for e in elems ]
-  urls = [ e['Title'] for e in elems ]
+  urls = [ e['Url'] for e in elems ]
   titles = map(html_decode, titles)
   return titles, urls, thumbs
 
