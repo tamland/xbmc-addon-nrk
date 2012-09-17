@@ -112,7 +112,7 @@ def parse_episodes(series_id, season_id):
   descr = [lambda x=x: _get_descr(x) for x in ids ]
   thumbs = repeat(_thumb_url(series_id))
   fanart = repeat(_fanart_url(series_id))
-  return titles, ids, descr, thumbs, fanart
+  return titles, ids, thumbs, fanart, descr
 
 
 def parse_media_url(video_id, bitrate):

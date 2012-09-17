@@ -53,7 +53,7 @@ def add_item(title, url, thumb=""):
   addDirectoryItem(plugin.handle, url, li, False)
 
 
-def view(titles, urls, descr=repeat(''), thumbs=repeat(''), bgs=repeat('')):
+def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat('')):
   total = len(titles)
   for title, url, descr, thumb, bg in zip(titles, urls, descr, thumbs, bgs):
     descr = descr() if callable(descr) else descr
@@ -72,26 +72,22 @@ def view(titles, urls, descr=repeat(''), thumbs=repeat(''), bgs=repeat('')):
 @plugin.route('/recommended')
 def recommended():
   import data
-  titles, urls, thumbs, bgs = data.parse_recommended()
-  view(titles, urls, thumbs=thumbs, bgs=bgs)
+  view(*data.parse_recommended())
 
 @plugin.route('/mostrecent')
 def mostrecent():
   import data
-  titles, urls, thumbs, bgs = data.parse_most_recent()
-  view(titles, urls, thumbs=thumbs, bgs=bgs)
+  view(*data.parse_most_recent())
 
 @plugin.route('/categories')
 def categories():
   import data
-  titles, urls, thumbs, bgs = data.parse_categories()
-  view(titles, urls, thumbs=thumbs, bgs=bgs)
+  view(*data.parse_categories())
 
 @plugin.route('/kategori/<arg>')
 def category(arg):
   import data
-  titles, urls, thumbs, bgs = data.parse_by_category(arg)
-  view(titles, urls, thumbs=thumbs, bgs=bgs)
+  view(*data.parse_by_category(arg))
 
 @plugin.route('/letters')
 def letters():
@@ -105,8 +101,7 @@ def letters():
 @plugin.route('/letters/<arg>')
 def letter(arg):
   import data
-  titles, urls, thumbs, bgs = data.parse_by_letter(arg)
-  view(titles, urls, thumbs=thumbs, bgs=bgs)
+  view(*data.parse_by_letter(arg))
 
 @plugin.route('/serie/<arg>')
 def seasons(arg):
@@ -120,8 +115,7 @@ def seasons(arg):
 @plugin.route('/program/Episodes/<series_id>/<season_id>')
 def episodes(series_id, season_id):
   import data
-  titles, urls, descr, thumbs, bgs = data.parse_episodes(series_id, season_id)
-  view(titles, urls, descr, thumbs, bgs)
+  view(*data.parse_episodes(series_id, season_id))
 
 @plugin.route('/serie/<series_id>/<video_id>/.*')
 @plugin.route('/program/<video_id>')
