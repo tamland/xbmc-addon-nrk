@@ -15,14 +15,13 @@
 
 import re
 import requests
-import BeautifulSoup
+import HTMLParser
 import StorageServer
 import CommonFunctions
 from itertools import repeat
 from subs import get_subtitles
 
-html_decode = lambda string: BeautifulSoup.BeautifulSoup(string,
-    convertEntities=BeautifulSoup.BeautifulSoup.HTML_ENTITIES).contents[0]
+html_decode = HTMLParser.HTMLParser().unescape
 parseDOM = CommonFunctions.parseDOM
 requests = requests.session(headers={'User-Agent':'xbmc.org','X-Requested-With':'XMLHttpRequest'})
 cache = StorageServer.StorageServer('nrk.no', 336)
