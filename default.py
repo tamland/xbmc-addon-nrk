@@ -72,26 +72,26 @@ def view(titles, urls, descr=repeat(''), thumbs=repeat(''), bgs=repeat('')):
 @plugin.route('/recommended')
 def recommended():
   import data
-  titles, urls, bgs = data.parse_recommended()
-  view(titles, urls, bgs=bgs)
+  titles, urls, thumbs, bgs = data.parse_recommended()
+  view(titles, urls, thumbs=thumbs, bgs=bgs)
 
 @plugin.route('/mostrecent')
 def mostrecent():
   import data
-  titles, urls, thumbs = data.parse_most_recent()
-  view(titles, urls, thumbs=thumbs)
+  titles, urls, thumbs, bgs = data.parse_most_recent()
+  view(titles, urls, thumbs=thumbs, bgs=bgs)
 
 @plugin.route('/categories')
 def categories():
   import data
-  titles, urls = data.parse_categories()
-  view(titles, urls)
+  titles, urls, thumbs, bgs = data.parse_categories()
+  view(titles, urls, thumbs=thumbs, bgs=bgs)
 
 @plugin.route('/kategori/<arg>')
 def category(arg):
   import data
-  titles, urls = data.parse_by_category(arg)
-  view(titles, urls)
+  titles, urls, thumbs, bgs = data.parse_by_category(arg)
+  view(titles, urls, thumbs=thumbs, bgs=bgs)
 
 @plugin.route('/letters')
 def letters():
@@ -105,23 +105,23 @@ def letters():
 @plugin.route('/letters/<arg>')
 def letter(arg):
   import data
-  titles, urls = data.parse_by_letter(arg)
-  view(titles, urls)
+  titles, urls, thumbs, bgs = data.parse_by_letter(arg)
+  view(titles, urls, thumbs=thumbs, bgs=bgs)
 
 @plugin.route('/serie/<arg>')
 def seasons(arg):
   import data
-  titles, urls = data.parse_seasons(arg)
+  titles, urls, thumbs, bgs = data.parse_seasons(arg)
   if len(titles) == 1:
     plugin.redirect(plugin.url_for(urls[0]))
     return
-  view(titles, urls)
+  view(titles, urls, thumbs=thumbs, bgs=bgs)
 
 @plugin.route('/program/Episodes/<series_id>/<season_id>')
 def episodes(series_id, season_id):
   import data
-  titles, urls, descr = data.parse_episodes(series_id, season_id)
-  view(titles, urls, descr=descr)
+  titles, urls, descr, thumbs, bgs = data.parse_episodes(series_id, season_id)
+  view(titles, urls, descr, thumbs, bgs)
 
 @plugin.route('/serie/<series_id>/<video_id>/.*')
 @plugin.route('/program/<video_id>')
