@@ -131,9 +131,9 @@ def play(video_id, series_id=""):
   start_time = time.time()
   while not player.isPlaying() and time.time() - start_time < 10:
     time.sleep(1.)
-    player.setSubtitles(subtitle)
-    if not SHOW_SUBS:
-      player.showSubtitles(False)
+  player.setSubtitles(subtitle)
+  if not SHOW_SUBS:
+    player.showSubtitles(False)
 
 if ( __name__ == "__main__" ):
   plugin.run()
