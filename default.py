@@ -127,13 +127,14 @@ def play(video_id, series_id=""):
   xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
   player = xbmc.Player()
   subtitle = data.get_subtitles(video_id)
-  #Wait for stream to start
-  start_time = time.time()
-  while not player.isPlaying() and time.time() - start_time < 10:
-    time.sleep(1.)
-  player.setSubtitles(subtitle)
-  if not SHOW_SUBS:
-    player.showSubtitles(False)
+  if subtitle:
+    #Wait for stream to start
+    start_time = time.time()
+    while not player.isPlaying() and time.time() - start_time < 10:
+      time.sleep(1.)
+    player.setSubtitles(subtitle)
+    if not SHOW_SUBS:
+      player.showSubtitles(False)
 
 if ( __name__ == "__main__" ):
   plugin.run()
