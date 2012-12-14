@@ -14,6 +14,7 @@
 '''
 
 import re
+import json
 import requests
 import HTMLParser
 import StorageServer
@@ -25,10 +26,6 @@ html_decode = HTMLParser.HTMLParser().unescape
 parseDOM = CommonFunctions.parseDOM
 requests = requests.session(headers={'User-Agent':'xbmc.org','X-Requested-With':'XMLHttpRequest'})
 cache = StorageServer.StorageServer('nrk.no', 336)
-
-def _get_cached(url):
-  f = lambda x: requests.get(x).json
-  return cache.cacheFunction(f, url)
 
 
 def parse_by_letter(arg):
@@ -118,11 +115,28 @@ def parse_episodes(series_id, season_id):
 def parse_media_url(video_id, bitrate):
   bitrate = 4 if bitrate > 4 else bitrate
   url = "http://nrk.no/serum/api/video/%s" % video_id
-  url = _get_cached(url)['mediaURL']
+  url = _get_cached_json(url, 'mediaURL')
   url = url.replace('/z/', '/i/', 1)
   url = url.rsplit('/', 1)[0]
   url = url + '/index_%s_av.m3u8' % bitrate
   return url
+
+
+def _get_cached_json(url, node):
+  return _get_cached(url, lambda x: json.loads(x)[node])
+
+def _get_cached(url, transform):
+  data = cache.get(url)
+  if data:
+    try:
+      ret = transform(data)
+      return ret
+    except: # assume data is broken
+      pass
+  data = requests.get(url).text
+  cache.delete(url)
+  cache.set(url, data)
+  return transform(data)
 
 def _thumb_url(id):
   return "http://nrk.eu01.aws.af.cm/t/%s" % id.strip('/')
@@ -132,6 +146,5 @@ def _fanart_url(id):
 
 def _get_descr(url):
   url = "http://nrk.no/serum/api/video/%s" % url.split('/')[3]
-  descr = _get_cached(url)['description']
+  descr = _get_cached_json(url, 'description')
   return descr
-
