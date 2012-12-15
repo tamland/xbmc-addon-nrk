@@ -29,19 +29,19 @@ xhrsession = requests.session(headers={'User-Agent':'xbmc.org','X-Requested-With
 cache = StorageServer.StorageServer('nrk.no', 336)
 
 
-def parse_by_letter(arg):
+def get_by_letter(arg):
   """ returns: </serie/newton> or </program/koif45000708> """
   url = "http://tv.nrk.no/programmer/%s?filter=rettigheter&ajax=true" % arg
   html = xhrsession.get(url).text
   return _parse_list(html)
 
-def parse_by_category(arg):
+def get_by_category(arg):
   url = "http://tv.nrk.no/kategori/%s" % arg
   html = xhrsession.get(url).text
   html = parseDOM(html, 'div', {'class':'alpha-list clear'})
   return _parse_list(html)
 
-def parse_categories():
+def get_categories():
   url = "http://tv.nrk.no/kategori/"
   html = xhrsession.get(url).text
   html = parseDOM(html, 'ul', {'id':'categoryList'})
@@ -57,7 +57,7 @@ def _parse_list(html):
   return titles, urls, thumbs, fanart
 
 
-def parse_recommended():
+def get_recommended():
   url = "http://tv.nrk.no/"
   html = xhrsession.get(url).text
   html = parseDOM(html, 'ul', {'id':'introSlider'})[0]
@@ -73,7 +73,7 @@ def parse_recommended():
   return titles, urls, thumbs, fanart
 
 
-def parse_most_recent():
+def get_most_recent():
   url = "http://tv.nrk.no/listobjects/recentlysent.json/page/0"
   elems = xhrsession.get(url).json['ListObjectViewModels']
   titles = [ e['Title'] for e in elems ]
@@ -84,7 +84,7 @@ def parse_most_recent():
   return titles, urls, thumbs, fanart
 
 
-def parse_search_results(query, page=1):
+def get_search_results(query, page=1):
   url = "http://tv.nrk.no/sok?q=%s&side=%s&filter=rettigheter" % (query, page)
   html = session.get(url).text # use normal request. xhr page wont list all the results
   anc = parseDOM(html, 'a', {'class':'searchresult listobject-link'})
@@ -98,7 +98,7 @@ def parse_search_results(query, page=1):
   return titles, urls, thumbs, fanart
 
 
-def parse_seasons(arg):
+def get_seasons(arg):
   """ returns: </program/Episodes/aktuelt-tv/11998> """
   url = "http://tv.nrk.no/serie/%s" % arg
   html = xhrsession.get(url).text
@@ -112,7 +112,7 @@ def parse_seasons(arg):
   return titles, ids, thumbs, fanart
 
 
-def parse_episodes(series_id, season_id):
+def get_episodes(series_id, season_id):
   """ returns: </serie/aktuelt-tv/nnfa50051612/16-05-2012..> """
   url = "http://tv.nrk.no/program/Episodes/%s/%s" % (series_id, season_id)
   html = xhrsession.get(url).text
@@ -127,7 +127,7 @@ def parse_episodes(series_id, season_id):
   return titles, ids, thumbs, fanart, descr
 
 
-def parse_media_url(video_id, bitrate):
+def get_media_url(video_id, bitrate):
   bitrate = 4 if bitrate > 4 else bitrate
   url = "http://nrk.no/serum/api/video/%s" % video_id
   url = _get_cached_json(url, 'mediaURL')

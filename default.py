@@ -89,22 +89,22 @@ def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), upda
 @plugin.route('/recommended')
 def recommended():
   import data
-  view(*data.parse_recommended())
+  view(*data.get_recommended())
 
 @plugin.route('/mostrecent')
 def mostrecent():
   import data
-  view(*data.parse_most_recent())
+  view(*data.get_most_recent())
 
 @plugin.route('/categories')
 def categories():
   import data
-  view(*data.parse_categories())
+  view(*data.get_categories())
 
 @plugin.route('/kategori/<arg>')
 def category(arg):
   import data
-  view(*data.parse_by_category(arg))
+  view(*data.get_by_category(arg))
 
 @plugin.route('/letters')
 def letters():
@@ -128,7 +128,7 @@ def search():
 @plugin.route('/search/<query>/<page>')
 def search_results(query, page):
   import data
-  results = data.parse_search_results(query, page)
+  results = data.get_search_results(query, page)
   more_node = ["Flere", '/search/%s/%s' % (query, int(page)+1), "", "" ]
   for i in range(0, len(more_node)):
     results[i].append(more_node[i])
@@ -137,12 +137,12 @@ def search_results(query, page):
 @plugin.route('/letters/<arg>')
 def letter(arg):
   import data
-  view(*data.parse_by_letter(arg))
+  view(*data.get_by_letter(arg))
 
 @plugin.route('/serie/<arg>')
 def seasons(arg):
   import data
-  titles, urls, thumbs, bgs = data.parse_seasons(arg)
+  titles, urls, thumbs, bgs = data.get_seasons(arg)
   if len(titles) == 1:
     plugin.redirect(plugin.make_url(urls[0]))
     return
@@ -151,14 +151,14 @@ def seasons(arg):
 @plugin.route('/program/Episodes/<series_id>/<season_id>')
 def episodes(series_id, season_id):
   import data
-  view(*data.parse_episodes(series_id, season_id))
+  view(*data.get_episodes(series_id, season_id))
 
 @plugin.route('/serie/<series_id>/<video_id>/.*')
 @plugin.route('/program/<video_id>')
 @plugin.route('/program/<video_id>/.*')
 def play(video_id, series_id=""):
   import data
-  url = data.parse_media_url(video_id, BITRATE)
+  url = data.get_media_url(video_id, BITRATE)
   xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
   player = xbmc.Player()
   subtitle = data.get_subtitles(video_id)
