@@ -24,6 +24,7 @@ from subs import get_subtitles
 
 html_decode = HTMLParser.HTMLParser().unescape
 parseDOM = CommonFunctions.parseDOM
+session = requests.session(headers={'User-Agent':'xbmc.org'})
 xhrsession = requests.session(headers={'User-Agent':'xbmc.org','X-Requested-With':'XMLHttpRequest'})
 cache = StorageServer.StorageServer('nrk.no', 336)
 
@@ -85,7 +86,7 @@ def parse_most_recent():
 
 def parse_search_results(query, page=1):
   url = "http://tv.nrk.no/sok?q=%s&side=%s&filter=rettigheter" % (query, page)
-  html = xhrsession.get(url).text
+  html = session.get(url).text # use normal request. xhr page wont list all the results
   anc = parseDOM(html, 'a', {'class':'searchresult listobject-link'})
   titles = [ parseDOM(a, 'strong')[0] for a in anc ]
   titles = map(html_decode, titles)
