@@ -24,25 +24,25 @@ from subs import get_subtitles
 
 html_decode = HTMLParser.HTMLParser().unescape
 parseDOM = CommonFunctions.parseDOM
-requests = requests.session(headers={'User-Agent':'xbmc.org','X-Requested-With':'XMLHttpRequest'})
+xhrsession = requests.session(headers={'User-Agent':'xbmc.org','X-Requested-With':'XMLHttpRequest'})
 cache = StorageServer.StorageServer('nrk.no', 336)
 
 
 def parse_by_letter(arg):
   """ returns: </serie/newton> or </program/koif45000708> """
   url = "http://tv.nrk.no/programmer/%s?filter=rettigheter&ajax=true" % arg
-  html = requests.get(url).text
+  html = xhrsession.get(url).text
   return _parse_list(html)
 
 def parse_by_category(arg):
   url = "http://tv.nrk.no/kategori/%s" % arg
-  html = requests.get(url).text
+  html = xhrsession.get(url).text
   html = parseDOM(html, 'div', {'class':'alpha-list clear'})
   return _parse_list(html)
 
 def parse_categories():
   url = "http://tv.nrk.no/kategori/"
-  html = requests.get(url).text
+  html = xhrsession.get(url).text
   html = parseDOM(html, 'ul', {'id':'categoryList'})
   return _parse_list(html)
 
@@ -58,7 +58,7 @@ def _parse_list(html):
 
 def parse_recommended():
   url = "http://tv.nrk.no/"
-  html = requests.get(url).text
+  html = xhrsession.get(url).text
   html = parseDOM(html, 'ul', {'id':'introSlider'})[0]
   
   h1s = parseDOM(html, 'h2')
@@ -74,7 +74,7 @@ def parse_recommended():
 
 def parse_most_recent():
   url = "http://tv.nrk.no/listobjects/recentlysent.json/page/0"
-  elems = requests.get(url).json['ListObjectViewModels']
+  elems = xhrsession.get(url).json['ListObjectViewModels']
   titles = [ e['Title'] for e in elems ]
   titles = map(html_decode, titles)
   urls = [ e['Url'] for e in elems ]
@@ -85,7 +85,7 @@ def parse_most_recent():
 
 def parse_search_results(query, page=1):
   url = "http://tv.nrk.no/sok?q=%s&side=%s&filter=rettigheter" % (query, page)
-  html = requests.get(url).text
+  html = xhrsession.get(url).text
   anc = parseDOM(html, 'a', {'class':'searchresult listobject-link'})
   titles = [ parseDOM(a, 'strong')[0] for a in anc ]
   titles = map(html_decode, titles)
@@ -100,7 +100,7 @@ def parse_search_results(query, page=1):
 def parse_seasons(arg):
   """ returns: </program/Episodes/aktuelt-tv/11998> """
   url = "http://tv.nrk.no/serie/%s" % arg
-  html = requests.get(url).text
+  html = xhrsession.get(url).text
   html = parseDOM(html, 'div', {'id':'seasons'})
   html = parseDOM(html, 'noscript')
   titles = parseDOM(html, 'a', {'class':'seasonLink'})
@@ -114,7 +114,7 @@ def parse_seasons(arg):
 def parse_episodes(series_id, season_id):
   """ returns: </serie/aktuelt-tv/nnfa50051612/16-05-2012..> """
   url = "http://tv.nrk.no/program/Episodes/%s/%s" % (series_id, season_id)
-  html = requests.get(url).text
+  html = xhrsession.get(url).text
   trs = parseDOM(html, 'tr', {'class':'has-programtooltip episode-row js-click *'})
   titles = [ parseDOM(tr, 'a', {'class':'p-link'})[0] for tr in trs ]
   titles = map(html_decode, titles)
@@ -147,7 +147,7 @@ def _get_cached(url, transform):
       return ret
     except: # assume data is broken
       pass
-  data = requests.get(url).text
+  data = xhrsession.get(url).text
   cache.delete(url)
   cache.set(url, data)
   return transform(data)
