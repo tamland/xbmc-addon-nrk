@@ -71,8 +71,7 @@ def add(title, url, mimetype, thumb=""):
   li.setProperty('mimetype', mimetype)
   addDirectoryItem(plugin.handle, url, li, False)
 
-
-def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat('')):
+def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), update_listing=False):
   total = len(titles)
   for title, url, descr, thumb, bg in zip(titles, urls, descr, thumbs, bgs):
     descr = descr() if callable(descr) else descr
@@ -85,8 +84,7 @@ def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat('')):
     if playable:
       li.setInfo('video', {'plot':descr})
     addDirectoryItem(plugin.handle, plugin.make_url(url), li, not playable, total)
-  endOfDirectory(plugin.handle)
-
+  endOfDirectory(plugin.handle, updateListing=update_listing)
 
 @plugin.route('/recommended')
 def recommended():
@@ -134,7 +132,7 @@ def search_results(query, page):
   more_node = ["Flere", '/search/%s/%s' % (query, int(page)+1), "", "" ]
   for i in range(0, len(more_node)):
     results[i].append(more_node[i])
-  view(*results)
+  view(*results, update_listing=int(page) > 1)
 
 @plugin.route('/letters/<arg>')
 def letter(arg):
@@ -175,4 +173,3 @@ def play(video_id, series_id=""):
 
 if ( __name__ == "__main__" ):
   plugin.run()
-
