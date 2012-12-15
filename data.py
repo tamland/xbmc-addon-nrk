@@ -83,6 +83,20 @@ def parse_most_recent():
   return titles, urls, thumbs, fanart
 
 
+def parse_search_results(query, page=1):
+  url = "http://tv.nrk.no/sok?q=%s&side=%s&filter=rettigheter" % (query, page)
+  html = requests.get(url).text
+  anc = parseDOM(html, 'a', {'class':'searchresult listobject-link'})
+  titles = [ parseDOM(a, 'strong')[0] for a in anc ]
+  titles = map(html_decode, titles)
+  
+  urls = parseDOM(html, 'a', {'class':'searchresult listobject-link'}, ret='href')
+  urls = [ r.split('http://tv.nrk.no')[1] for r in urls ]
+  thumbs = [ _thumb_url(url) for url in urls ]
+  fanart = [ _fanart_url(url) for url in urls ]
+  return titles, urls, thumbs, fanart
+
+
 def parse_seasons(arg):
   """ returns: </program/Episodes/aktuelt-tv/11998> """
   url = "http://tv.nrk.no/serie/%s" % arg

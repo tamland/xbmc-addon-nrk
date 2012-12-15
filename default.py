@@ -19,6 +19,7 @@ import sys
 import time
 import xbmc, xbmcaddon, xbmcplugin
 from itertools import repeat
+from urllib import quote
 from xbmcplugin import addDirectoryItem
 from xbmcplugin import endOfDirectory
 from xbmcgui import ListItem
@@ -38,6 +39,7 @@ def view_top():
   addDirectoryItem(plugin.handle, plugin.make_url("/mostrecent"), ListItem("Siste"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/categories"), ListItem("Kategorier"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/letters"), ListItem("A-Å"), True)
+  addDirectoryItem(plugin.handle, plugin.make_url("/search"), ListItem("Søk"), True)
   endOfDirectory(plugin.handle)
 
 @plugin.route('/live')
@@ -114,6 +116,25 @@ def letters():
   titles = [ e.upper() for e in titles ]
   urls = [ '/letters/%s' % l for l in (common + ['ae', 'oe', 'aa']) ]
   view(titles, urls)
+
+@plugin.route('/search')
+def search():
+  keyboard = xbmc.Keyboard()
+  keyboard.setHeading('Søk')
+  keyboard.doModal()
+  if keyboard.isConfirmed():
+    query = keyboard.getText()
+    query = quote(query)
+    plugin.redirect(plugin.make_url('/search/%s/1' % query))
+
+@plugin.route('/search/<query>/<page>')
+def search_results(query, page):
+  import data
+  results = data.parse_search_results(query, page)
+  more_node = ["Flere", '/search/%s/%s' % (query, int(page)+1), "", "" ]
+  for i in range(0, len(more_node)):
+    results[i].append(more_node[i])
+  view(*results)
 
 @plugin.route('/letters/<arg>')
 def letter(arg):
