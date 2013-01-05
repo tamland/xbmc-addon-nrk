@@ -20,8 +20,7 @@ import xbmcswift2 as xbmcswift
 
 class Plugin(xbmcswift.Plugin):
   def __init__(self):
-    addon = xbmcaddon.Addon()
-    xbmcswift.Plugin.__init__(self, addon.getAddonInfo('name'), addon.getAddonInfo('id'), '')
+    xbmcswift.Plugin.__init__(self)
 
   def make_url(self, url):
     return 'plugin://%s%s' % (self._addon_id, url)
