@@ -113,13 +113,11 @@ def letters():
 
 @plugin.route('/search')
 def search():
-  keyboard = xbmc.Keyboard()
-  keyboard.setHeading('Søk')
-  keyboard.doModal()
-  if keyboard.isConfirmed():
-    query = keyboard.getText()
-    query = quote(query)
-    plugin.redirect(plugin.make_url('/search/%s/1' % query))
+  query = plugin.keyboard(heading="Søk")
+  if query:
+    plugin.redirect(plugin.make_url('/search/%s/1' % quote(query)))
+  else:
+    plugin._end_of_directory = True # hack: prevent xbmcswift from calling endOfDirectory
 
 @plugin.route('/search/<query>/<page>')
 def search_results(query, page):
