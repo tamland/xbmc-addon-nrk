@@ -13,7 +13,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
-
 import os
 import sys
 import time
@@ -28,7 +27,6 @@ plugin = plugin.Plugin()
 
 BITRATE = int(plugin.get_setting('bitrate')) + 1
 SHOW_SUBS = int(plugin.get_setting('showsubtitles')) == 1
-
 
 @plugin.route('/')
 def view_top():
@@ -169,5 +167,5 @@ def play(video_id, series_id=""):
     if not SHOW_SUBS:
       player.showSubtitles(False)
 
-if ( __name__ == "__main__" ):
+if  __name__ == "__main__" :
   plugin.run()
