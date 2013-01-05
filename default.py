@@ -29,7 +29,7 @@ plugin = plugin.Plugin()
 ADDON = xbmcaddon.Addon()
 ADDON_PATH = ADDON.getAddonInfo('path')
 BITRATE = int(ADDON.getSetting('bitrate')) + 1
-SHOW_SUBS = ADDON.getSetting('showsubtitles')
+SHOW_SUBS = int(ADDON.getSetting('showsubtitles')) == 1
 
 
 @plugin.route('/')
