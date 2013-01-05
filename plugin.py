@@ -16,7 +16,7 @@
 """ some xbmcswift boilerplate """
 
 import xbmcaddon
-import xbmcswift
+import xbmcswift2 as xbmcswift
 
 class Plugin(xbmcswift.Plugin):
   def __init__(self):
@@ -24,7 +24,7 @@ class Plugin(xbmcswift.Plugin):
     xbmcswift.Plugin.__init__(self, addon.getAddonInfo('name'), addon.getAddonInfo('id'), '')
 
   def make_url(self, url):
-    return 'plugin://%s%s' % (self._plugin_id, url)
+    return 'plugin://%s%s' % (self._addon_id, url)
 
   def route_for(self, path):
     for rule in self._routes:
