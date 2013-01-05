@@ -26,10 +26,8 @@ from xbmcgui import ListItem
 import plugin
 plugin = plugin.Plugin()
 
-ADDON = xbmcaddon.Addon()
-ADDON_PATH = ADDON.getAddonInfo('path')
-BITRATE = int(ADDON.getSetting('bitrate')) + 1
-SHOW_SUBS = int(ADDON.getSetting('showsubtitles')) == 1
+BITRATE = int(plugin.get_setting('bitrate')) + 1
+SHOW_SUBS = int(plugin.get_setting('showsubtitles')) == 1
 
 
 @plugin.route('/')
@@ -65,7 +63,7 @@ def live():
 
 def add(title, url, mimetype, thumb=""):
   if thumb:
-    img_path = os.path.join(ADDON_PATH, "resources/images")
+    img_path = os.path.join(plugin.path, "resources/images")
     thumb = os.path.join(img_path, thumb)
   li =  ListItem(title, thumbnailImage=thumb)
   li.setProperty('mimetype', mimetype)

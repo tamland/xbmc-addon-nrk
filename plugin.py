@@ -21,9 +21,13 @@ import xbmcswift2 as xbmcswift
 class Plugin(xbmcswift.Plugin):
   def __init__(self):
     xbmcswift.Plugin.__init__(self)
-
+  
+  @property
+  def path(self):
+    return self.addon.getAddonInfo('path')
+  
   def make_url(self, url):
-    return 'plugin://%s%s' % (self._addon_id, url)
+    return 'plugin://%s%s' % (self.id, url)
 
   def route_for(self, path):
     for rule in self._routes:
