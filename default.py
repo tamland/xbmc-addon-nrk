@@ -151,11 +151,11 @@ def episodes(series_id, season_id):
 @plugin.route('/program/<video_id>')
 @plugin.route('/program/<video_id>/.*')
 def play(video_id, series_id=""):
-  import data
+  import data, subs
   url = data.get_media_url(video_id, BITRATE)
   xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
   player = xbmc.Player()
-  subtitle = data.get_subtitles(video_id)
+  subtitle = subs.get_subtitles(video_id)
   if subtitle:
     #Wait for stream to start
     start_time = time.time()

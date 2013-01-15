@@ -16,8 +16,7 @@
 import os
 import re
 import xbmc
-import requests
-requests = requests.session(headers={'User-Agent':'xbmc.org'})
+from data import xhrsession as requests
 
 def get_subtitles(video_id):
   html = requests.get("http://tv.nrk.no/programsubtitles/%s" % video_id).text
