@@ -78,7 +78,7 @@ def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), upda
     li.setProperty('isplayable', str(playable))
     li.setProperty('fanart_image', bg)
     if playable:
-      li.setInfo('video', {'plot':descr})
+      li.setInfo('video', {'title':title, 'plot':descr})
     addDirectoryItem(plugin.handle, plugin.make_url(url), li, not playable, total)
   endOfDirectory(plugin.handle, updateListing=update_listing)
 
