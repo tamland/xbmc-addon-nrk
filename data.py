@@ -138,7 +138,10 @@ def get_media_url(video_id, bitrate):
 
 
 def _get_cached_json(url, node):
-  return _get_cached(url, lambda x: json.loads(x)[node])
+  try:
+    return _get_cached(url, lambda x: json.loads(x)[node])
+  except:
+    return ""
 
 def _get_cached(url, transform):
   data = cache.get(url)
