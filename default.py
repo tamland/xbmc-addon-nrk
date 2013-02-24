@@ -113,11 +113,10 @@ def letters():
 
 @plugin.route('/search')
 def search():
-  query = plugin.keyboard(heading="Søk")
-  if query:
-    plugin.redirect(plugin.make_url('/search/%s/1' % quote(query)))
-  else:
-    plugin._end_of_directory = True # hack: prevent xbmcswift from calling endOfDirectory
+  keyboard = xbmc.Keyboard(heading="Søk")
+  keyboard.doModal()
+  if keyboard.isConfirmed():
+    plugin.redirect('/search/%s/1' % quote(keyboard.getText()))
 
 @plugin.route('/search/<query>/<page>')
 def search_results(query, page):
@@ -138,7 +137,7 @@ def seasons(arg):
   import data
   titles, urls, thumbs, bgs = data.get_seasons(arg)
   if len(titles) == 1:
-    plugin.redirect(plugin.make_url(urls[0]))
+    plugin.redirect(urls[0])
     return
   view(titles, urls, thumbs=thumbs, bgs=bgs)
 
