@@ -114,8 +114,9 @@ def letters():
 def search():
   keyboard = xbmc.Keyboard(heading="Søk")
   keyboard.doModal()
-  if keyboard.isConfirmed():
-    plugin.redirect('/search/%s/1' % quote(keyboard.getText()))
+  query = keyboard.getText()
+  if query:
+    plugin.redirect('/search/%s/1' % quote(query))
 
 @plugin.route('/search/<query>/<page>')
 def search_results(query, page):
