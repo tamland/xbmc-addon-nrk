@@ -14,9 +14,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import os
-import sys
 import time
-import xbmc, xbmcaddon, xbmcplugin
+import xbmc, xbmcplugin
 from itertools import repeat
 from urllib import quote
 from xbmcplugin import addDirectoryItem
@@ -122,7 +121,7 @@ def search():
 def search_results(query, page):
   import data
   results = data.get_search_results(query, page)
-  more_node = ["Flere", '/search/%s/%s' % (query, int(page)+1), "", "" ]
+  more_node = [ "Flere", '/search/%s/%s' % (query, int(page)+1), "", "" ]
   for i in range(0, len(more_node)):
     results[i].append(more_node[i])
   view(*results, update_listing=int(page) > 1)
@@ -137,8 +136,7 @@ def seasons(arg):
   import data
   titles, urls, thumbs, bgs = data.get_seasons(arg)
   if len(titles) == 1:
-    plugin.redirect(urls[0])
-    return
+    return plugin.redirect(urls[0])
   view(titles, urls, thumbs=thumbs, bgs=bgs)
 
 @plugin.route('/program/Episodes/<series_id>/<season_id>')
@@ -164,5 +162,5 @@ def play(video_id, series_id=""):
     if not SHOW_SUBS:
       player.showSubtitles(False)
 
-if  __name__ == "__main__" :
+if  __name__ == '__main__':
   plugin.run()
