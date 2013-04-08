@@ -78,6 +78,8 @@ def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), upda
     li.setProperty('fanart_image', bg)
     if playable:
       li.setInfo('video', {'title':title, 'plot':descr})
+      li.addStreamInfo('video', {'codec':'h264', 'width':1280, 'height':720})
+      li.addStreamInfo('audio', {'codec':'aac', 'channels':2})
     addDirectoryItem(plugin.handle, plugin.make_url(url), li, not playable, total)
   endOfDirectory(plugin.handle, updateListing=update_listing)
 
