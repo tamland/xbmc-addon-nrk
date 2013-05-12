@@ -82,8 +82,8 @@ def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), upda
       li.addStreamInfo('video', {'codec':'h264', 'width':1280, 'height':720})
       li.addStreamInfo('audio', {'codec':'aac', 'channels':2})
       commands = []
-      url = plugin.make_url( "/searchfor/%s" % title.encode('utf-8') )
-      runner = "XBMC.ActivateWindow(Video," + url + ",return)"
+      search_url = plugin.make_url( "/searchfor/%s" % title.encode('utf-8') )
+      runner = "XBMC.ActivateWindow(Video," + search_url + ",return)"
       commands.append(( str("Search NRK..."), runner))
       li.addContextMenuItems( commands )
     addDirectoryItem(plugin.handle, plugin.make_url(url), li, not playable, total)
