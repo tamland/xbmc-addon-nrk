@@ -80,6 +80,11 @@ def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), upda
       li.setInfo('video', {'title':title, 'plot':descr})
       li.addStreamInfo('video', {'codec':'h264', 'width':1280, 'height':720})
       li.addStreamInfo('audio', {'codec':'aac', 'channels':2})
+      commands = []
+      url = plugin.make_url( "/searchfor/%s" % title.encode('utf-8') )
+      runner = "XBMC.ActivateWindow(Video," + url + ",return)"
+      commands.append(( str("Search NRK..."), runner))
+      li.addContextMenuItems( commands )
     addDirectoryItem(plugin.handle, plugin.make_url(url), li, not playable, total)
   endOfDirectory(plugin.handle, updateListing=update_listing)
 
@@ -128,6 +133,15 @@ def search_results(query, page):
   for i in range(0, len(more_node)):
     results[i].append(more_node[i])
   view(*results, update_listing=int(page) > 1)
+
+@plugin.route('/searchfor/<query>')
+def search_for(query):
+  keyboard = xbmc.Keyboard(heading="Søk")
+  keyboard.setDefault(query)
+  keyboard.doModal()
+  query = keyboard.getText()
+  if query:
+    plugin.redirect('/search/%s/1' % quote(query))
 
 @plugin.route('/letters/<arg>')
 def letter(arg):
