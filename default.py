@@ -32,6 +32,7 @@ def view_top():
   addDirectoryItem(plugin.handle, plugin.make_url("/live"), ListItem("Direkte"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/recommended"), ListItem("Aktuelt"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/mostrecent"), ListItem("Siste"), True)
+  addDirectoryItem(plugin.handle, plugin.make_url("/popular"), ListItem("Populært"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/categories"), ListItem("Kategorier"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/letters"), ListItem("A-Å"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/search"), ListItem("Søk"), True)
@@ -80,6 +81,11 @@ def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), upda
       li.setInfo('video', {'title':title, 'plot':descr})
       li.addStreamInfo('video', {'codec':'h264', 'width':1280, 'height':720})
       li.addStreamInfo('audio', {'codec':'aac', 'channels':2})
+      commands = []
+      search_url = plugin.make_url( "/searchfor/%s" % title.encode('utf-8') )
+      runner = "XBMC.ActivateWindow(Video," + search_url + ",return)"
+      commands.append(( str("Search NRK..."), runner))
+      li.addContextMenuItems( commands )
     addDirectoryItem(plugin.handle, plugin.make_url(url), li, not playable, total)
   endOfDirectory(plugin.handle, updateListing=update_listing)
 
@@ -92,6 +98,17 @@ def recommended():
 def mostrecent():
   import data
   view(*data.get_most_recent())
+
+@plugin.route('/popular')
+def popular():
+  addDirectoryItem(plugin.handle, plugin.make_url("/popular/Week"), ListItem("Siste uke"), True)
+  addDirectoryItem(plugin.handle, plugin.make_url("/popular/Month"), ListItem("Siste måned"), True)
+  endOfDirectory(plugin.handle)
+
+@plugin.route('/popular/<arg>')
+def popular_result(arg):
+  import data
+  view(*data.get_popular_items(arg))
 
 @plugin.route('/categories')
 def categories():
@@ -128,6 +145,15 @@ def search_results(query, page):
   for i in range(0, len(more_node)):
     results[i].append(more_node[i])
   view(*results, update_listing=int(page) > 1)
+
+@plugin.route('/searchfor/<query>')
+def search_for(query):
+  keyboard = xbmc.Keyboard(heading="Søk")
+  keyboard.setDefault(query)
+  keyboard.doModal()
+  query = keyboard.getText()
+  if query:
+    plugin.redirect('/search/%s/1' % quote(query))
 
 @plugin.route('/letters/<arg>')
 def letter(arg):

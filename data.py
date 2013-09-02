@@ -96,6 +96,17 @@ def get_most_recent():
   return titles, urls, thumbs, fanart
 
 
+def get_popular_items(arg):
+  url = "http://tv.nrk.no/listobjects/mostpopular/%s.json/page/0" % arg
+  elems = xhrsession.get(url).json()['Data']
+  titles = [ e['Title'] for e in elems ]
+  titles = map(html_decode, titles)
+  urls = [ e['Url'] for e in elems ]
+  thumbs = [ e['Images'][0]['ImageUrl'] for e in elems ]
+  fanart = [ _fanart_url(url) for url in urls ]
+  return titles, urls, thumbs, fanart
+
+
 def get_search_results(query, page=1):
   url = "http://tv.nrk.no/sok?q=%s&side=%s&filter=rettigheter" % (query, page)
   html = session.get(url).text # use normal request. xhr page wont list all the results
