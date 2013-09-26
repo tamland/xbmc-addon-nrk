@@ -128,7 +128,7 @@ def get_episodes(series_id, season_id):
   titles = [ parseDOM(tr, 'a', {'class':'p-link'})[0] for tr in trs ]
   titles = map(html_decode, titles)
   ids = [ parseDOM(tr, 'a', {'class':'p-link'}, ret='href')[0] for tr in trs ]
-  ids = [ e.split('http://tv.nrk.no')[1] for e in ids ]
+  ids = [ e.split('http://tv.nrk.no')[-1] for e in ids ]
   descr = [lambda x=x: _get_descr(x) for x in ids ]
   thumbs = repeat(_thumb_url(series_id))
   fanart = repeat(_fanart_url(series_id))
