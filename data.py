@@ -68,7 +68,7 @@ def get_recommended():
   url = "http://tv.nrk.no/programmer"
   html = xhrsession.get(url).text
   html = parseDOM(html, 'div', {'class':'recommended-list'})[0]
-  titles = map(html_decode, parseDOM(html, 'h3'))
+  titles = map(html_decode, parseDOM(html, 'img', ret='alt'))
   urls = parseDOM(html, 'a', ret='href')
   thumbs = parseDOM(html, 'img', ret='src')
   fanart = [ _fanart_url(url) for url in urls ]
