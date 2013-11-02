@@ -124,7 +124,7 @@ def get_episodes(series_id, season_id):
   """ returns: </serie/aktuelt-tv/nnfa50051612/16-05-2012..> """
   url = "http://tv.nrk.no/program/Episodes/%s/%s" % (series_id, season_id)
   html = xhrsession.get(url).text
-  trs = parseDOM(html, 'tr', {'class':'has-programtooltip episode-row js-click *'})
+  trs = parseDOM(html, 'tr', {'class':'[^"\']*episode-row js-click *'})
   titles = [ parseDOM(tr, 'a', {'class':'p-link'})[0] for tr in trs ]
   titles = map(html_decode, titles)
   ids = [ parseDOM(tr, 'a', {'class':'p-link'}, ret='href')[0] for tr in trs ]
