@@ -138,7 +138,7 @@ def get_episodes(series_id, season_id):
 def get_media_url(video_id, bitrate):
   bitrate = 4 if bitrate > 4 else bitrate
   url = "http://nrk.no/serum/api/video/%s" % video_id
-  url = _get_cached_json(url, 'mediaURL')
+  url = _get_cached_json(url, 'mediaUrl')
   url = url.replace('/z/', '/i/', 1)
   url = url.rsplit('/', 1)[0]
   url = url + '/index_%s_av.m3u8' % bitrate
