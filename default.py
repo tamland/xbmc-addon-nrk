@@ -29,11 +29,11 @@ SHOW_SUBS = int(plugin.get_setting('showsubtitles')) == 1
 
 @plugin.route('/')
 def view_top():
-  addDirectoryItem(plugin.handle, plugin.make_url("/live"), ListItem("Direkte"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/recommended"), ListItem("Aktuelt"), True)
+  addDirectoryItem(plugin.handle, plugin.make_url("/browse"), ListItem("Bla"), True)
+  addDirectoryItem(plugin.handle, plugin.make_url("/live"), ListItem("Direkte"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/mostrecent"), ListItem("Nytt"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/mostpopular"), ListItem("Populært"), True)
-  addDirectoryItem(plugin.handle, plugin.make_url("/browse"), ListItem("Bla"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/search"), ListItem("Søk"), True)
   endOfDirectory(plugin.handle)
 
