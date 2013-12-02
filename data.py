@@ -164,7 +164,7 @@ def _fanart_url(id):
   return "http://nrk.eu01.aws.af.cm/f/%s" % id.strip('/')
 
 def _get_descr(url):
-  url = "http://nrk.no/serum/api/video/%s" % url.split('/')[3]
+  url = "http://v7.psapi.nrk.no/mediaelement/%s" % url.split('/')[3]
   try:
     return _get_cached_json(url, 'description')
   except:
