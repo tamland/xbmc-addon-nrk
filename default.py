@@ -94,7 +94,7 @@ def mostrecent():
   view(*data.get_most_recent())
 
 @plugin.route('/mostpopular')
-def mostpolpular():
+def mostpopular():
   import data
   view(*data.get_most_popular())
 
