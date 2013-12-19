@@ -19,7 +19,7 @@ import xbmc
 from data import xhrsession as requests
 
 def get_subtitles(video_id):
-  html = requests.get("http://tv.nrk.no/programsubtitles/%s" % video_id).text
+  html = requests.get("http://v7.psapi.nrk.no/programs/%s/subtitles/tt" % video_id).text
   if not html:
     return None
   
