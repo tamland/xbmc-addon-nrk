@@ -136,7 +136,7 @@ def get_episodes(series_id, season_id):
   return titles, urls, thumbs, fanart, descr
 
 
-def get_media_url(video_id, bitrate):
+def get_media_url(video_id):
   url = "http://v7.psapi.nrk.no/mediaelement/%s" % video_id
   return xhrsession.get(url).json()['mediaUrl']
 
