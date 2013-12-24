@@ -21,6 +21,6 @@
     <description lang="no">NRK Nett-TV gir deg muligheten til å se mange av NRKs programmer både direkte og i opptak.</description>
     <license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
     <forum>http://forum.xbmc.org/showthread.php?tid=52824</forum>
-    <source>https://github.com/takoi/xbmc-addon-nrk</source>
+    <source>https://github.com/tamland/xbmc-addon-nrk</source>
   </extension>
 </addon>
