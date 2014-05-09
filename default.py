@@ -31,7 +31,8 @@ def view_top():
   addDirectoryItem(plugin.handle, plugin.make_url("/live"), ListItem("Direkte"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/recommended"), ListItem("Aktuelt"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/mostrecent"), ListItem("Nytt"), True)
-  addDirectoryItem(plugin.handle, plugin.make_url("/mostpopular"), ListItem("Populært"), True)
+  addDirectoryItem(plugin.handle, plugin.make_url("/mostpopularweek"), ListItem("Populært siste Uke"), True)
+  addDirectoryItem(plugin.handle, plugin.make_url("/mostpopularmonth"), ListItem("Populært siste Måned"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/browse"), ListItem("Bla"), True)
   addDirectoryItem(plugin.handle, plugin.make_url("/search"), ListItem("Søk"), True)
   endOfDirectory(plugin.handle)
@@ -92,10 +93,15 @@ def mostrecent():
   import data
   view(*data.get_most_recent())
 
-@plugin.route('/mostpopular')
-def mostpopular():
+@plugin.route('/mostpopularweek')
+def mostpopularweek():
   import data
-  view(*data.get_most_popular())
+  view(*data.get_most_popular_week())
+
+@plugin.route('/mostpopularmonth')
+def mostpopularmonth():
+  import data
+  view(*data.get_most_popular_month())
 
 @plugin.route('/category/<id>')
 def category1(id):
