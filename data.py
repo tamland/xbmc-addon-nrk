@@ -78,8 +78,12 @@ def get_most_recent():
   url = "http://tv.nrk.no/listobjects/recentlysent.json/page/0/100"
   return _json_list(url)
 
-def get_most_popular():
+def get_most_popular_week():
   url = "http://tv.nrk.no/listobjects/mostpopular/Week.json/page/0/100"
+  return _json_list(url)
+
+def get_most_popular_month():
+  url = "http://tv.nrk.no/listobjects/mostpopular/Month.json/page/0/100"
   return _json_list(url)
 
 def _json_list(url):
