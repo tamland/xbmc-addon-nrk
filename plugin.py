@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,12 +18,14 @@
 import re
 import sys
 import xbmc, xbmcaddon
+import cgi
 
 class Plugin(object):
   def __init__(self):
     self._routes = []
     self._addon = xbmcaddon.Addon()
     self.handle = int(sys.argv[1])
+    self.args = sys.argv[2][1:]
     self.addon_id = self._addon.getAddonInfo('id')
     self.path = self._addon.getAddonInfo('path')
   
@@ -45,6 +50,12 @@ class Plugin(object):
     return decorator
   
   def run(self):
+    if self.args:
+      queries = cgi.parse_qs(self.args)
+      q = {}
+      for key, value in queries.items():
+        q[key] = value[0]
+      self._dispatch(q[key])
     path = sys.argv[0].split('plugin://%s' % self.addon_id)[1] or '/'
     self._dispatch(path)
   
