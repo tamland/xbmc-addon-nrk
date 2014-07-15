@@ -40,9 +40,6 @@ class Plugin(object):
         self.path = self._addon.getAddonInfo('path')
         self.args = None
 
-    def build_url(self, path):
-        return 'plugin://%s%s' % (self.addon_id, path)
-
     def route_for(self, path):
         uri_self = 'plugin://%s' % self.addon_id
         if path.startswith(uri_self):
@@ -57,9 +54,11 @@ class Plugin(object):
         for rule in self._routes:
             if rule._view_func is func:
                 path = rule.make_path(*args, **kwargs)
-                url = self.build_url(path)
-                return url
+                return self.url_for_path(path)
         return None
+
+    def url_for_path(self, path):
+        return 'plugin://%s%s' % (self.addon_id, path)
 
     def route(self, url_rule):
         def decorator(f):
