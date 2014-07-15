@@ -33,13 +33,13 @@ SHOW_SUBS = int(xbmcaddon.Addon().getSetting('showsubtitles')) == 1
 
 @plugin.route('/')
 def view_top():
-    addDirectoryItem(plugin.handle, plugin.build_url("/live"), ListItem("Direkte"), True)
-    addDirectoryItem(plugin.handle, plugin.build_url("/recommended"), ListItem("Aktuelt"), True)
-    addDirectoryItem(plugin.handle, plugin.build_url("/mostrecent"), ListItem("Nytt"), True)
-    addDirectoryItem(plugin.handle, plugin.build_url("/mostpopularweek"), ListItem("Populært siste uke"), True)
-    addDirectoryItem(plugin.handle, plugin.build_url("/mostpopularmonth"), ListItem("Populært siste måned"), True)
-    addDirectoryItem(plugin.handle, plugin.build_url("/browse"), ListItem("Bla"), True)
-    addDirectoryItem(plugin.handle, plugin.build_url("/search"), ListItem("Søk"), True)
+    addDirectoryItem(plugin.handle, plugin.url_for(live), ListItem("Direkte"), True)
+    addDirectoryItem(plugin.handle, plugin.url_for(recommended), ListItem("Aktuelt"), True)
+    addDirectoryItem(plugin.handle, plugin.url_for(mostrecent), ListItem("Nytt"), True)
+    addDirectoryItem(plugin.handle, plugin.url_for(mostpopularweek), ListItem("Populært siste uke"), True)
+    addDirectoryItem(plugin.handle, plugin.url_for(mostpopularmonth), ListItem("Populært siste måned"), True)
+    addDirectoryItem(plugin.handle, plugin.url_for(browse), ListItem("Bla"), True)
+    addDirectoryItem(plugin.handle, plugin.url_for(search), ListItem("Søk"), True)
     endOfDirectory(plugin.handle)
 
 
@@ -88,7 +88,7 @@ def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), upda
             li.setInfo('video', {'title': title, 'plot': descr})
             li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
             li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
-        addDirectoryItem(plugin.handle, plugin.build_url(url), li, not playable, total)
+        addDirectoryItem(plugin.handle, plugin.url_for_path(url), li, not playable, total)
     endOfDirectory(plugin.handle, updateListing=update_listing)
 
 
