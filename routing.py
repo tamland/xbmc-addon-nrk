@@ -22,16 +22,21 @@ import xbmcaddon
 from urlparse import parse_qs
 from urllib import urlencode
 
-log = lambda msg: xbmc.log("[routing] %s" % msg, level=xbmc.LOGDEBUG)
+
+_addon = xbmcaddon.Addon()
+_addon_id = _addon.getAddonInfo('id')
+
+_log_tag = "[%s][routing] " % _addon_id
+log = lambda msg: xbmc.log(_log_tag + msg, level=xbmc.LOGDEBUG)
 
 
 class Plugin(object):
 
     def __init__(self):
         self._routes = []
-        self._addon = xbmcaddon.Addon()
+        self._addon = _addon
         self.handle = int(sys.argv[1])
-        self.addon_id = self._addon.getAddonInfo('id')
+        self.addon_id = _addon_id
         self.path = self._addon.getAddonInfo('path')
         self.args = None
 
@@ -75,10 +80,10 @@ class Plugin(object):
         for rule in self._routes:
             view_func, kwargs = rule.match(path)
             if view_func:
-                log("dispatching to <%s>" % view_func.__name__)
+                log("dispatching to <%s>, args: %s" % (view_func.__name__, kwargs))
                 view_func(**kwargs)
                 return
-        raise Exception('no route for path')
+        raise Exception('no route for path "%s"' % path)
 
 
 class UrlRule(object):
