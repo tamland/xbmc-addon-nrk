@@ -15,7 +15,9 @@
 '''
 import os
 import time
-import xbmc, xbmcplugin, xbmcaddon
+import xbmc
+import xbmcplugin
+import xbmcaddon
 from itertools import repeat
 from urllib import quote
 from xbmcplugin import addDirectoryItem
@@ -25,6 +27,7 @@ import routing
 plugin = routing.Plugin()
 
 SHOW_SUBS = int(xbmcaddon.Addon().getSetting('showsubtitles')) == 1
+
 
 @plugin.route('/')
 def view_top():
@@ -37,11 +40,12 @@ def view_top():
     addDirectoryItem(plugin.handle, plugin.build_url("/search"), ListItem("Søk"), True)
     endOfDirectory(plugin.handle)
 
+
 @plugin.route('/live')
 def live():
     import data
     res = os.path.join(plugin.path, "resources/images")
-    for ch in [1,2,3]:
+    for ch in [1, 2, 3]:
         url, fanart = data.get_live_stream(ch)
         add("NRK %s" % ch, url, "application/vnd.apple.mpegurl", os.path.join(res, "nrk%d.png" % ch), fanart)
     add("NRK P1", "http://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3_h", "audio/mpeg")
@@ -60,11 +64,13 @@ def live():
     add("Super", "http://lyd.nrk.no/nrk_radio_super_mp3_h", "audio/mpeg")
     endOfDirectory(plugin.handle)
 
+
 def add(title, url, mimetype, thumb="", fanart=""):
-    li =  ListItem(title, thumbnailImage=thumb)
+    li = ListItem(title, thumbnailImage=thumb)
     li.setProperty('mimetype', mimetype)
     li.setProperty('fanart_image', fanart)
     addDirectoryItem(plugin.handle, url, li, False)
+
 
 def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), update_listing=False):
     total = len(titles)
@@ -77,64 +83,75 @@ def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), upda
         li.setProperty('isplayable', str(playable))
         li.setProperty('fanart_image', bg)
         if playable:
-            li.setInfo('video', {'title':title, 'plot':descr})
-            li.addStreamInfo('video', {'codec':'h264', 'width':1280, 'height':720})
-            li.addStreamInfo('audio', {'codec':'aac', 'channels':2})
+            li.setInfo('video', {'title': title, 'plot': descr})
+            li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
+            li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
         addDirectoryItem(plugin.handle, plugin.build_url(url), li, not playable, total)
     endOfDirectory(plugin.handle, updateListing=update_listing)
+
 
 @plugin.route('/recommended')
 def recommended():
     import data
     view(*data.get_recommended())
 
+
 @plugin.route('/mostrecent')
 def mostrecent():
     import data
     view(*data.get_most_recent())
+
 
 @plugin.route('/mostpopularweek')
 def mostpopularweek():
     import data
     view(*data.get_most_popular_week())
 
+
 @plugin.route('/mostpopularmonth')
 def mostpopularmonth():
     import data
     view(*data.get_most_popular_month())
 
+
 @plugin.route('/category/<id>')
 def category1(id):
     view_letter_list("/category/%s" % id)
+
 
 @plugin.route('/category/<id>/<letter>')
 def category2(id, letter):
     import data
     view(*data.get_by_category(id, letter))
 
+
 @plugin.route('/letters')
 def letters():
     view_letter_list('/letter')
+
 
 @plugin.route('/letter/<arg>')
 def letter(arg):
     import data
     view(*data.get_by_letter(arg))
 
+
 @plugin.route('/browse')
 def browse():
     import data
     titles, ids = data.get_categories()
     titles = ["Alle"] + titles
-    urls = ["/letters"] + [ "/category/%s" % i for i in ids ]
+    urls = ["/letters"] + ["/category/%s" % i for i in ids]
     view(titles, urls)
+
 
 def view_letter_list(base_url):
     common = ['0-9'] + map(chr, range(97, 123))
-    titles = common + [ u'æ', u'ø', u'å' ]
-    titles = [ e.upper() for e in titles ]
-    urls = [ "%s/%s" % (base_url, l) for l in (common + ['ae', 'oe', 'aa']) ]
+    titles = common + [u'æ', u'ø', u'å']
+    titles = [e.upper() for e in titles]
+    urls = ["%s/%s" % (base_url, l) for l in (common + ['ae', 'oe', 'aa'])]
     view(titles, urls)
+
 
 @plugin.route('/search')
 def search():
@@ -144,14 +161,16 @@ def search():
     if query:
         plugin.redirect('/search/%s/1' % quote(query))
 
+
 @plugin.route('/search/<query>/<page>')
 def search_results(query, page):
     import data
     results = data.get_search_results(query, page)
-    more_node = [ "Flere", '/search/%s/%s' % (query, int(page)+1), "", "" ]
+    more_node = ["Flere", '/search/%s/%s' % (query, int(page) + 1), "", ""]
     for i in range(0, len(more_node)):
         results[i].append(more_node[i])
     view(*results, update_listing=int(page) > 1)
+
 
 @plugin.route('/serie/<arg>')
 def seasons(arg):
@@ -161,22 +180,25 @@ def seasons(arg):
         return plugin.redirect(urls[0])
     view(titles, urls, thumbs=thumbs, bgs=bgs)
 
+
 @plugin.route('/program/Episodes/<series_id>/<path:season_id>')
 def episodes(series_id, season_id):
     import data
     view(*data.get_episodes(series_id, season_id))
 
+
 @plugin.route('/serie/<series_id>/<video_id>/.*')
 @plugin.route('/program/<video_id>')
 @plugin.route('/program/<video_id>/.*')
 def play(video_id, series_id=""):
-    import data, subs
+    import data
+    import subs
     url = data.get_media_url(video_id)
     xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
     player = xbmc.Player()
     subtitle = subs.get_subtitles(video_id)
     if subtitle:
-        #Wait for stream to start
+        # Wait for stream to start
         start_time = time.time()
         while not player.isPlaying() and time.time() - start_time < 10:
             time.sleep(1.)
@@ -184,5 +206,5 @@ def play(video_id, series_id=""):
         if not SHOW_SUBS:
             player.showSubtitles(False)
 
-if  __name__ == '__main__':
+if __name__ == '__main__':
     plugin.run()
