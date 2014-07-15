@@ -21,7 +21,7 @@ import xbmc
 import xbmcplugin
 import xbmcaddon
 from itertools import repeat
-from urllib import quote
+from urllib import quote, unquote
 from xbmcplugin import addDirectoryItem
 from xbmcplugin import endOfDirectory
 from xbmcgui import ListItem
@@ -49,6 +49,7 @@ def live():
     res = os.path.join(plugin.path, "resources/images")
     for ch in [1, 2, 3]:
         url, fanart = data.get_live_stream(ch)
+        url = plugin.url_for(play_url, url=url)
         add("NRK %s" % ch, url, "application/vnd.apple.mpegurl", os.path.join(res, "nrk%d.png" % ch), fanart)
     add("NRK P1", "http://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3_h", "audio/mpeg")
     add("NRK P2", "http://lyd.nrk.no/nrk_radio_p2_mp3_h", "audio/mpeg")
@@ -71,6 +72,7 @@ def add(title, url, mimetype, thumb="", fanart=""):
     li = ListItem(title, thumbnailImage=thumb)
     li.setProperty('mimetype', mimetype)
     li.setProperty('fanart_image', fanart)
+    li.setProperty('isplayable', 'true')
     addDirectoryItem(plugin.handle, url, li, False)
 
 
@@ -207,6 +209,13 @@ def play(video_id, series_id=""):
         player.setSubtitles(subtitle)
         if not SHOW_SUBS:
             player.showSubtitles(False)
+
+
+@plugin.route('/play')
+def play_url():
+    url = plugin.args['url'][0]
+    xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
+
 
 if __name__ == '__main__':
     plugin.run()
