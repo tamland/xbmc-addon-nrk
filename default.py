@@ -24,7 +24,7 @@ from itertools import repeat
 from urllib import quote, unquote
 from xbmcplugin import addDirectoryItem
 from xbmcplugin import endOfDirectory
-from xbmcgui import ListItem
+from xbmcgui import ListItem, Dialog
 import routing
 plugin = routing.Plugin()
 
@@ -214,6 +214,13 @@ def play(video_id, series_id=""):
 @plugin.route('/play')
 def play_url():
     url = plugin.args['url'][0]
+
+    if url.startswith('https://') and (
+            xbmc.getCondVisibility('system.platform.android') or
+            xbmc.getCondVisibility('system.platform.ios')):
+        dialog = Dialog()
+        dialog.ok("NRK Nett-TV", "Direktestrømmer er ikke støttet på iOS/Android")
+
     xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
 
 
