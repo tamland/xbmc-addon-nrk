@@ -58,6 +58,8 @@ class Plugin(object):
         return None
 
     def url_for_path(self, path):
+        if not path.startswith('/'):
+            path = '/' + path
         return 'plugin://%s%s' % (self.addon_id, path)
 
     def route(self, url_rule):
