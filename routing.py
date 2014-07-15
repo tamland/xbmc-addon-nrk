@@ -19,6 +19,8 @@ import re
 import sys
 import xbmc
 import xbmcaddon
+from urlparse import parse_qs
+from urllib import urlencode
 
 log = lambda msg: xbmc.log("[routing] %s" % msg, level=xbmc.LOGDEBUG)
 
@@ -31,6 +33,7 @@ class Plugin(object):
         self.handle = int(sys.argv[1])
         self.addon_id = self._addon.getAddonInfo('id')
         self.path = self._addon.getAddonInfo('path')
+        self.args = None
 
     def build_url(self, path):
         return 'plugin://%s%s' % (self.addon_id, path)
@@ -61,6 +64,7 @@ class Plugin(object):
         return decorator
 
     def run(self):
+        self.args = parse_qs(sys.argv[2].lstrip('?'))
         path = sys.argv[0].split('plugin://%s' % self.addon_id)[1] or '/'
         self._dispatch(path)
 
@@ -81,8 +85,10 @@ class UrlRule(object):
 
     def __init__(self, url_rule, view_func):
         self._view_func = view_func
-        # convert "/foo/<string:bar>" to "/foo/{bar}"
-        self._url_format = re.sub('<(?:[^:]+:)?([A-z]+)>', '{\\1}', url_rule)
+
+        kw_pattern = r'<(?:[^:]+:)?([A-z]+)>'
+        self._url_format = re.sub(kw_pattern, '{\\1}', url_rule)
+        self._keywords = re.findall(kw_pattern, url_rule)
 
         p = re.sub('<([A-z]+)>', '<string:\\1>', url_rule)
         p = re.sub('<string:([A-z]+)>', '(?P<\\1>[^/]+?)', p)
@@ -100,6 +106,8 @@ class UrlRule(object):
         if args and kwargs:
             raise ValueError("can't use both args and kwargs")
         if args:
-            uf = re.sub(r'{[A-z]+}', r'{}', self._url_format)
-            return uf.format(*args)
-        return self._url_format.format(**kwargs)
+            return re.sub(r'{[A-z]+}', r'{}', self._url_format).format(*args)
+
+        url_args = dict(((k, v) for k, v in kwargs.items() if k in self._keywords))
+        qs_args = dict(((k, v) for k, v in kwargs.items() if k not in self._keywords))
+        return self._url_format.format(**url_args) + '?' + urlencode(qs_args)
