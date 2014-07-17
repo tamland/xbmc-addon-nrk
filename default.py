@@ -22,6 +22,7 @@ import xbmcplugin
 import xbmcaddon
 from itertools import repeat
 from urllib import quote, unquote
+from collections import namedtuple
 from xbmcplugin import addDirectoryItem
 from xbmcplugin import endOfDirectory
 from xbmcgui import ListItem, Dialog
@@ -29,6 +30,8 @@ import routing
 plugin = routing.Plugin()
 
 SHOW_SUBS = int(xbmcaddon.Addon().getSetting('showsubtitles')) == 1
+
+Node = namedtuple('Node', ['title', 'url'])
 
 
 @plugin.route('/')
@@ -76,46 +79,44 @@ def add(title, url, mimetype, thumb="", fanart=""):
     addDirectoryItem(plugin.handle, url, li, False)
 
 
-def view(titles, urls, thumbs=repeat(''), bgs=repeat(''), descr=repeat(''), update_listing=False):
-    total = len(titles)
-    for title, url, descr, thumb, bg in zip(titles, urls, descr, thumbs, bgs):
-        descr = descr() if callable(descr) else descr
-        thumb = thumb() if callable(thumb) else thumb
-        bg = bg() if callable(bg) else bg
-        li = ListItem(title, thumbnailImage=thumb)
-        playable = plugin.route_for(url) == play
+def view(items, update_listing=False):
+    total = len(items)
+    for item in items:
+        li = ListItem(item.title, thumbnailImage=getattr(item, 'thumb', ''))
+        playable = plugin.route_for(item.url) == play
         li.setProperty('isplayable', str(playable))
-        li.setProperty('fanart_image', bg)
+        if hasattr(item, 'fanart'):
+            li.setProperty('fanart_image', item.fanart)
         if playable:
-            li.setInfo('video', {'title': title, 'plot': descr})
+            li.setInfo('video', {'title': item.title, 'plot': getattr(item, 'description', '')})
             li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
             li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
-        addDirectoryItem(plugin.handle, plugin.url_for_path(url), li, not playable, total)
+        addDirectoryItem(plugin.handle, plugin.url_for_path(item.url), li, not playable, total)
     endOfDirectory(plugin.handle, updateListing=update_listing)
 
 
 @plugin.route('/recommended')
 def recommended():
     import data
-    view(*data.get_recommended())
+    view(data.get_recommended())
 
 
 @plugin.route('/mostrecent')
 def mostrecent():
     import data
-    view(*data.get_most_recent())
+    view(data.get_most_recent())
 
 
 @plugin.route('/mostpopularweek')
 def mostpopularweek():
     import data
-    view(*data.get_most_popular_week())
+    view(data.get_most_popular_week())
 
 
 @plugin.route('/mostpopularmonth')
 def mostpopularmonth():
     import data
-    view(*data.get_most_popular_month())
+    view(data.get_most_popular_month())
 
 
 @plugin.route('/category/<id>')
@@ -126,7 +127,7 @@ def category1(id):
 @plugin.route('/category/<id>/<letter>')
 def category2(id, letter):
     import data
-    view(*data.get_by_category(id, letter))
+    view(data.get_by_category(id, letter))
 
 
 @plugin.route('/letters')
@@ -137,7 +138,7 @@ def letters():
 @plugin.route('/letter/<arg>')
 def letter(arg):
     import data
-    view(*data.get_by_letter(arg))
+    view(data.get_by_letter(arg))
 
 
 @plugin.route('/browse')
@@ -146,7 +147,7 @@ def browse():
     titles, ids = data.get_categories()
     titles = ["Alle"] + titles
     urls = ["/letters"] + ["/category/%s" % i for i in ids]
-    view(titles, urls)
+    view([Node(title, url) for title, url in zip(titles, urls)])
 
 
 def view_letter_list(base_url):
@@ -154,7 +155,7 @@ def view_letter_list(base_url):
     titles = common + [u'æ', u'ø', u'å']
     titles = [e.upper() for e in titles]
     urls = ["%s/%s" % (base_url, l) for l in (common + ['ae', 'oe', 'aa'])]
-    view(titles, urls)
+    view([Node(title, url) for title, url in zip(titles, urls)])
 
 
 @plugin.route('/search')
@@ -170,25 +171,23 @@ def search():
 def search_results(query, page):
     import data
     results = data.get_search_results(query, page)
-    more_node = ["Flere", '/search/%s/%s' % (query, int(page) + 1), "", ""]
-    for i in range(0, len(more_node)):
-        results[i].append(more_node[i])
-    view(*results, update_listing=int(page) > 1)
+    more_node = Node("Flere", '/search/%s/%s' % (query, int(page) + 1))
+    view(results + more_node, update_listing=int(page) > 1)
 
 
 @plugin.route('/serie/<arg>')
 def seasons(arg):
     import data
-    titles, urls, thumbs, bgs = data.get_seasons(arg)
-    if len(titles) == 1:
-        return plugin.redirect(urls[0])
-    view(titles, urls, thumbs=thumbs, bgs=bgs)
+    items = data.get_seasons(arg)
+    if len(items) == 1:
+        return plugin.redirect(items[0].url)
+    view(items)
 
 
 @plugin.route('/program/Episodes/<series_id>/<path:season_id>')
 def episodes(series_id, season_id):
     import data
-    view(*data.get_episodes(series_id, season_id))
+    view(data.get_episodes(series_id, season_id))
 
 
 @plugin.route('/serie/<series_id>/<video_id>/.*')
