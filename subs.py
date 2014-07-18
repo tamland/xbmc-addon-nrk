@@ -19,33 +19,33 @@ import xbmc
 from data import xhrsession as requests
 
 def get_subtitles(video_id):
-  html = requests.get("http://v7.psapi.nrk.no/programs/%s/subtitles/tt" % video_id).text
-  if not html:
-    return None
-  
-  filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt')
-  with open(filename, 'w') as f:
-    parts = re.compile(r'<p begin="(.*?)" dur="(.*?)".*?>(.*?)</p>',re.DOTALL).findall(html)
-    i = 0
-    for begint, dur, contents in parts:
-      begin = _stringToTime(begint)
-      dur = _stringToTime(dur)
-      end = begin+dur
-      i += 1
-      f.write(str(i))
-      f.write('\n%s' % _timeToString(begin))
-      f.write(' --> %s\n' % _timeToString(end))
-      f.write(re.sub('<br />\s*','\n',' '.join(contents.replace('<span style="italic">','<i>').replace('</span>','</i>').replace('&amp;','&').split())).encode('utf-8'))
-      f.write('\n\n')
-  return filename
+    html = requests.get("http://v7.psapi.nrk.no/programs/%s/subtitles/tt" % video_id).text
+    if not html:
+        return None
+
+    filename = os.path.join(xbmc.translatePath("special://temp"),'nrk.srt')
+    with open(filename, 'w') as f:
+        parts = re.compile(r'<p begin="(.*?)" dur="(.*?)".*?>(.*?)</p>',re.DOTALL).findall(html)
+        i = 0
+        for begint, dur, contents in parts:
+            begin = _stringToTime(begint)
+            dur = _stringToTime(dur)
+            end = begin+dur
+            i += 1
+            f.write(str(i))
+            f.write('\n%s' % _timeToString(begin))
+            f.write(' --> %s\n' % _timeToString(end))
+            f.write(re.sub('<br />\s*','\n',' '.join(contents.replace('<span style="italic">','<i>').replace('</span>','</i>').replace('&amp;','&').split())).encode('utf-8'))
+            f.write('\n\n')
+    return filename
 
 def _stringToTime(txt):
-  p = txt.split(':')
-  try:
-    ms = float(p[2])
-  except ValueError:
-    ms = 0
-  return int(p[0]) * 3600 + int(p[1]) * 60 + ms
+    p = txt.split(':')
+    try:
+        ms = float(p[2])
+    except ValueError:
+        ms = 0
+    return int(p[0]) * 3600 + int(p[1]) * 60 + ms
 
 def _timeToString(time):
-  return '%02d:%02d:%02d,%03d' % (time/3600,(time%3600)/60,time%60,(time%1)*1000)
+    return '%02d:%02d:%02d,%03d' % (time/3600,(time%3600)/60,time%60,(time%1)*1000)
