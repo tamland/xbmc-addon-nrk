@@ -164,7 +164,7 @@ def search():
     keyboard.doModal()
     query = keyboard.getText()
     if query:
-        plugin.redirect('/search/%s/1' % quote(query))
+        plugin.redirect('/search/%s/0' % quote(query))
 
 
 @plugin.route('/search/<query>/<page>')
@@ -172,7 +172,7 @@ def search_results(query, page):
     import data
     results = data.get_search_results(query, page)
     more_node = Node("Flere", '/search/%s/%s' % (query, int(page) + 1))
-    view(results + more_node, update_listing=int(page) > 1)
+    view(results + [more_node], update_listing=int(page) > 1)
 
 
 @plugin.route('/serie/<arg>')

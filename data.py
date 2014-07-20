@@ -126,18 +126,23 @@ def _json_list(url):
     return Program.from_lists(titles, urls, thumbs, fanart)
 
 
-def get_search_results(query, page=1):
-    url = "http://tv.nrk.no/sok?q=%s&side=%s&filter=rettigheter" % (query, page)
-    html = session.get(url).text  # use normal request. xhr page wont list all the results
-    anc = parseDOM(html, 'a', {'class': 'searchresult listobject-link'})
-    titles = [parseDOM(a, 'strong')[0] for a in anc]
+def get_search_results(query, page=0):
+    url = "http://tv.nrk.no/sokmaxresults?q=%s&page=%s" % (query, page)
+    html = xhrsession.get(url).text
+    lis = parseDOM(html, 'li')
+
+    titles = [parseDOM(li, 'img', ret='alt')[0] for li in lis]
     titles = map(html_decode, titles)
 
-    urls = parseDOM(html, 'a', {'class': 'searchresult listobject-link'}, ret='href')
-    urls = [r.split('http://tv.nrk.no')[1] for r in urls]
-    thumbs = [_thumb_url(url) for url in urls]
+    urls = [parseDOM(li, 'a', ret='href')[0] for li in lis]
+    urls = [url.replace('http://tv.nrk.no', '') for url in urls]
+
+    descr = [parseDOM(li, 'h3')[0] for li in lis]
+    descr = [html_decode(common.stripTags(_)) for _ in descr]
+
+    thumbs = [parseDOM(li, 'img', ret='src')[0] for li in lis]
     fanart = [_fanart_url(url) for url in urls]
-    return titles, urls, thumbs, fanart
+    return Program.from_lists(titles, urls, thumbs, fanart, descr)
 
 
 def get_seasons(arg):
