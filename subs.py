@@ -17,7 +17,7 @@ import os
 import re
 import xbmc
 from io import BytesIO
-from data import xhrsession as requests
+from data import session as requests
 
 
 def get_subtitles(video_id):

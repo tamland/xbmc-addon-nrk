@@ -26,10 +26,10 @@ html_decode = HTMLParser.HTMLParser().unescape
 parseDOM = common.parseDOM
 cache = StorageServer.StorageServer('nrk.no', 336)
 
-xhrsession = requests.session()
-xhrsession.headers['User-Agent'] = 'xbmc.org'
-xhrsession.headers['X-Requested-With'] = 'XMLHttpRequest'
-xhrsession.headers['Cookie'] = "NRK_PLAYER_SETTINGS_TV=devicetype=desktop&preferred-player-odm=hlslink&preferred-player-live=hlslink"
+session = requests.session()
+session.headers['User-Agent'] = 'xbmc.org'
+session.headers['X-Requested-With'] = 'XMLHttpRequest'
+session.headers['Cookie'] = "NRK_PLAYER_SETTINGS_TV=devicetype=desktop&preferred-player-odm=hlslink&preferred-player-live=hlslink"
 
 
 class Program(object):
@@ -53,7 +53,7 @@ class Program(object):
 
 def get_live_stream(ch):
     url = "http://tv.nrk.no/direkte/nrk%s" % ch
-    html = xhrsession.get(url).text
+    html = session.get(url).text
     url = parseDOM(html, 'div', {'id': 'playerelement'}, ret='data-media')[0]
     img = parseDOM(html, 'img', {'class': 'poster'}, ret='src')[0]
     return url, img
@@ -78,7 +78,7 @@ def get_by_category(category, l):
 
 
 def _program_list(url):
-    items = xhrsession.get(url).json()
+    items = session.get(url).json()
     items = [i for i in items if i['hasOndemandRights']]
     titles = [i['Title'] for i in items]
     urls = [i['Url'] for i in items]
@@ -89,7 +89,7 @@ def _program_list(url):
 
 def get_recommended():
     url = "http://tv.nrk.no/programmer"
-    html = xhrsession.get(url).text
+    html = session.get(url).text
     html = parseDOM(html, 'div', {'class': 'recommended-list'})[0]
     titles = map(html_decode, parseDOM(html, 'img', ret='alt'))
     urls = parseDOM(html, 'a', ret='href')
@@ -114,7 +114,7 @@ def get_most_popular_month():
 
 
 def _json_list(url):
-    elems = xhrsession.get(url).json()['Data']
+    elems = session.get(url).json()['Data']
     titles = [e['Title'] for e in elems]
     titles = map(html_decode, titles)
     urls = [e['Url'] for e in elems]
@@ -125,7 +125,7 @@ def _json_list(url):
 
 def get_search_results(query, page=0):
     url = "http://tv.nrk.no/sokmaxresults?q=%s&page=%s" % (query, page)
-    html = xhrsession.get(url).text
+    html = session.get(url).text
     lis = parseDOM(html, 'li')
 
     titles = [parseDOM(li, 'img', ret='alt')[0] for li in lis]
@@ -144,7 +144,7 @@ def get_search_results(query, page=0):
 
 def get_seasons(arg):
     url = "http://tv.nrk.no/serie/%s" % arg
-    html = xhrsession.get(url).text
+    html = session.get(url).text
     items = parseDOM(html, 'li', {'class': 'season-menu-item'})
     titles = [html_decode(parseDOM(li, 'a')[0]) for li in items]
     ids = [parseDOM(li, 'a', ret='data-season')[0] for li in items]
@@ -156,7 +156,7 @@ def get_seasons(arg):
 
 def get_episodes(series_id, season_id):
     url = "http://tv.nrk.no/program/Episodes/%s/%s" % (series_id, season_id)
-    html = xhrsession.get(url).text
+    html = session.get(url).text
     ul = parseDOM(html, 'ul', {'class': 'episode-list'})
     assert len(ul) == 1
     cls = parseDOM(ul, 'li', ret='class')
@@ -174,7 +174,7 @@ def get_episodes(series_id, season_id):
 
 def get_media_url(video_id):
     url = "http://v7.psapi.nrk.no/mediaelement/%s" % video_id
-    return xhrsession.get(url).json()['mediaUrl']
+    return session.get(url).json()['mediaUrl']
 
 
 def _get_cached_json(url, node):
@@ -184,7 +184,7 @@ def _get_cached_json(url, node):
             return json.loads(data)[node]
         except:  # cache might be broken
             pass
-    data = xhrsession.get(url).text
+    data = session.get(url).text
     cache.delete(url)
     cache.set(url, data)
     return json.loads(data)[node]
