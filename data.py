@@ -26,7 +26,7 @@ html_decode = HTMLParser.HTMLParser().unescape
 parseDOM = common.parseDOM
 cache = StorageServer.StorageServer('nrk.no', 336)
 
-session = requests.session()
+session = requests.Session()
 session.headers['User-Agent'] = 'xbmc.org'
 session.headers['X-Requested-With'] = 'XMLHttpRequest'
 session.headers['Cookie'] = "NRK_PLAYER_SETTINGS_TV=devicetype=desktop&preferred-player-odm=hlslink&preferred-player-live=hlslink"
