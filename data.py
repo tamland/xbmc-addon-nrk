@@ -26,9 +26,6 @@ html_decode = HTMLParser.HTMLParser().unescape
 parseDOM = common.parseDOM
 cache = StorageServer.StorageServer('nrk.no', 336)
 
-session = requests.session()
-session.headers['User-Agent'] = 'xbmc.org'
-
 xhrsession = requests.session()
 xhrsession.headers['User-Agent'] = 'xbmc.org'
 xhrsession.headers['X-Requested-With'] = 'XMLHttpRequest'
