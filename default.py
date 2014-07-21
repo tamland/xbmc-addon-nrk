@@ -48,10 +48,10 @@ def view_top():
 
 @plugin.route('/live')
 def live():
-    import data
+    import nrktv
     res = os.path.join(plugin.path, "resources/images")
     for ch in [1, 2, 3]:
-        url, fanart = data.get_live_stream(ch)
+        url, fanart = nrktv.get_live_stream(ch)
         url = plugin.url_for(play_url, url=url)
         add("NRK %s" % ch, url, "application/vnd.apple.mpegurl", os.path.join(res, "nrk%d.png" % ch), fanart)
     add("NRK P1", "http://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3_h", "audio/mpeg")
@@ -97,26 +97,26 @@ def view(items, update_listing=False):
 
 @plugin.route('/recommended')
 def recommended():
-    import data
-    view(data.get_recommended())
+    import nrktv
+    view(nrktv.get_recommended())
 
 
 @plugin.route('/mostrecent')
 def mostrecent():
-    import data
-    view(data.get_most_recent())
+    import nrktv
+    view(nrktv.get_most_recent())
 
 
 @plugin.route('/mostpopularweek')
 def mostpopularweek():
-    import data
-    view(data.get_most_popular_week())
+    import nrktv
+    view(nrktv.get_most_popular_week())
 
 
 @plugin.route('/mostpopularmonth')
 def mostpopularmonth():
-    import data
-    view(data.get_most_popular_month())
+    import nrktv
+    view(nrktv.get_most_popular_month())
 
 
 @plugin.route('/category/<id>')
@@ -126,8 +126,8 @@ def category1(id):
 
 @plugin.route('/category/<id>/<letter>')
 def category2(id, letter):
-    import data
-    view(data.get_by_category(id, letter))
+    import nrktv
+    view(nrktv.get_by_category(id, letter))
 
 
 @plugin.route('/letters')
@@ -137,14 +137,14 @@ def letters():
 
 @plugin.route('/letter/<arg>')
 def letter(arg):
-    import data
-    view(data.get_by_letter(arg))
+    import nrktv
+    view(nrktv.get_by_letter(arg))
 
 
 @plugin.route('/browse')
 def browse():
-    import data
-    titles, ids = data.get_categories()
+    import nrktv
+    titles, ids = nrktv.get_categories()
     titles = ["Alle"] + titles
     urls = ["/letters"] + ["/category/%s" % i for i in ids]
     view([Node(title, url) for title, url in zip(titles, urls)])
@@ -169,16 +169,16 @@ def search():
 
 @plugin.route('/search/<query>/<page>')
 def search_results(query, page):
-    import data
-    results = data.get_search_results(query, page)
+    import nrktv
+    results = nrktv.get_search_results(query, page)
     more_node = Node("Flere", '/search/%s/%s' % (query, int(page) + 1))
     view(results + [more_node], update_listing=int(page) > 1)
 
 
 @plugin.route('/serie/<arg>')
 def seasons(arg):
-    import data
-    items = data.get_seasons(arg)
+    import nrktv
+    items = nrktv.get_seasons(arg)
     if len(items) == 1:
         return plugin.redirect(items[0].url)
     view(items)
@@ -186,17 +186,17 @@ def seasons(arg):
 
 @plugin.route('/program/Episodes/<series_id>/<path:season_id>')
 def episodes(series_id, season_id):
-    import data
-    view(data.get_episodes(series_id, season_id))
+    import nrktv
+    view(nrktv.get_episodes(series_id, season_id))
 
 
 @plugin.route('/serie/<series_id>/<video_id>/.*')
 @plugin.route('/program/<video_id>')
 @plugin.route('/program/<video_id>/.*')
 def play(video_id, series_id=""):
-    import data
+    import nrktv
     import subs
-    url = data.get_media_url(video_id)
+    url = nrktv.get_media_url(video_id)
     xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
     player = xbmc.Player()
     subtitle = subs.get_subtitles(video_id)
