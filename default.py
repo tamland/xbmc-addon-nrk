@@ -191,10 +191,10 @@ def episodes(series_id, season_id):
 
 
 @plugin.route('/serie/<series_id>/<video_id>')
-@plugin.route('/serie/<series_id>/<video_id>/.*')
+@plugin.route('/serie/<series_id>/<video_id>/<path:unused>')
 @plugin.route('/program/<video_id>')
-@plugin.route('/program/<video_id>/.*')
-def play(video_id, series_id=""):
+@plugin.route('/program/<video_id>/<path:unused>')
+def play(video_id, series_id="", unused=""):
     import nrktv
     import subs
     url = nrktv.get_media_url(video_id)
