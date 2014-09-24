@@ -104,8 +104,11 @@ def view(items, update_listing=False, urls=None):
 
 @plugin.route('/recommended')
 def recommended():
-    import nrktv
-    view(nrktv.get_recommended())
+    import nrktv_mobile as nrktv
+    xbmcplugin.setContent(plugin.handle, 'episodes')
+    programs = nrktv.recommended_programs()
+    urls = [plugin.url_for(play, item.id) for item in programs]
+    view(programs, urls=urls)
 
 
 @plugin.route('/mostrecent')
