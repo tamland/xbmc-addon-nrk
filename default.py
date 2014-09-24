@@ -79,19 +79,26 @@ def add(title, url, mimetype, thumb="", fanart=""):
     addDirectoryItem(plugin.handle, url, li, False)
 
 
-def view(items, update_listing=False):
+def view(items, update_listing=False, urls=None):
+    if urls is None:
+        urls = [plugin.url_for_path(item.url) for item in items]
     total = len(items)
-    for item in items:
+    for item, url in zip(items, urls):
         li = ListItem(item.title, thumbnailImage=getattr(item, 'thumb', ''))
-        playable = plugin.route_for(item.url) == play
+        playable = plugin.route_for(url) == play
         li.setProperty('isplayable', str(playable))
         if hasattr(item, 'fanart'):
             li.setProperty('fanart_image', item.fanart)
         if playable:
-            li.setInfo('video', {'title': item.title, 'plot': getattr(item, 'description', '')})
+            li.setInfo('video', {
+                'title': item.title,
+                'genre': item.category.title if hasattr(item, 'category') else '',
+                'mpaa': getattr(item, 'legal_age', ''),
+                'plot': getattr(item, 'description', '')
+            })
             li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
             li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
-        addDirectoryItem(plugin.handle, plugin.url_for_path(item.url), li, not playable, total)
+        addDirectoryItem(plugin.handle, url, li, not playable, total)
     endOfDirectory(plugin.handle, updateListing=update_listing)
 
 
@@ -103,8 +110,11 @@ def recommended():
 
 @plugin.route('/mostrecent')
 def mostrecent():
-    import nrktv
-    view(nrktv.get_most_recent())
+    import nrktv_mobile as nrktv
+    xbmcplugin.setContent(plugin.handle, 'episodes')
+    programs = nrktv.recent_programs()
+    urls = [plugin.url_for(play, item.id) for item in programs]
+    view(programs, urls=urls)
 
 
 @plugin.route('/mostpopularweek')
