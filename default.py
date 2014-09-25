@@ -39,8 +39,7 @@ def view_top():
     addDirectoryItem(plugin.handle, plugin.url_for(live), ListItem("Direkte"), True)
     addDirectoryItem(plugin.handle, plugin.url_for(recommended), ListItem("Aktuelt"), True)
     addDirectoryItem(plugin.handle, plugin.url_for(mostrecent), ListItem("Nytt"), True)
-    addDirectoryItem(plugin.handle, plugin.url_for(mostpopularweek), ListItem("Populært siste uke"), True)
-    addDirectoryItem(plugin.handle, plugin.url_for(mostpopularmonth), ListItem("Populært siste måned"), True)
+    addDirectoryItem(plugin.handle, plugin.url_for(popular), ListItem("Populært"), True)
     addDirectoryItem(plugin.handle, plugin.url_for(browse), ListItem("Bla"), True)
     addDirectoryItem(plugin.handle, plugin.url_for(search), ListItem("Søk"), True)
     endOfDirectory(plugin.handle)
@@ -120,10 +119,12 @@ def mostrecent():
     view(programs, urls=urls)
 
 
-@plugin.route('/mostpopularweek')
-def mostpopularweek():
-    import nrktv
-    view(nrktv.get_most_popular_week())
+@plugin.route('/popular')
+def popular():
+    import nrktv_mobile as nrktv
+    xbmcplugin.setContent(plugin.handle, 'episodes')
+    programs = nrktv.popular_programs()
+    view(programs, urls=[plugin.url_for(play, item.id) for item in programs])
 
 
 @plugin.route('/mostpopularmonth')
