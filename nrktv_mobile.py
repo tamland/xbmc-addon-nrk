@@ -45,12 +45,20 @@ class Program(Model):
     description = None
     legal_age = None
     image_id = None
-    media_url = None
+    media_urls = None
     _image_url = "http://m.nrk.no/m/img?kaleidoId=%s&width=%d"
 
     @staticmethod
     def from_response(r):
         category = Category.from_response(r['category'])
+
+        media_urls = []
+        if 'parts' in r:
+            parts = sorted(r['parts'], key=lambda x: x['part'])
+            media_urls = [part['mediaUrl'] for part in parts]
+        elif 'mediaUrl' in r:
+            media_urls = [r['mediaUrl']]
+
         return Program(
             id=r['programId'],
             title=r['title'],
@@ -59,7 +67,7 @@ class Program(Model):
             duration=r['duration'],
             image_id=r['imageId'],
             legal_age=r.get('legalAge') or r.get('aldersgrense'),
-            media_url=r['mediaUrl'],
+            media_urls=media_urls,
             thumb=Program._image_url % (r['imageId'], 250),
             fanart=Program._image_url % (r['imageId'], 1920),
         )
