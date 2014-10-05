@@ -108,3 +108,8 @@ def popular_programs(category_id='all-programs'):
 def recent_programs(category_id='all-programs'):
     return [Program.from_response(item) for item in
             _get('/categories/%s/recentlysentprograms' % category_id)]
+
+
+def episodes(series_id):
+    return [Program.from_response(item) for item in
+            _get('/series/%s' % series_id)['programs']]

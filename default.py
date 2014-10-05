@@ -194,12 +194,12 @@ def search_results(query, page):
 
 
 @plugin.route('/serie/<arg>')
-def seasons(arg):
-    import nrktv
-    items = nrktv.get_seasons(arg)
-    if len(items) == 1:
-        return plugin.redirect(items[0].url)
-    view(items)
+def series_view(arg):
+    import nrktv_mobile as nrktv
+    xbmcplugin.setContent(plugin.handle, 'episodes')
+    programs = nrktv.episodes(arg)
+    urls = [plugin.url_for(play, item.id) for item in programs]
+    view(programs, urls=urls)
 
 
 @plugin.route('/program/Episodes/<series_id>/<path:season_id>')
