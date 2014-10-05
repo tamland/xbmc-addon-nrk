@@ -50,6 +50,9 @@ class Program(Model):
     aired = None
     """Date and time aired as :class:`datetime.datetime`"""
 
+    category = None
+    """:class:`Category`"""
+
     legal_age = None
     image_id = None
     media_urls = None
