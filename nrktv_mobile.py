@@ -50,6 +50,9 @@ class Program(Model):
     aired = None
     """Date and time aired as :class:`datetime.datetime`"""
 
+    duration = None
+    """In seconds"""
+
     category = None
     """:class:`Category`"""
 
@@ -74,7 +77,7 @@ class Program(Model):
             title=r['title'],
             category=category,
             description=r.get('description'),
-            duration=r['duration'],
+            duration=int(r['duration']/1000),
             image_id=r['imageId'],
             legal_age=r.get('legalAge') or r.get('aldersgrense'),
             media_urls=media_urls,
