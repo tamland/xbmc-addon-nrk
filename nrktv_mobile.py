@@ -44,6 +44,9 @@ class Category(Model):
 
 class Program(Model):
     description = None
+    episode = None
+    """Episode number, name or date as string."""
+
     aired = None
     """Date and time aired as :class:`datetime.datetime`"""
 
@@ -74,6 +77,7 @@ class Program(Model):
             media_urls=media_urls,
             thumb=Program._image_url % (r['imageId'], 250),
             fanart=Program._image_url % (r['imageId'], 1920),
+            episode=r.get('episodeNumberOrDate'),
             aired=datetime.datetime.fromtimestamp(
                 int(r['usageRights']['availableFrom']/1000)),
         )
