@@ -17,6 +17,7 @@
 
 from __future__ import unicode_literals
 
+import datetime
 from requests import Session
 
 session = Session()
@@ -43,6 +44,9 @@ class Category(Model):
 
 class Program(Model):
     description = None
+    aired = None
+    """Date and time aired as :class:`datetime.datetime`"""
+
     legal_age = None
     image_id = None
     media_urls = None
@@ -70,6 +74,8 @@ class Program(Model):
             media_urls=media_urls,
             thumb=Program._image_url % (r['imageId'], 250),
             fanart=Program._image_url % (r['imageId'], 1920),
+            aired=datetime.datetime.fromtimestamp(
+                int(r['usageRights']['availableFrom']/1000)),
         )
 
 

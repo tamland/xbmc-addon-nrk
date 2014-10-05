@@ -93,7 +93,8 @@ def view(items, update_listing=False, urls=None):
                 'title': item.title,
                 'genre': item.category.title if hasattr(item, 'category') else '',
                 'mpaa': getattr(item, 'legal_age', ''),
-                'plot': getattr(item, 'description', '')
+                'plot': getattr(item, 'description', ''),
+                'aired': item.aired.strftime('%Y-%m-%d') if hasattr(item, 'aired') else '',
             })
             li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
             li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
