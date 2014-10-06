@@ -83,14 +83,17 @@ def view(items, update_listing=False, urls=None):
         urls = [plugin.url_for_path(item.url) for item in items]
     total = len(items)
     for item, url in zip(items, urls):
-        li = ListItem(item.title, thumbnailImage=getattr(item, 'thumb', ''))
+        title = item.title
+        if getattr(item, 'episode', None):
+            title += " " + item.episode
+        li = ListItem(title, thumbnailImage=getattr(item, 'thumb', ''))
         playable = plugin.route_for(url) == play
         li.setProperty('isplayable', str(playable))
         if hasattr(item, 'fanart'):
             li.setProperty('fanart_image', item.fanart)
         if playable:
             info = {
-                'title': item.title,
+                'title': title,
                 'plot': item.description,
                 'mpaa': item.legal_age,
             }
