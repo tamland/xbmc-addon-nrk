@@ -74,7 +74,7 @@ class Program(Model):
 
         return Program(
             id=r['programId'],
-            title=r['title'],
+            title=r['title'].strip(),
             category=category,
             description=r.get('description'),
             duration=int(r['duration']/1000),
