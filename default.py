@@ -102,7 +102,7 @@ def view(items, update_listing=False, urls=None):
             if item.aired:
                 info['aired'] = item.aired.strftime('%Y-%m-%d')
             li.setInfo('video', info)
-            li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
+            li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720, 'duration': item.duration})
             li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
         addDirectoryItem(plugin.handle, url, li, not playable, total)
     endOfDirectory(plugin.handle, updateListing=update_listing)
