@@ -63,7 +63,6 @@ def live():
     add("Jazz", "http://lyd.nrk.no/nrk_radio_jazz_mp3_h", "audio/mpeg")
     add("Klassisk", "http://lyd.nrk.no/nrk_radio_klassisk_mp3_h", "audio/mpeg")
     add("Folkemusikk", "http://lyd.nrk.no/nrk_radio_folkemusikk_mp3_h", "audio/mpeg")
-    add("Gull", "http://lyd.nrk.no/nrk_radio_gull_mp3_h", "audio/mpeg")
     add("mP3", "http://lyd.nrk.no/nrk_radio_mp3_mp3_h", "audio/mpeg")
     add("P3 Urørt", "http://lyd.nrk.no/nrk_radio_p3_urort_mp3_h", "audio/mpeg")
     add("Sport", "http://lyd.nrk.no/nrk_radio_sport_mp3_h", "audio/mpeg")
