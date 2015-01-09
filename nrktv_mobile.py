@@ -120,3 +120,7 @@ def recent_programs(category_id='all-programs'):
 def episodes(series_id):
     return [Program.from_response(item) for item in
             _get('/series/%s' % series_id)['programs']]
+
+
+def program(program_id):
+    return Program.from_response(_get('/programs/%s' % program_id))

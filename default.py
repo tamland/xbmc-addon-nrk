@@ -231,9 +231,14 @@ def episodes(series_id, season_id):
 @plugin.route('/program/<video_id>')
 @plugin.route('/program/<video_id>/<path:unused>')
 def play(video_id, series_id="", unused=""):
-    import nrktv
+    import nrktv_mobile as nrktv
     import subs
-    url = nrktv.get_media_url(video_id)
+
+    urls = nrktv.program(video_id).media_urls
+    if not urls:
+        return
+    url = urls[0] if len(urls) == 1 else "stack://" + ' , '.join(urls)
+
     xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
     player = xbmc.Player()
     subtitle = subs.get_subtitles(video_id)
