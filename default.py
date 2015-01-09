@@ -64,44 +64,47 @@ def live():
         li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
         addDirectoryItem(plugin.handle, ch.media_url, li, False)
 
-    add("NRK P1", "http://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3_h", "audio/mpeg")
-    add("NRK P1+", "http://lyd.nrk.no/nrk_radio_p1pluss_mp3_h.m3u", "audio,/mpeg")
-    add("NRK P2", "http://lyd.nrk.no/nrk_radio_p2_mp3_h", "audio/mpeg")
-    add("NRK P3", "http://lyd.nrk.no/nrk_radio_p3_mp3_h", "audio/mpeg")
-    add("NRK P13", "http://lyd.nrk.no/nrk_radio_p13_mp3_h", "audio/mpeg")
-    add("Alltid nyheter", "http://lyd.nrk.no/nrk_radio_alltid_nyheter_mp3_h", "audio/mpeg")
-    add("Alltid RR", "http://lyd.nrk.no/nrk_radio_p3_radioresepsjonen_mp3_h", "audio/mpeg")
-    add("Jazz", "http://lyd.nrk.no/nrk_radio_jazz_mp3_h", "audio/mpeg")
-    add("Klassisk", "http://lyd.nrk.no/nrk_radio_klassisk_mp3_h", "audio/mpeg")
-    add("Folkemusikk", "http://lyd.nrk.no/nrk_radio_folkemusikk_mp3_h", "audio/mpeg")
-    add("mP3", "http://lyd.nrk.no/nrk_radio_mp3_mp3_h", "audio/mpeg")
-    add("P3 Urørt", "http://lyd.nrk.no/nrk_radio_p3_urort_mp3_h", "audio/mpeg")
-    add("Sport", "http://lyd.nrk.no/nrk_radio_sport_mp3_h", "audio/mpeg")
-    add("Sápmi", "http://lyd.nrk.no/nrk_radio_sami_mp3_h", "audio/mpeg")
-    add("Super", "http://lyd.nrk.no/nrk_radio_super_mp3_h", "audio/mpeg")
-    add("P1 Østlandssendingen", "http://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3_h", "audio/mpeg")
-    add("P1 Buskerud", "http://lyd.nrk.no/nrk_radio_p1_buskerud_mp3_h", "audio/mpeg")
-    add("P1 Finnmark", "http://lyd.nrk.no/nrk_radio_p1_finnmark_mp3_h", "audio/mpeg")
-    add("P1 Hedemark og Oppland", "http://lyd.nrk.no/nrk_radio_p1_hedmark_og_oppland_mp3_h", "audio/mpeg")
-    add("P1 Hordaland", "http://lyd.nrk.no/nrk_radio_p1_hordaland_mp3_h", "audio/mpeg")
-    add("P1 Møre og Romsdal", "http://lyd.nrk.no/nrk_radio_p1_more_og_romsdal_mp3_h", "audio/mpeg")
-    add("P1 Nordland", "http://lyd.nrk.no/nrk_radio_p1_nordland_mp3_h", "audio/mpeg")
-    add("P1 Rogaland", "http://lyd.nrk.no/nrk_radio_p1_rogaland_mp3_h", "audio/mpeg")
-    add("P1 Sogn og Fjordane", "http://lyd.nrk.no/nrk_radio_p1_sogn_og_fjordane_mp3_h", "audio/mpeg")
-    add("P1 Sørlandet", "http://lyd.nrk.no/nrk_radio_p1_sorlandet_mp3_h", "audio/mpeg")
-    add("P1 Telemark", "http://lyd.nrk.no/nrk_radio_p1_telemark_mp3_h", "audio/mpeg")
-    add("P1 Troms", "http://lyd.nrk.no/nrk_radio_p1_troms_mp3_h", "audio/mpeg")
-    add("P1 Vestfold", "http://lyd.nrk.no/nrk_radio_p1_vestfold_mp3_h", "audio/mpeg")
-    add("P1 Østfold", "http://lyd.nrk.no/nrk_radio_p1_ostfold_mp3_h", "audio/mpeg")
+    add_radio_channels()
     endOfDirectory(plugin.handle)
 
 
-def add(title, url, mimetype, thumb="", fanart=""):
-    li = ListItem(title, thumbnailImage=thumb)
-    li.setProperty('mimetype', mimetype)
-    li.setProperty('fanart_image', fanart)
-    li.setProperty('isplayable', 'true')
-    addDirectoryItem(plugin.handle, url, li, False)
+def add_radio_channels():
+    radio_channels = [
+        ("NRK P1", "http://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3"),
+        ("NRK P1+", "http://lyd.nrk.no/nrk_radio_p1pluss_mp3_h.m3u"),
+        ("NRK P2", "http://lyd.nrk.no/nrk_radio_p2_mp3_h"),
+        ("NRK P3", "http://lyd.nrk.no/nrk_radio_p3_mp3_h"),
+        ("NRK P13", "http://lyd.nrk.no/nrk_radio_p13_mp3_h"),
+        ("Alltid nyheter", "http://lyd.nrk.no/nrk_radio_alltid_nyheter_mp3_h"),
+        ("Alltid RR", "http://lyd.nrk.no/nrk_radio_p3_radioresepsjonen_mp3_h"),
+        ("Jazz", "http://lyd.nrk.no/nrk_radio_jazz_mp3_h"),
+        ("Klassisk", "http://lyd.nrk.no/nrk_radio_klassisk_mp3_h"),
+        ("Folkemusikk", "http://lyd.nrk.no/nrk_radio_folkemusikk_mp3_h"),
+        ("mP3", "http://lyd.nrk.no/nrk_radio_mp3_mp3_h"),
+        ("P3 Urørt", "http://lyd.nrk.no/nrk_radio_p3_urort_mp3_h"),
+        ("Sport", "http://lyd.nrk.no/nrk_radio_sport_mp3_h"),
+        ("Sápmi", "http://lyd.nrk.no/nrk_radio_sami_mp3_h"),
+        ("Super", "http://lyd.nrk.no/nrk_radio_super_mp3_h"),
+        ("P1 Østlandssendingen", "http://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3_h"),
+        ("P1 Buskerud", "http://lyd.nrk.no/nrk_radio_p1_buskerud_mp3_h"),
+        ("P1 Finnmark", "http://lyd.nrk.no/nrk_radio_p1_finnmark_mp3_h"),
+        ("P1 Hedemark og Oppland", "http://lyd.nrk.no/nrk_radio_p1_hedmark_og_oppland_mp3_h"),
+        ("P1 Hordaland", "http://lyd.nrk.no/nrk_radio_p1_hordaland_mp3_h"),
+        ("P1 Møre og Romsdal", "http://lyd.nrk.no/nrk_radio_p1_more_og_romsdal_mp3_h"),
+        ("P1 Nordland", "http://lyd.nrk.no/nrk_radio_p1_nordland_mp3_h"),
+        ("P1 Rogaland", "http://lyd.nrk.no/nrk_radio_p1_rogaland_mp3_h"),
+        ("P1 Sogn og Fjordane", "http://lyd.nrk.no/nrk_radio_p1_sogn_og_fjordane_mp3_h"),
+        ("P1 Sørlandet", "http://lyd.nrk.no/nrk_radio_p1_sorlandet_mp3_h"),
+        ("P1 Telemark", "http://lyd.nrk.no/nrk_radio_p1_telemark_mp3_h"),
+        ("P1 Troms", "http://lyd.nrk.no/nrk_radio_p1_troms_mp3_h"),
+        ("P1 Vestfold", "http://lyd.nrk.no/nrk_radio_p1_vestfold_mp3_h"),
+        ("P1 Østfold", "http://lyd.nrk.no/nrk_radio_p1_ostfold_mp3_h"),
+    ]
+    for title, url in radio_channels:
+        li = ListItem(title,)
+        li.setProperty('mimetype', "audio/mpeg")
+        li.setProperty('isplayable', 'true')
+        addDirectoryItem(plugin.handle, url, li, False)
 
 
 def view(items, update_listing=False, urls=None):
