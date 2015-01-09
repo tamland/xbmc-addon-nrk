@@ -51,7 +51,6 @@ def live():
     res = os.path.join(plugin.path, "resources/images")
     for ch in [1, 2, 3]:
         url, fanart = nrktv.get_live_stream(ch)
-        url = plugin.url_for(play_url, url=url)
         add("NRK %s" % ch, url, "application/vnd.apple.mpegurl", os.path.join(res, "nrk%d.png" % ch), fanart)
     add("NRK P1", "http://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3_h", "audio/mpeg")
     add("NRK P1+", "http://lyd.nrk.no/nrk_radio_p1pluss_mp3_h.m3u", "audio,/mpeg")
@@ -255,13 +254,6 @@ def play(video_id, series_id="", unused=""):
 @plugin.route('/play')
 def play_url():
     url = plugin.args['url'][0]
-
-    if url.startswith('https://') and (
-            xbmc.getCondVisibility('system.platform.android') or
-            xbmc.getCondVisibility('system.platform.ios')):
-        dialog = Dialog()
-        dialog.ok("NRK Nett-TV", "Direktestrømmer er ikke støttet på iOS/Android")
-
     xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
 
 
