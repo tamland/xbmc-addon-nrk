@@ -47,11 +47,23 @@ def view_top():
 
 @plugin.route('/live')
 def live():
-    import nrktv
-    res = os.path.join(plugin.path, "resources/images")
-    for ch in [1, 2, 3]:
-        url, fanart = nrktv.get_live_stream(ch)
-        add("NRK %s" % ch, url, "application/vnd.apple.mpegurl", os.path.join(res, "nrk%d.png" % ch), fanart)
+    import nrktv_mobile as nrk_tv
+    for ch in nrk_tv.channels():
+        plot = None
+        fanart = ch.fanart
+        if ch.current_program:
+            plot = u"Nå: %s.\n%s" % (ch.current_program.title, ch.current_program.description)
+            fanart = ch.current_program.fanart
+
+        li = ListItem(ch.title, thumbnailImage=ch.thumb)
+        li.setProperty('mimetype', "application/vnd.apple.mpegurl")
+        li.setProperty('isplayable', 'true')
+        li.setProperty('fanart_image', fanart)
+        li.setInfo('video', {'title': ch.title, 'plot': plot})
+        li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
+        li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
+        addDirectoryItem(plugin.handle, ch.media_url, li, False)
+
     add("NRK P1", "http://lyd.nrk.no/nrk_radio_p1_ostlandssendingen_mp3_h", "audio/mpeg")
     add("NRK P1+", "http://lyd.nrk.no/nrk_radio_p1pluss_mp3_h.m3u", "audio,/mpeg")
     add("NRK P2", "http://lyd.nrk.no/nrk_radio_p2_mp3_h", "audio/mpeg")
