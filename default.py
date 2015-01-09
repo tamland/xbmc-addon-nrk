@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2014 Thomas Amland
+# Copyright (C) 2010-2015 Thomas Amland
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,17 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import time
 import xbmc
 import xbmcplugin
 import xbmcaddon
-from itertools import repeat
-from urllib import quote, unquote
+from urllib import quote
 from collections import namedtuple
 from xbmcplugin import addDirectoryItem
 from xbmcplugin import endOfDirectory
-from xbmcgui import ListItem, Dialog
+from xbmcgui import ListItem
 import routing
 plugin = routing.Plugin()
 
