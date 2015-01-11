@@ -46,19 +46,13 @@ class Category(Model):
 
 class Channel(Model):
     media_url = None
-    current_program = None
 
     @staticmethod
     def from_response(r):
-        current_program = None
-        if 'epg' in r and 'programEpg' in r['epg'] and len(r['epg']['liveBufferEpg']) > 0:
-            current_program = Program.from_response(r['epg']['liveBufferEpg'][0])
-
         return Channel(
             title=r['title'],
             id=r['channelId'],
             media_url=r['mediaUrl'],
-            current_program=current_program,
             thumb=_image_url % (r['imageId'], 250),
             fanart=_image_url % (r['imageId'], 1920),
         )

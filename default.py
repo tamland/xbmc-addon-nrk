@@ -47,17 +47,11 @@ def view_top():
 def live():
     import nrktv_mobile as nrk_tv
     for ch in nrk_tv.channels():
-        plot = None
-        fanart = ch.fanart
-        if ch.current_program:
-            plot = u"Nå: %s.\n%s" % (ch.current_program.title, ch.current_program.description)
-            fanart = ch.current_program.fanart
-
         li = ListItem(ch.title, thumbnailImage=ch.thumb)
         li.setProperty('mimetype', "application/vnd.apple.mpegurl")
         li.setProperty('isplayable', 'true')
-        li.setProperty('fanart_image', fanart)
-        li.setInfo('video', {'title': ch.title, 'plot': plot})
+        li.setProperty('fanart_image', ch.fanart)
+        li.setInfo('video', {'title': ch.title})
         li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
         li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
         addDirectoryItem(plugin.handle, ch.media_url, li, False)
