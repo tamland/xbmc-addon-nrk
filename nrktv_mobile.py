@@ -75,6 +75,7 @@ class Program(Model):
     legal_age = None
     image_id = None
     media_urls = None
+    available = True
 
     @staticmethod
     def from_response(r):
@@ -108,6 +109,7 @@ class Program(Model):
             fanart=_image_url % (r['imageId'], 1920),
             episode=r.get('episodeNumberOrDate'),
             aired=aired,
+            available=r.get('isAvailable', True)
         )
 
 

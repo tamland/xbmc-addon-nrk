@@ -104,6 +104,8 @@ def view(items, update_listing=False, urls=None):
         urls = [plugin.url_for_path(item.url) for item in items]
     total = len(items)
     for item, url in zip(items, urls):
+        if not getattr(item, 'available', True):
+            continue
         title = item.title
         if getattr(item, 'episode', None):
             title += " " + item.episode
