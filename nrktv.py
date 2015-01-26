@@ -163,7 +163,7 @@ def get_episodes(series_id, season_id):
 
 
 def get_media_url(video_id):
-    url = "http://v7.psapi.nrk.no/mediaelement/%s" % video_id
+    url = "http://v8.psapi.nrk.no/mediaelement/%s" % video_id
     return session.get(url).json()['mediaUrl']
 
 
