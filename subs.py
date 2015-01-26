@@ -21,7 +21,7 @@ from nrktv import session as requests
 
 
 def get_subtitles(video_id):
-    html = requests.get("http://v7.psapi.nrk.no/programs/%s/subtitles/tt" % video_id).text
+    html = requests.get("http://v8.psapi.nrk.no/programs/%s/subtitles/tt" % video_id).text
     if not html:
         return None
 
