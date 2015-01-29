@@ -1,3 +1,6 @@
+[B]4.4.22[/B]
+- Fikset teksing etter NRK-oppdatering
+
 [B]4.4.21[/B]
 - Støtte for avspilling av programmer som har flere deler
 
