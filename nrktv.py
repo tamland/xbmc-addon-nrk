@@ -116,16 +116,16 @@ def _json_list(url):
 def get_search_results(query, page=0):
     url = "http://tv.nrk.no/sokmaxresults?q=%s&page=%s" % (query, page)
     html = session.get(url).text
-    lis = parseDOM(html, 'li')
+    lis = parseDOM(html, 'div', attrs= {'class': 'air'})
 
-    titles = [parseDOM(li, 'img', ret='alt')[0] for li in lis]
-    titles = map(html_decode, titles)
+    titles = [parseDOM(li, 'h3')[0] for li in lis]
+    titles = [html_decode(common.stripTags(_).replace('\n', ' ')) for _ in titles]
 
     urls = [parseDOM(li, 'a', ret='href')[0] for li in lis]
     urls = [url.replace('http://tv.nrk.no', '') for url in urls]
 
-    descr = [parseDOM(li, 'h3')[0] for li in lis]
-    descr = [html_decode(common.stripTags(_)) for _ in descr]
+    descr = [parseDOM(li, 'p')[0] for li in lis]
+    descr = [html_decode(common.stripTags(_).replace('&hellip;', '')) for _ in descr]
 
     thumbs = [parseDOM(li, 'img', ret='src')[0] for li in lis]
     fanart = [_fanart_url(url) for url in urls]
