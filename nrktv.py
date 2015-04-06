@@ -47,10 +47,10 @@ def get_live_stream(ch):
 
 
 def get_categories():
-    titles = ["Barn", "Dokumentar og fakta", "Filmer og serier", "Helse, forbruker og livsstil",
-              "Kultur og underholdning", "Nyheter", "Samisk", "Sport", "Tegnspråk"]
-    ids = ["barn", "dokumentar-og-fakta", "filmer-og-serier", "helse-forbruker-og-livsstil",
-           "kultur-og-underholdning", "nyheter", "samisk", "sport", "tegnspraak"]
+    titles = ["Barn", "Dokumentar", "Drama og serier", "Film", "Humor", "Kultur", "Livsstil",
+              "Natur", "Nyheter", "Samisk", "Sport", "Sysnstolk", "Tegnspråk", "Underholdning", "Vitenskap"]
+    ids = ["barn", "dokumentar", "drama-serier", "film", "humor", "kultur", "livsstil",
+           "natur", "nyheter", "samisk", "sport", "synstolk", "tegnspraak", "underholdning", "vitenskap"]
     return titles, ids
 
 
