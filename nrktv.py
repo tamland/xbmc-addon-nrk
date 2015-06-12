@@ -67,11 +67,11 @@ def get_by_category(category, l):
 def _program_list(url):
     items = session.get(url).json()
     items = [i for i in items if i['hasOndemandRights']]
-    titles = [i['Title'] for i in items]
-    urls = [i['Url'] for i in items]
+    titles = [i['title'] for i in items]
+    urls = [i['url'] for i in items]
 
     image_url = "http://m.nrk.no/m/img?kaleidoId=%s&width=%d"
-    img_ids = [i['ImageUrl'].split('/')[-1] for i in items]
+    img_ids = [i['imageUrl'].split('/')[-1] for i in items]
     thumbs = [image_url % (id, 300) for id in img_ids]
     fanart = [image_url % (id, 1920) for id in img_ids]
     return _programs_from_lists(titles, urls, thumbs, fanart)
@@ -104,11 +104,11 @@ def get_most_popular_month():
 
 
 def _json_list(url):
-    elems = session.get(url).json()['Data']
-    titles = [e['Title'] for e in elems]
+    elems = session.get(url).json()['data']
+    titles = [e['title'] for e in elems]
     titles = map(html_decode, titles)
-    urls = [e['Url'] for e in elems]
-    thumbs = [e['Images'][0]['ImageUrl'] for e in elems]
+    urls = [e['url'] for e in elems]
+    thumbs = [e['images'][0]['imageUrl'] for e in elems]
     fanart = [_fanart_url(url) for url in urls]
     return _programs_from_lists(titles, urls, thumbs, fanart)
 
