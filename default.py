@@ -38,7 +38,7 @@ def view_top():
     addDirectoryItem(plugin.handle, plugin.url_for(recommended), ListItem("Aktuelt"), True)
     addDirectoryItem(plugin.handle, plugin.url_for(mostrecent), ListItem("Nytt"), True)
     addDirectoryItem(plugin.handle, plugin.url_for(popular), ListItem("Populært"), True)
-    addDirectoryItem(plugin.handle, plugin.url_for(browse), ListItem("Bla"), True)
+    addDirectoryItem(plugin.handle, plugin.url_for(browse), ListItem("Kategorier"), True)
     addDirectoryItem(plugin.handle, plugin.url_for(search), ListItem("Søk"), True)
     endOfDirectory(plugin.handle)
 
@@ -168,16 +168,15 @@ def mostpopularmonth():
     view(nrktv.get_most_popular_month())
 
 
-@plugin.route('/category/<id>')
-def category1(id):
-    view_letter_list("/category/%s" % id)
-
-
-@plugin.route('/category/<id>/<letter>')
-def category2(id, letter):
-    import nrktv
-    view(nrktv.get_by_category(id, letter))
-
+@plugin.route('/category/<category_id>')
+def category(category_id):
+    import nrktv_mobile as nrktv
+    xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_PLAYLIST_ORDER)
+    xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS)
+    items = nrktv.programs(category_id)
+    urls = [plugin.url_for((series_view if item.is_series else play), item.id)
+            for item in items]
+    view(items, urls=urls)
 
 @plugin.route('/letters')
 def letters():
@@ -192,11 +191,11 @@ def letter(arg):
 
 @plugin.route('/browse')
 def browse():
-    import nrktv
-    titles, ids = nrktv.get_categories()
-    titles = ["Alle"] + titles
-    urls = ["/letters"] + ["/category/%s" % i for i in ids]
-    view([Node(title, url) for title, url in zip(titles, urls)])
+    xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS)
+    import nrktv_mobile as nrktv
+    items = nrktv.categories()
+    urls = [plugin.url_for(category, item.id) for item in items]
+    view(items, urls=urls)
 
 
 def view_letter_list(base_url):
