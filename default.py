@@ -19,34 +19,34 @@ import time
 import xbmc
 import xbmcplugin
 import xbmcaddon
-from urllib import quote
-from collections import namedtuple
 from xbmcplugin import addDirectoryItem
+from xbmcplugin import addDirectoryItems
 from xbmcplugin import endOfDirectory
 from xbmcgui import ListItem
 import routing
+import nrktv_mobile as nrktv
+import subs
+
 plugin = routing.Plugin()
-
-SHOW_SUBS = int(xbmcaddon.Addon().getSetting('showsubtitles')) == 1
-
-Node = namedtuple('Node', ['title', 'url'])
 
 
 @plugin.route('/')
-def view_top():
-    addDirectoryItem(plugin.handle, plugin.url_for(live), ListItem("Direkte"), True)
-    addDirectoryItem(plugin.handle, plugin.url_for(recommended), ListItem("Aktuelt"), True)
-    addDirectoryItem(plugin.handle, plugin.url_for(mostrecent), ListItem("Nytt"), True)
-    addDirectoryItem(plugin.handle, plugin.url_for(popular), ListItem("Populært"), True)
-    addDirectoryItem(plugin.handle, plugin.url_for(browse), ListItem("Kategorier"), True)
-    addDirectoryItem(plugin.handle, plugin.url_for(search), ListItem("Søk"), True)
+def root():
+    items = [
+        (plugin.url_for(live), ListItem("Direkte"), True),
+        (plugin.url_for(recommended), ListItem("Aktuelt"), True),
+        (plugin.url_for(mostrecent), ListItem("Nytt"), True),
+        (plugin.url_for(popular), ListItem("Populært"), True),
+        (plugin.url_for(browse), ListItem("Kategorier"), True),
+        (plugin.url_for(search), ListItem("Søk"), True),
+    ]
+    addDirectoryItems(plugin.handle, items)
     endOfDirectory(plugin.handle)
 
 
 @plugin.route('/live')
 def live():
-    import nrktv_mobile as nrk_tv
-    for ch in nrk_tv.channels():
+    for ch in nrktv.channels():
         li = ListItem(ch.title, thumbnailImage=ch.thumb)
         li.setProperty('mimetype', "application/vnd.apple.mpegurl")
         li.setProperty('isplayable', 'true')
@@ -138,7 +138,6 @@ def view(items, update_listing=False, urls=None):
 
 @plugin.route('/recommended')
 def recommended():
-    import nrktv_mobile as nrktv
     xbmcplugin.setContent(plugin.handle, 'episodes')
     programs = nrktv.recommended_programs()
     urls = [plugin.url_for(play, item.id) for item in programs]
@@ -147,7 +146,6 @@ def recommended():
 
 @plugin.route('/mostrecent')
 def mostrecent():
-    import nrktv_mobile as nrktv
     xbmcplugin.setContent(plugin.handle, 'episodes')
     programs = nrktv.recent_programs()
     urls = [plugin.url_for(play, item.id) for item in programs]
@@ -156,7 +154,6 @@ def mostrecent():
 
 @plugin.route('/popular')
 def popular():
-    import nrktv_mobile as nrktv
     xbmcplugin.setContent(plugin.handle, 'episodes')
     programs = nrktv.popular_programs()
     view(programs, urls=[plugin.url_for(play, item.id) for item in programs])
@@ -168,7 +165,6 @@ def _to_series_or_program_url(item):
 
 @plugin.route('/category/<category_id>')
 def category(category_id):
-    import nrktv_mobile as nrktv
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_PLAYLIST_ORDER)
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS)
     items = nrktv.programs(category_id)
@@ -178,7 +174,6 @@ def category(category_id):
 @plugin.route('/browse')
 def browse():
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS)
-    import nrktv_mobile as nrktv
     items = nrktv.categories()
     urls = [plugin.url_for(category, item.id) for item in items]
     view(items, urls=urls)
@@ -191,28 +186,20 @@ def search():
     keyboard.doModal()
     query = keyboard.getText()
     if query:
-        import nrktv_mobile as nrktv
         items = nrktv.search(query.decode('utf-8'))
         view(items, urls=map(_to_series_or_program_url, items))
 
 
 @plugin.route('/series/<series_id>')
 def series_view(series_id):
-    import nrktv_mobile as nrktv
     xbmcplugin.setContent(plugin.handle, 'episodes')
     programs = nrktv.episodes(series_id)
     urls = [plugin.url_for(play, item.id) for item in programs]
     view(programs, urls=urls)
 
 
-@plugin.route('/serie/<series_id>/<video_id>')
-@plugin.route('/serie/<series_id>/<video_id>/<path:unused>')
-@plugin.route('/program/<video_id>')
-@plugin.route('/program/<video_id>/<path:unused>')
-def play(video_id, series_id="", unused=""):
-    import nrktv_mobile as nrktv
-    import subs
-
+@plugin.route('/play/<video_id>')
+def play(video_id):
     urls = nrktv.program(video_id).media_urls
     if not urls:
         return
@@ -227,7 +214,7 @@ def play(video_id, series_id="", unused=""):
         while not player.isPlaying() and time.time() - start_time < 10:
             time.sleep(1.)
         player.setSubtitles(subtitle)
-        if not SHOW_SUBS:
+        if xbmcaddon.Addon().getSetting('showsubtitles') != '1':
             player.showSubtitles(False)
 
 
