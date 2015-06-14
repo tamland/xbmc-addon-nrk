@@ -162,15 +162,17 @@ def popular():
     view(programs, urls=[plugin.url_for(play, item.id) for item in programs])
 
 
+def _to_series_or_program_url(item):
+    return plugin.url_for((series_view if item.is_series else play), item.id)
+
+
 @plugin.route('/category/<category_id>')
 def category(category_id):
     import nrktv_mobile as nrktv
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_PLAYLIST_ORDER)
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS)
     items = nrktv.programs(category_id)
-    urls = [plugin.url_for((series_view if item.is_series else play), item.id)
-            for item in items]
-    view(items, urls=urls)
+    view(items, urls=map(_to_series_or_program_url, items))
 
 
 @plugin.route('/browse')
@@ -184,26 +186,21 @@ def browse():
 
 @plugin.route('/search')
 def search():
-    keyboard = xbmc.Keyboard(heading="Søk")
+    keyboard = xbmc.Keyboard()
+    keyboard.setHeading("Søk")
     keyboard.doModal()
     query = keyboard.getText()
     if query:
-        plugin.redirect('/search/%s/0' % quote(query))
+        import nrktv_mobile as nrktv
+        items = nrktv.search(query.decode('utf-8'))
+        view(items, urls=map(_to_series_or_program_url, items))
 
 
-@plugin.route('/search/<query>/<page>')
-def search_results(query, page):
-    import nrktv
-    results = nrktv.get_search_results(query, page)
-    more_node = Node("Flere", '/search/%s/%s' % (query, int(page) + 1))
-    view(results + [more_node], update_listing=int(page) > 1)
-
-
-@plugin.route('/serie/<arg>')
-def series_view(arg):
+@plugin.route('/series/<series_id>')
+def series_view(series_id):
     import nrktv_mobile as nrktv
     xbmcplugin.setContent(plugin.handle, 'episodes')
-    programs = nrktv.episodes(arg)
+    programs = nrktv.episodes(series_id)
     urls = [plugin.url_for(play, item.id) for item in programs]
     view(programs, urls=urls)
 

@@ -51,7 +51,7 @@ class Category(Base):
     @staticmethod
     def from_response(r):
         return Category(
-            title=r['displayValue'],
+            title=r.get('displayValue', None) or r['title'],
             id=r['categoryId'],
         )
 
@@ -184,3 +184,19 @@ def _to_series_or_program(item):
 def programs(category_id):
     items = _get('/categories/%s/programs' % category_id)
     return map(_to_series_or_program, items)
+
+
+def _hit_to_series_or_program(item):
+    hit_type = item.get('type', None)
+    if hit_type == 'serie':
+        return Series.from_response(item['hit'])
+    elif hit_type == 'episode' or hit_type == 'program':
+        return Program.from_response(item['hit'])
+    return None
+
+
+def search(query):
+    response = _get('/search/' + query)
+    if response['hits'] is None:
+        return []
+    return filter(None, map(_hit_to_series_or_program, response['hits']))
