@@ -114,7 +114,7 @@ def _json_list(url):
 
 
 def get_search_results(query, page=0):
-    url = "http://tv.nrk.no/sokmaxresults?q=%s&page=%s" % (query, page)
+    url = "http://tv.nrk.no/searchresults?Q=%s&Page=%s" % (query, page)
     html = session.get(url).text
     lis = parseDOM(html, 'div', attrs= {'class': 'air'})
 
