@@ -162,12 +162,6 @@ def popular():
     view(programs, urls=[plugin.url_for(play, item.id) for item in programs])
 
 
-@plugin.route('/mostpopularmonth')
-def mostpopularmonth():
-    import nrktv
-    view(nrktv.get_most_popular_month())
-
-
 @plugin.route('/category/<category_id>')
 def category(category_id):
     import nrktv_mobile as nrktv
@@ -178,16 +172,6 @@ def category(category_id):
             for item in items]
     view(items, urls=urls)
 
-@plugin.route('/letters')
-def letters():
-    view_letter_list('/letter')
-
-
-@plugin.route('/letter/<arg>')
-def letter(arg):
-    import nrktv
-    view(nrktv.get_by_letter(arg))
-
 
 @plugin.route('/browse')
 def browse():
@@ -196,14 +180,6 @@ def browse():
     items = nrktv.categories()
     urls = [plugin.url_for(category, item.id) for item in items]
     view(items, urls=urls)
-
-
-def view_letter_list(base_url):
-    common = ['0-9'] + map(chr, range(97, 123))
-    titles = common + [u'æ', u'ø', u'å']
-    titles = [e.upper() for e in titles]
-    urls = ["%s/%s" % (base_url, l) for l in (common + ['ae', 'oe', 'aa'])]
-    view([Node(title, url) for title, url in zip(titles, urls)])
 
 
 @plugin.route('/search')
@@ -230,12 +206,6 @@ def series_view(arg):
     programs = nrktv.episodes(arg)
     urls = [plugin.url_for(play, item.id) for item in programs]
     view(programs, urls=urls)
-
-
-@plugin.route('/program/Episodes/<series_id>/<path:season_id>')
-def episodes(series_id, season_id):
-    import nrktv
-    view(nrktv.get_episodes(series_id, season_id))
 
 
 @plugin.route('/serie/<series_id>/<video_id>')
