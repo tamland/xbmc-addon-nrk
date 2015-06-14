@@ -34,9 +34,9 @@ plugin = routing.Plugin()
 def root():
     items = [
         (plugin.url_for(live), ListItem("Direkte"), True),
-        (plugin.url_for(recommended), ListItem("Aktuelt"), True),
-        (plugin.url_for(mostrecent), ListItem("Nytt"), True),
-        (plugin.url_for(popular), ListItem("Populært"), True),
+        (plugin.url_for(recommended), ListItem("Anbefalt"), True),
+        (plugin.url_for(popular), ListItem("Mest sett"), True),
+        (plugin.url_for(mostrecent), ListItem("Sist sendt"), True),
         (plugin.url_for(browse), ListItem("Kategorier"), True),
         (plugin.url_for(search), ListItem("Søk"), True),
     ]
