@@ -31,7 +31,7 @@ class ImageMixin(object):
 
     @property
     def thumb(self):
-        return self._image_url % (self.image_id, 250) if self.image_id else None
+        return self._image_url % (self.image_id, 500) if self.image_id else None
 
     @property
     def fanart(self):
