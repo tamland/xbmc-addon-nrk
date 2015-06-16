@@ -183,6 +183,8 @@ def _to_series_or_program(item):
 
 def programs(category_id):
     items = _get('/categories/%s/programs' % category_id)
+    items = [item for item in items if item.get('title', '').strip() != ''
+             and item['programId'] != 'notransmission']
     return map(_to_series_or_program, items)
 
 
