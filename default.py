@@ -119,17 +119,19 @@ def view(items, update_listing=False, urls=None):
         li.setProperty('isplayable', str(playable))
         if hasattr(item, 'fanart'):
             li.setProperty('fanart_image', item.fanart)
+
+        info = {'title': title}
+        if hasattr(item, 'description'):
+            info['plot'] = item.description
+        if hasattr(item, 'category') and item.category:
+            info['genre'] = item.category.title
+        if hasattr(item, 'legal_age'):
+            info['mpaa'] = item.legal_age
+        if hasattr(item, 'aired'):
+            info['aired'] = item.aired.strftime('%Y-%m-%d')
+        li.setInfo('video', info)
+
         if playable:
-            info = {
-                'title': title,
-                'plot': item.description,
-                'mpaa': item.legal_age,
-            }
-            if item.category:
-                info['genre'] = item.category.title
-            if item.aired:
-                info['aired'] = item.aired.strftime('%Y-%m-%d')
-            li.setInfo('video', info)
             li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720, 'duration': item.duration})
             li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
         addDirectoryItem(plugin.handle, url, li, not playable, total)
