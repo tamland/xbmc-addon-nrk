@@ -114,11 +114,14 @@ def view(items, update_listing=False, urls=None):
         title = item.title
         if getattr(item, 'episode', None):
             title += " " + item.episode
-        li = ListItem(title, thumbnailImage=getattr(item, 'thumb', ''))
+        li = ListItem(title)
         playable = plugin.route_for(url) == play
         li.setProperty('isplayable', str(playable))
-        if hasattr(item, 'fanart'):
-            li.setProperty('fanart_image', item.fanart)
+
+        li.setArt({
+            'thumb': getattr(item, 'thumb', ''),
+            'fanart': getattr(item, 'fanart' ''),
+        })
 
         info = {'title': title}
         if hasattr(item, 'description'):
