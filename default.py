@@ -120,7 +120,7 @@ def view(items, update_listing=False, urls=None):
 
         li.setArt({
             'thumb': getattr(item, 'thumb', ''),
-            'fanart': getattr(item, 'fanart' ''),
+            'fanart': getattr(item, 'fanart', ''),
         })
 
         info = {'title': title}
