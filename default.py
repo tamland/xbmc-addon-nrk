@@ -47,17 +47,18 @@ def root():
 @plugin.route('/live')
 def live():
     for ch in nrktv.channels():
-        li = ListItem(ch.title, thumbnailImage=ch.thumb)
+        li = ListItem(ch.title)
         li.setProperty('mimetype', "application/vnd.apple.mpegurl")
         li.setProperty('isplayable', 'true')
-        li.setProperty('fanart_image', ch.fanart)
+        li.setArt({'thumb': ch.thumb, 'fanart': ch.fanart})
         li.setInfo('video', {'title': ch.title})
         li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
         li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
         addDirectoryItem(plugin.handle, ch.media_url, li, False)
 
     url = "https://nrktegnsprak-lh.akamaihd.net/i/nrktegnsprak_0@111177/master.m3u8"
-    li = ListItem("Tegnspråk", thumbnailImage="http://gfx.nrk.no/R4LFuTHBHWPMmv1dkqvPGQY4-ZZTKdNKAFPg_LHhoEFA")
+    li = ListItem("Tegnspråk")
+    li.setArt({'thumb': "http://gfx.nrk.no/R4LFuTHBHWPMmv1dkqvPGQY4-ZZTKdNKAFPg_LHhoEFA"})
     li.setProperty('isplayable', 'true')
     addDirectoryItem(plugin.handle, url, li, False)
 
