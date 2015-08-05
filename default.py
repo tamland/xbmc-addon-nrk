@@ -24,7 +24,7 @@ from xbmcplugin import addDirectoryItems
 from xbmcplugin import endOfDirectory
 from xbmcgui import ListItem
 import routing
-import nrktv_mobile as nrktv
+import nrktv
 import subs
 
 plugin = routing.Plugin()
