@@ -51,8 +51,8 @@ class Category(Base):
     @staticmethod
     def from_response(r):
         return Category(
-            title=r.get('displayValue', None) or r['title'],
-            id=r['categoryId'],
+            title=r.get('displayValue', r.get('title', None)),
+            id=r.get('categoryId', None),
         )
 
 
