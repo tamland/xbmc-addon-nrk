@@ -147,7 +147,7 @@ class Program(Series):
 
 
 def _get(path):
-    r = session.get("http://m.nrk.no/tvapi/v1" + path)
+    r = session.get("http://tvapi.nrk.no/v1" + path)
     r.raise_for_status()
     return r.json()
 
