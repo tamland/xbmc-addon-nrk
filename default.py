@@ -171,6 +171,7 @@ def _to_series_or_program_url(item):
 
 @plugin.route('/category/<category_id>')
 def category(category_id):
+    xbmcplugin.setContent(plugin.handle, 'episodes')
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_PLAYLIST_ORDER)
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS)
     items = nrktv.programs(category_id)
