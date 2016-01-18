@@ -110,7 +110,7 @@ def view(items, update_listing=False, urls=None):
     if urls is None:
         urls = [plugin.url_for_path(item.url) for item in items]
     total = len(items)
-    for item, url in zip(items, urls):
+    for i, (item, url) in enumerate(zip(items, urls)):
         if not getattr(item, 'available', True):
             continue
         title = item.title
@@ -119,13 +119,12 @@ def view(items, update_listing=False, urls=None):
         li = ListItem(title)
         playable = plugin.route_for(url) == play
         li.setProperty('isplayable', str(playable))
-
         li.setArt({
             'thumb': getattr(item, 'thumb', ''),
             'fanart': getattr(item, 'fanart', ''),
         })
 
-        info = {'title': title}
+        info = {'title': title, 'count': i}
         if hasattr(item, 'description'):
             info['plot'] = item.description
         if hasattr(item, 'category') and item.category:
