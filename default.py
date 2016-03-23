@@ -248,6 +248,3 @@ def play_url():
     url = plugin.args['url'][0]
     xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
 
-
-if __name__ == '__main__':
-    plugin.run()

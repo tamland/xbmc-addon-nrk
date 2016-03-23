@@ -8,7 +8,7 @@
     <import addon="script.module.requests" version="1.0.4"/>
     <import addon="script.module.routing" version="0.1.0"/>
   </requires>
-  <extension point="xbmc.python.pluginsource" library="default.py">
+  <extension point="xbmc.python.pluginsource" library="main.py">
     <provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
