@@ -161,27 +161,44 @@ def show_episode_list(episodes):
     endOfDirectory(plugin.handle)
 
 
+def show_plug_list(items):
+    items = filter(lambda ep: getattr(ep, 'available', True), items)
+    for i, item in enumerate(items):
+        title = item.title
+        if item.episode:
+            title += " (%s)" % item.episode
+        li = ListItem(title)
+        set_common_properties(item, li)
+        set_steam_details(item, li)
+        li.setInfo('video', {
+            'title': title,
+            'count': i,
+            'mediatype': 'video'})
+
+        url = plugin.url_for(play, item.id)
+        addDirectoryItem(plugin.handle, url, li, False)
+    endOfDirectory(plugin.handle)
+
+
 @plugin.route('/recommended')
 def recommended():
     xbmcplugin.setContent(plugin.handle, 'episodes')
     programs = nrktv.recommended_programs()
-    urls = [plugin.url_for(play, item.id) for item in programs]
-    view(programs, urls=urls)
+    show_plug_list(programs)
 
 
 @plugin.route('/mostrecent')
 def mostrecent():
     xbmcplugin.setContent(plugin.handle, 'episodes')
     programs = nrktv.recent_programs()
-    urls = [plugin.url_for(play, item.id) for item in programs]
-    view(programs, urls=urls)
+    show_plug_list(programs)
 
 
 @plugin.route('/popular')
 def popular():
     xbmcplugin.setContent(plugin.handle, 'episodes')
     programs = nrktv.popular_programs()
-    view(programs, urls=[plugin.url_for(play, item.id) for item in programs])
+    show_plug_list(programs)
 
 
 def _to_series_or_program_url(item):
