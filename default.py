@@ -180,23 +180,28 @@ def show_plug_list(items):
     endOfDirectory(plugin.handle)
 
 
+def set_content_type_videos():
+    t = 'mixed' if tuple(map(int, xbmc.__version__.split('.'))) >= (2, 25, 0) else 'episodes'
+    xbmcplugin.setContent(plugin.handle, t)
+
+
 @plugin.route('/recommended')
 def recommended():
-    xbmcplugin.setContent(plugin.handle, 'episodes')
+    set_content_type_videos()
     programs = nrktv.recommended_programs()
     show_plug_list(programs)
 
 
 @plugin.route('/mostrecent')
 def mostrecent():
-    xbmcplugin.setContent(plugin.handle, 'episodes')
+    set_content_type_videos()
     programs = nrktv.recent_programs()
     show_plug_list(programs)
 
 
 @plugin.route('/popular')
 def popular():
-    xbmcplugin.setContent(plugin.handle, 'episodes')
+    set_content_type_videos()
     programs = nrktv.popular_programs()
     show_plug_list(programs)
 
@@ -207,7 +212,7 @@ def _to_series_or_program_url(item):
 
 @plugin.route('/category/<category_id>')
 def category(category_id):
-    xbmcplugin.setContent(plugin.handle, 'episodes')
+    set_content_type_videos()
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_PLAYLIST_ORDER)
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS)
     items = nrktv.programs(category_id)
@@ -235,7 +240,7 @@ def search():
 
 @plugin.route('/series/<series_id>')
 def series_view(series_id):
-    xbmcplugin.setContent(plugin.handle, 'episodes')
+    set_content_type_videos()
     programs = nrktv.episodes(series_id)
     show_episode_list(programs)
 
