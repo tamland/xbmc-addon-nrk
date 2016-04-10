@@ -175,6 +175,10 @@ def show_plug_list(items):
             'count': i,
             'mediatype': 'video'})
 
+        if getattr(item, 'series_id', None):
+            action = "container.update(\"%s\")" % plugin.url_for(series_view, item.series_id)
+            li.addContextMenuItems([("Gå til serie", action)])
+
         url = plugin.url_for(play, item.id)
         addDirectoryItem(plugin.handle, url, li, False)
     endOfDirectory(plugin.handle)
