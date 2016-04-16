@@ -185,7 +185,7 @@ def show_plug_list(items):
 
 
 def set_content_type_videos():
-    t = 'mixed' if tuple(map(int, xbmc.__version__.split('.'))) >= (2, 25, 0) else 'episodes'
+    t = 'videos' if tuple(map(int, xbmc.__version__.split('.'))) >= (2, 25, 0) else 'episodes'
     xbmcplugin.setContent(plugin.handle, t)
 
 
