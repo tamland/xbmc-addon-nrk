@@ -22,20 +22,18 @@ from requests import Session
 
 session = Session()
 session.headers['User-Agent'] = 'kodi.tv'
-session.headers['app-version-android'] = '2500'
 
 
 class ImageMixin(object):
-    image_id = None
-    _image_url = "http://m.nrk.no/m/img?kaleidoId=%s&width=%d"
+    images = None
 
     @property
     def thumb(self):
-        return self._image_url % (self.image_id, 500) if self.image_id else None
+        return self.images[0]['url']
 
     @property
     def fanart(self):
-        return self._image_url % (self.image_id, 1920) if self.image_id else None
+        return self.images[-1]['url']
 
 
 class Base(object):
@@ -57,24 +55,15 @@ class Category(Base):
 
 
 class Channel(ImageMixin, Base):
-    media_url = None
-
-    # override images. some resolutions are corrupt server side
-    @property
-    def thumb(self):
-        return self._image_url % (self.image_id, 490)
-
-    @property
-    def fanart(self):
-        return self._image_url % (self.image_id, 1910)
+    manifest = None
 
     @staticmethod
     def from_response(r):
         return Channel(
-            title=r['title'],
-            id=r['channelId'],
-            media_url=r.get('mediaUrl'),
-            image_id=r.get('imageId'),
+            title=r['_embedded']['playback']['title'],
+            id=r['id'],
+            manifest=r["_links"]['manifest']['href'],
+            images=r['_embedded']['playback']['posters'][0]['image']['items'],
         )
 
 
@@ -151,9 +140,18 @@ class Program(Series):
 
 
 def _get(path):
-    r = session.get("http://tvapi.nrk.no/v1" + path)
+    api_key = "d1381d92278a47c09066460f2522a67d"
+    r = session.get("https://psapi.nrk.no{}?api_key={}".format(path, api_key))
     r.raise_for_status()
     return r.json()
+
+
+def _get_playback_url(manifest_url):
+    playable = _get(manifest_url)['playable']
+    if playable:
+        return playable['assets'][0]['url']
+    else:
+        return None
 
 
 def recommended_programs(category_id='all-programs'):
@@ -181,8 +179,8 @@ def program(program_id):
 
 
 def channels():
-    chs = [Channel.from_response(item) for item in _get('/channels')]
-    return [ch for ch in chs if ch.media_url]
+    chs = [Channel.from_response(item) for item in _get('/tv/live')]
+    return [ch for ch in chs if ch.manifest]
 
 
 def categories():

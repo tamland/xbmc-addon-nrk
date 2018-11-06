@@ -16,12 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
+from ast import literal_eval
 import xbmc
 import xbmcplugin
 import xbmcaddon
 from xbmcplugin import addDirectoryItem
 from xbmcplugin import addDirectoryItems
 from xbmcplugin import endOfDirectory
+from xbmcplugin import setResolvedUrl
 from xbmcgui import ListItem
 import routing
 import nrktv
@@ -54,17 +56,22 @@ def live():
         li.setInfo('video', {'title': ch.title})
         li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
         li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
-        addDirectoryItem(plugin.handle, ch.media_url, li, False)
+        addDirectoryItem(plugin.handle, plugin.url_for(live_resolve, q={
+            "manifest": ch.manifest
+        }), li, False)
 
-    url = "https://nrktegnsprak-lh.akamaihd.net/i/nrktegnsprak_0@111177/master.m3u8"
-    li = ListItem("Tegnspråk")
-    li.setArt({'thumb': "http://gfx.nrk.no/R4LFuTHBHWPMmv1dkqvPGQY4-ZZTKdNKAFPg_LHhoEFA"})
-    li.setProperty('isplayable', 'true')
-    addDirectoryItem(plugin.handle, url, li, False)
-
-    add_radio_channels()
+    # add_radio_channels()
     endOfDirectory(plugin.handle)
 
+@plugin.route('/live_resolve')
+def live_resolve(**kwargs):
+    manifest = literal_eval(plugin.args['q'][0])['manifest']
+    success = False
+    media_url = nrktv._get_playback_url(manifest);
+    if (media_url):
+        success = True
+    li = ListItem(path=media_url)
+    setResolvedUrl(plugin.handle, success, li)
 
 def add_radio_channels():
     radio_channels = [
