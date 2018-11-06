@@ -182,6 +182,10 @@ def channels():
     chs = [Channel.from_response(item) for item in _get('/tv/live')]
     return [ch for ch in chs if ch.manifest]
 
+def radios():
+    rds = [Channel.from_response(item) for item in _get('/radio/live')]
+    return [rd for rd in rds if rd.manifest]
+
 
 def categories():
     return [Category.from_response(item) for item in _get('/categories/')]
