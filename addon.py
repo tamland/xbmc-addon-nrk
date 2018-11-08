@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
-from ast import literal_eval
 import xbmc
 import xbmcplugin
 import xbmcaddon
@@ -56,9 +55,8 @@ def live():
         li.setInfo('video', {'title': ch.title})
         li.addStreamInfo('video', {'codec': 'h264', 'width': 1280, 'height': 720})
         li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
-        addDirectoryItem(plugin.handle, plugin.url_for(live_resolve, q={
-            "manifest": ch.manifest
-        }), li, False)
+        addDirectoryItem(plugin.handle,
+                         plugin.url_for(live_resolve, ch.manifest.split('/')[-1]), li, False)
 
     for rd in nrktv.radios():
         li = ListItem(rd.title)
@@ -67,17 +65,15 @@ def live():
         li.setArt({'thumb': rd.thumb, 'fanart': rd.fanart})
         li.setInfo('video', {'title': ch.title})
         li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
-        addDirectoryItem(plugin.handle, plugin.url_for(live_resolve, q={
-            "manifest": rd.manifest
-        }), li, False)
+        addDirectoryItem(plugin.handle,
+                         plugin.url_for(live_resolve, rd.manifest.split('/')[-1]), li, False)
 
     endOfDirectory(plugin.handle)
 
-@plugin.route('/live_resolve')
-def live_resolve(**kwargs):
-    manifest = literal_eval(plugin.args['q'][0])['manifest']
+@plugin.route('/live_resolve/<id>')
+def live_resolve(id):
     success = False
-    media_url = nrktv.get_playback_url(manifest);
+    media_url = nrktv.get_playback_url("/playback/manifest/channel/%s" % id);
     if (media_url):
         success = True
     li = ListItem(path=media_url)
