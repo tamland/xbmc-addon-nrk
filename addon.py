@@ -71,14 +71,13 @@ def live():
             "manifest": rd.manifest
         }), li, False)
 
-    # add_radio_channels()
     endOfDirectory(plugin.handle)
 
 @plugin.route('/live_resolve')
 def live_resolve(**kwargs):
     manifest = literal_eval(plugin.args['q'][0])['manifest']
     success = False
-    media_url = nrktv._get_playback_url(manifest);
+    media_url = nrktv.get_playback_url(manifest);
     if (media_url):
         success = True
     li = ListItem(path=media_url)
@@ -123,14 +122,21 @@ def view(items, update_listing=False, urls=None):
     endOfDirectory(plugin.handle, updateListing=update_listing)
 
 
+def show_season_list(series_id, seasons):
+    for item in seasons:
+        li = ListItem(item.title)
+        url = plugin.url_for(episodes_view, series_id, item.id)
+        addDirectoryItem(plugin.handle, url, li, True)
+    endOfDirectory(plugin.handle)
+
 def show_episode_list(episodes):
     episodes = filter(lambda ep: getattr(ep, 'available', True), episodes)
     for i, item in enumerate(episodes):
-        li = ListItem(item.episode)
+        li = ListItem("%s - %s" % (item.episode, item.title))
         set_common_properties(item, li)
         set_steam_details(item, li)
         li.setInfo('video', {
-            'title': item.episode,
+            'title': item.title,
             'count': i,
             'mediatype': 'episode',
             'tvshowtitle': item.title})
@@ -223,9 +229,14 @@ def search():
 
 @plugin.route('/series/<series_id>')
 def series_view(series_id):
-    set_content_type_videos()
-    programs = nrktv.episodes(series_id)
-    show_episode_list(programs)
+    seasons = nrktv.seasons(series_id)
+    show_season_list(series_id, seasons)
+
+@plugin.route('/episodes/<series_id>/<season_id>')
+def episodes_view(series_id, season_id):
+    # set_content_type_videos()
+    episodes = nrktv.episodes(series_id, season_id)
+    show_episode_list(episodes)
 
 
 @plugin.route('/play/<video_id>')
