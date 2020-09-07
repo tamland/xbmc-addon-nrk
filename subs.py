@@ -18,12 +18,16 @@
 import os
 import re
 import xbmc
+import json
 import requests
 from io import BytesIO
 
 
 def get_subtitles(video_id):
-    html = requests.get("http://v8.psapi.nrk.no/programs/%s/subtitles/tt" % video_id).text
+    media_element_url = "http://psapi-granitt-prod-we.cloudapp.net/mediaelement/%s" % (video_id)
+    media_element_json = requests.get(media_element_url)
+    ttml_sub_url = media_element_json.json()["subtitlesUrlPath"]
+    html = requests.get(ttml_sub_url).text
     if not html:
         return None
 
