@@ -18,7 +18,6 @@
 import os
 import re
 import xbmc
-import json
 import requests
 from io import BytesIO
 
