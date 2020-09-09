@@ -23,7 +23,8 @@ from io import BytesIO
 
 
 def get_subtitles(video_id):
-    html = requests.get("http://v8.psapi.nrk.no/programs/%s/subtitles/tt" % video_id).text
+    ttml_sub_url = requests.get("http://psapi-granitt-prod-we.cloudapp.net/mediaelement/%s" % (video_id)).json()["subtitlesUrlPath"]
+    html = requests.get(ttml_sub_url).text
     if not html:
         return None
 
