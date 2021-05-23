@@ -261,7 +261,7 @@ def radios():
 
 
 def categories():
-    return [Category.from_response(item) for item in _get('/medium/tv/categories')]
+    return [Category.from_response(item) for item in _get('/medium/tv/categories/')]
 
 
 def _to_series_or_program(item):
