@@ -126,7 +126,7 @@ def show_season_list(series_id, seasons):
     endOfDirectory(plugin.handle)
 
 def show_episode_list(episodes):
-    episodes = filter(lambda ep: getattr(ep, 'available', True), episodes)
+    episodes = [ep for ep in episodes if getattr(ep, 'available', True)]
     for i, item in enumerate(episodes):
         li = ListItem("%s - %s" % (item.episode, item.title))
         set_common_properties(item, li)
@@ -143,7 +143,7 @@ def show_episode_list(episodes):
 
 
 def show_plug_list(items):
-    items = filter(lambda ep: getattr(ep, 'available', True), items)
+    items = [ep for ep in items if getattr(ep, 'available', True)]
     for i, item in enumerate(items):
         title = item.title
         if item.episode:
@@ -201,7 +201,7 @@ def category(category_id):
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_PLAYLIST_ORDER)
     xbmcplugin.addSortMethod(plugin.handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS)
     items = nrktv.programs(category_id)
-    view(items, urls=map(_to_series_or_program_url, items))
+    view(items, urls=list(map(_to_series_or_program_url, items)))
 
 
 @plugin.route('/browse')
@@ -219,8 +219,8 @@ def search():
     keyboard.doModal()
     query = keyboard.getText()
     if query:
-        items = nrktv.search(query.decode('utf-8'))
-        view(items, urls=map(_to_series_or_program_url, items))
+        items = nrktv.search(query)
+        view(items, urls=list(map(_to_series_or_program_url, items)))
 
 
 @plugin.route('/series/<series_id>')

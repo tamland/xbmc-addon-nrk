@@ -19,18 +19,21 @@ import os
 import re
 import xbmc
 import requests
-from io import BytesIO
+from io import StringIO
 
 
 def get_subtitles(video_id):
-    ttml_sub_url = requests.get("http://psapi-granitt-prod-we.cloudapp.net/mediaelement/%s" % (video_id)).json()["subtitlesUrlPath"]
+    mediaelement_json = requests.get("http://psapi-granitt-prod-we.cloudapp.net/mediaelement/%s" % (video_id)).json()
+    if not mediaelement_json["hasSubtitles"]:
+        return None
+    ttml_sub_url = mediaelement_json["subtitlesUrlPath"]
     html = requests.get(ttml_sub_url).text
     if not html:
         return None
 
     content = _ttml_to_srt(html)
     filename = os.path.join(xbmc.translatePath("special://temp"), 'nor.srt')
-    with open(filename, 'w') as f:
+    with open(filename, 'w' ,encoding='utf8') as f:
         f.write(content)
     return filename
 
@@ -51,12 +54,12 @@ def _ttml_to_srt(ttml):
         subtitles.append((start, end, text))
 
     # fix overlapping
-    for i in xrange(0, len(subtitles) - 1):
+    for i in range(0, len(subtitles) - 1):
         start, end, text = subtitles[i]
         start_next, _, _ = subtitles[i + 1]
         subtitles[i] = (start, min(end, start_next - 1), text)
 
-    output = BytesIO()
+    output = StringIO()
     for i, (start, end, text) in enumerate(subtitles):
         text = text.replace('<span style="italic">', '<i>') \
             .replace('</span>', '</i>') \
@@ -64,7 +67,6 @@ def _ttml_to_srt(ttml):
             .split()
         text = ' '.join(text)
         text = re.sub('<br />\s*', '\n', text)
-        text = text.encode('utf-8')
 
         output.write(str(i + 1))
         output.write('\n%s' % _time_to_str(start))

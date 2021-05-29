@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
+
 
 import datetime
 import re
@@ -274,7 +274,7 @@ def programs(category_id):
     items = _get('/medium/tv/categories/%s/indexelements' % category_id)
     items = [item for item in items if item.get('title', '').strip() != ''
              and item['hasOndemandRights']]
-    return map(_to_series_or_program, items)
+    return list(map(_to_series_or_program, items))
 
 
 def _hit_to_series_or_program(item):
@@ -290,4 +290,4 @@ def search(query):
     response = _get('/search', '&q=' + query)
     if response['hits'] is None:
         return []
-    return filter(None, map(_hit_to_series_or_program, response['hits']))
+    return [_f for _f in map(_hit_to_series_or_program, response['hits']) if _f]
