@@ -139,8 +139,19 @@ class Program(Series):
 
         media_urls = []
         if 'mediaAssetsOnDemand' in r:
+            def format_path(part):
+                try:
+                    bitrates = [str(x) for x in part['bitrates']]
+                    return part['urlPattern'].format(
+                            'i',
+                            ',' + ','.join(bitrates) + ',',
+                            'master.m3u8')
+                except (KeyError, IndexError):
+                    # Fall back to previous behavior
+                    return part['hlsUrl']
+
             parts = sorted(r['mediaAssetsOnDemand'], key=lambda x: x['part'])
-            media_urls = [part['hlsUrl'] for part in parts]
+            media_urls = [format_path(part) for part in parts]
 
         images = _image_url_key_standardize(r.get('image', {}).get('webImages', None))
         duration = _duration_to_seconds(r.get('duration', 0))
