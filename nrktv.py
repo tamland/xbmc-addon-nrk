@@ -161,7 +161,7 @@ class Program(Series):
             media_urls=media_urls,
             episode=r.get('episodeNumberOrDate', 0),
             aired=aired,
-            available=r.get('availability', {}).get('status', 'unavailable') == 'available'
+            available=( (r.get('availability', {}).get('status', 'unavailable') == 'available') or (r.get('availability', {}).get('status', 'unavailable') == 'expires') )
         )
 
 def _duration_to_seconds(duration):
