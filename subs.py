@@ -23,19 +23,24 @@ from io import StringIO
 
 
 def get_subtitles(video_id):
-    mediaelement_json = requests.get("http://psapi-granitt-prod-we.cloudapp.net/mediaelement/%s" % (video_id)).json()
-    if not mediaelement_json["hasSubtitles"]:
+    mediaelement_json = requests.get("https://psapi.nrk.no/playback/manifest/%s" % (video_id)).json()
+
+    if not mediaelement_json["playable"]['subtitles']:
         return None
-    ttml_sub_url = mediaelement_json["subtitlesUrlPath"]
-    html = requests.get(ttml_sub_url).text
-    if not html:
+    ttml_sub_url = mediaelement_json["playable"]['subtitles'][0]['webVtt']
+    subs = requests.get(ttml_sub_url).text
+    if not subs:
         return None
 
-    content = _ttml_to_srt(html)
+    content = vtt_to_srt(subs)
     filename = os.path.join(xbmc.translatePath("special://temp"), 'nor.srt')
     with open(filename, 'w' ,encoding='utf8') as f:
         f.write(content)
     return filename
+
+
+def vtt_to_srt(content):
+    return content
 
 
 def _ttml_to_srt(ttml):
