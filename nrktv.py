@@ -19,7 +19,6 @@
 
 import datetime
 import re
-import xbmc
 from requests import Session
 
 session = Session()
@@ -140,12 +139,10 @@ class Program(Series):
 
         media_urls = []
 
-        manifest = session.get('https://psapi.nrk.no/playback/manifest/{}'.format(r.get('id')))
-        #xbmc.log("---------------->Manifest %s" % manifest.json(), xbmc.LOGERROR)
+        manifest = _get('/playback/manifest/{}'.format(r.get('id')))
 
         if manifest.json()['playability'] == 'playable':
             media_urls = list( map(lambda x: x['url'], manifest.json()['playable']['assets']) )
-            #xbmc.log("============> mediaurls %s" % media_urls, xbmc.LOGERROR)
             media_urls
 
         images = _image_url_key_standardize(r.get('image', {}).get('webImages', None))

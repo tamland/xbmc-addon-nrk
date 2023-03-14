@@ -32,14 +32,14 @@ def get_subtitles(video_id):
     if not subs:
         return None
 
-    content = vtt_to_srt(subs)
+    content = _vtt_to_srt(subs)
     filename = os.path.join(xbmc.translatePath("special://temp"), 'nor.srt')
     with open(filename, 'w' ,encoding='utf8') as f:
         f.write(content)
     return filename
 
 
-def vtt_to_srt(content):
+def _vtt_to_srt(content):
     return content
 
 
