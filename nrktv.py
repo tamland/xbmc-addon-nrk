@@ -138,20 +138,12 @@ class Program(Series):
             title = '{} {}'.format(seriesTitle, episodeTitle)
 
         media_urls = []
-        if 'mediaAssetsOnDemand' in r:
-            def format_path(part):
-                try:
-                    bitrates = [str(x) for x in part['bitrates']]
-                    return part['urlPattern'].format(
-                            'i',
-                            ',' + ','.join(bitrates) + ',',
-                            'master.m3u8')
-                except (KeyError, IndexError):
-                    # Fall back to previous behavior
-                    return part['hlsUrl']
 
-            parts = sorted(r['mediaAssetsOnDemand'], key=lambda x: x['part'])
-            media_urls = [format_path(part) for part in parts]
+        manifest = _get('/playback/manifest/{}'.format(r.get('id')))
+
+        if manifest.json()['playability'] == 'playable':
+            media_urls = list( map(lambda x: x['url'], manifest.json()['playable']['assets']) )
+            media_urls
 
         images = _image_url_key_standardize(r.get('image', {}).get('webImages', None))
         duration = _duration_to_seconds(r.get('duration', 0))
