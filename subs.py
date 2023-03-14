@@ -42,46 +42,6 @@ def get_subtitles(video_id):
 def _vtt_to_srt(content):
     return content
 
-
-def _ttml_to_srt(ttml):
-    lines = re.compile(r'<p begin="(.*?)" dur="(.*?)".*?>(.*?)</p>',
-                           re.DOTALL).findall(ttml)
-
-    # drop copyright line
-    if len(lines) > 0 and lines[0][2].lower().startswith('copyright'):
-        lines.pop(0)
-
-    subtitles = []
-    for start, duration, text in lines:
-        start = _str_to_time(start)
-        duration = _str_to_time(duration)
-        end = start + duration
-        subtitles.append((start, end, text))
-
-    # fix overlapping
-    for i in range(0, len(subtitles) - 1):
-        start, end, text = subtitles[i]
-        start_next, _, _ = subtitles[i + 1]
-        subtitles[i] = (start, min(end, start_next - 1), text)
-
-    output = StringIO()
-    for i, (start, end, text) in enumerate(subtitles):
-        text = text.replace('<span style="italic">', '<i>') \
-            .replace('</span>', '</i>') \
-            .replace('&amp;', '&') \
-            .split()
-        text = ' '.join(text)
-        text = re.sub('<br />\s*', '\n', text)
-
-        output.write(str(i + 1))
-        output.write('\n%s' % _time_to_str(start))
-        output.write(' --> %s\n' % _time_to_str(end))
-        output.write(text)
-        output.write('\n\n')
-
-    return output.getvalue()
-
-
 def _str_to_time(txt):
     p = txt.split(':')
     try:
