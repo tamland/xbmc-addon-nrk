@@ -140,11 +140,16 @@ class Program(Series):
         media_urls = []
 
         manifest = _get('/playback/manifest/{}'.format(r.get('id')))
-
-        if manifest.json()['playability'] == 'playable':
-            media_urls = list( map(lambda x: x['url'], manifest.json()['playable']['assets']) )
-            media_urls
-
+        # 4.8.0 begin
+        try:
+            if manifest.json()['playability'] == 'playable':
+                media_urls = list( map(lambda x: x['url'], manifest.json()['playable']['assets']) )
+                media_urls
+        except:  # il manifest della nuova api apparentemente e' gia' un dict
+            if manifest['playability'] == 'playable':
+                media_urls = list( map(lambda x: x['url'], manifest['playable']['assets']) )
+                media_urls            
+        # 4.8.0. end
         images = _image_url_key_standardize(r.get('image', {}).get('webImages', None))
         duration = _duration_to_seconds(r.get('duration', 0))
         legal_age = r.get('legalAge', None)
