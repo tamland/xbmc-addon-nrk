@@ -1,3 +1,6 @@
+[B]4.8.0[/B]
+Tilpasninger for Kodi v20 Nexus. Noe småfikser etter API-endringer // Adaptations for Kodi v20 Nexus. Some small fixes after some changes in the API
+
 [B]4.7.0[/B]
 - Fikset plugin etter API-endringer
 
