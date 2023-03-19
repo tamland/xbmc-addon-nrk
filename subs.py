@@ -18,6 +18,7 @@
 import os
 import re
 import xbmc
+import xbmcvfs    # 4.8.0  https://github.com/xbmc/xbmc/pull/19301
 import requests
 from io import StringIO
 
@@ -33,7 +34,10 @@ def get_subtitles(video_id):
         return None
 
     content = _vtt_to_srt(subs)
-    filename = os.path.join(xbmc.translatePath("special://temp"), 'nor.srt')
+    try:
+        filename = os.path.join(xbmc.translatePath("special://temp"), 'nor.srt')  # deprecated already in Kodi v19
+    except:
+        filename = os.path.join(xbmcvfs.translatePath("special://temp"), 'nor.srt')  # 4.8.0 https://github.com/xbmc/xbmc/pull/19301
     with open(filename, 'w' ,encoding='utf8') as f:
         f.write(content)
     return filename
