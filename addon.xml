@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.nrk"
        name="NRK Nett-TV"
-       version="4.7.0"
-       provider-name="takoi">
+       version="4.8.0"
+       provider-name="takoi+a99b">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.requests" version="1.0.4"/>
@@ -18,6 +18,7 @@
     <summary lang="no">Se NRK Nett-TV</summary>
     <description lang="en">NRK Web TV gives you the opportunity to watch live TV as well as recordings of many shows.</description>
     <description lang="no">NRK Nett-TV gir deg muligheten til å se mange av NRKs programmer både direkte og i opptak.</description>
+    <description lang="it">Questo addon per Kodi rende possibile la visione di molti programmi di NRK sia in diretta che in differita.</description>     
     <license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
     <forum>https://forum.kodi.tv/showthread.php?tid=52824</forum>
     <source>https://github.com/tamland/xbmc-addon-nrk</source>
