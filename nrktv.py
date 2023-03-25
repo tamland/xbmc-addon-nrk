@@ -145,7 +145,7 @@ class Program(Series):
             if manifest.json()['playability'] == 'playable':
                 media_urls = list( map(lambda x: x['url'], manifest.json()['playable']['assets']) )
                 media_urls
-        except:  # il manifest della nuova api apparentemente e' gia' un dict
+        except:
             if manifest['playability'] == 'playable':
                 media_urls = list( map(lambda x: x['url'], manifest['playable']['assets']) )
                 media_urls            
