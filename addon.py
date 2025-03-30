@@ -63,7 +63,7 @@ def live():
         li.setProperty('mimetype', "audio/mpeg")
         li.setProperty('isplayable', 'true')
         li.setArt({'thumb': rd.thumb, 'fanart': rd.fanart})
-        li.setInfo('video', {'title': ch.title})
+        li.setInfo('video', {'title': rd.title})
         li.addStreamInfo('audio', {'codec': 'aac', 'channels': 2})
         addDirectoryItem(plugin.handle,
                          plugin.url_for(live_resolve, rd.manifest.split('/')[-1]), li, False)
