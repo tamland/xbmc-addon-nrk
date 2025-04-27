@@ -1,0 +1,27 @@
+name: Kodi Addon-Submitter
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  kodi-addon-submitter:
+    runs-on: ubuntu-latest
+    name: Kodi addon submitter
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Generate distribution zip and submit to official kodi repository
+      id: kodi-addon-submitter
+      uses: xbmc/action-kodi-addon-submitter@v1.3
+      with: # Replace all the below variables
+        kodi-repository: repo-plugins
+        kodi-version: nexus
+        addon-id: plugin.video.nrk
+        kodi-matrix: false # Submit a Python 2/3 compatible addon to matrix branch in addition to the target branch
+        sub-directory: false
+      env: # Make sure you create the below secrets (GH_TOKEN and EMAIL)
+        GH_USERNAME: ${{ github.actor }}
+        GH_TOKEN: ${{secrets.GH_TOKEN}}
+        EMAIL: ${{secrets.EMAIL}}
