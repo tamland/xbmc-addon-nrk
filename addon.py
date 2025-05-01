@@ -34,7 +34,8 @@ plugin = routing.Plugin()
 @plugin.route('/')
 def root():
     items = [
-        (plugin.url_for(live), ListItem("Direkte"), True),
+        (plugin.url_for(live_tv), ListItem("Direkte TV"), True),
+        (plugin.url_for(live_radio), ListItem("Direkte radio"), True),
         (plugin.url_for(recommended), ListItem("Anbefalt"), True),
         (plugin.url_for(popular), ListItem("Mest sett"), True),
         (plugin.url_for(mostrecent), ListItem("Sist sendt"), True),
@@ -45,8 +46,8 @@ def root():
     endOfDirectory(plugin.handle)
 
 
-@plugin.route('/live')
-def live():
+@plugin.route('/live_tv')
+def live_tv():
     for ch in nrktv.channels():
         li = ListItem(ch.title)
         li.setProperty('mimetype', "application/vnd.apple.mpegurl")
@@ -58,6 +59,11 @@ def live():
         addDirectoryItem(plugin.handle,
                          plugin.url_for(live_resolve, ch.manifest.split('/')[-1]), li, False)
 
+    endOfDirectory(plugin.handle)
+
+
+@plugin.route('/live_radio')
+def live_radio():
     for rd in nrktv.radios():
         li = ListItem(rd.title)
         li.setProperty('mimetype', "audio/mpeg")
