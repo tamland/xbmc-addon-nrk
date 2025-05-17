@@ -1,3 +1,9 @@
+[B]4.9.0[/B]
+- Update license to SPDX format in addon.xml
+- Fix radio title
+- Create kodi-addon-submitter.yml
+- Split live TV and radio shows into separate submenus
+
 [B]4.8.0[/B]
 Tilpasninger for Kodi v20 Nexus. Noe småfikser etter API-endringer // Adaptations for Kodi v20 Nexus. Some small fixes after some changes in the API
 
