@@ -1,3 +1,6 @@
+[B]4.9.1[/B]
+- exclude github actions when publishing to kodi repo
+
 [B]4.9.0[/B]
 - Update license to SPDX format in addon.xml
 - Fix radio title
