@@ -22,6 +22,6 @@ jobs:
         kodi-matrix: false # Submit a Python 2/3 compatible addon to matrix branch in addition to the target branch
         sub-directory: false
       env: # Make sure you create the below secrets (GH_TOKEN and EMAIL)
-        GH_USERNAME: ${{ github.actor }}
+        GH_USERNAME: tamland
         GH_TOKEN: ${{secrets.GH_TOKEN}}
         EMAIL: ${{secrets.EMAIL}}
