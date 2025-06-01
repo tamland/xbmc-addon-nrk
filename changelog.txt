@@ -1,3 +1,6 @@
+[B]4.9.2[/B]
+- use hardcoded username to fix github action
+
 [B]4.9.1[/B]
 - exclude github actions when publishing to kodi repo
 
