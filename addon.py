@@ -82,8 +82,10 @@ def live_resolve(id):
     media_url = nrktv.get_playback_url("/playback/manifest/channel/%s" % id);
     if (media_url):
         success = True
-    li = ListItem(path=media_url)
-    setResolvedUrl(plugin.handle, success, li)
+    playitem = ListItem(path=media_url)
+    playitem.setProperty('inputstream', 'inputstream.adaptive')
+    playitem.setProperty('inputstream.adaptive.manifest_type', 'hls')
+    setResolvedUrl(plugin.handle, success, playitem)
 
 
 def set_stream_details(item, li):
