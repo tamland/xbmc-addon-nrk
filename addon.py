@@ -247,16 +247,17 @@ def play(video_id):
     if not urls:
         raise Exception("could not find any streams")
     url = urls[0] if len(urls) == 1 else "stack://" + ' , '.join(urls)
-
-    xbmcplugin.setResolvedUrl(plugin.handle, True, ListItem(path=url))
+    playitem = ListItem(path=url)
+    subtitles = subs.get_subtitles(video_id)
+    if subtitles:
+        playitem.setSubtitles(list(subtitles.values()))
+    xbmcplugin.setResolvedUrl(plugin.handle, True, listitem=playitem)
     player = xbmc.Player()
-    subtitle = subs.get_subtitles(video_id)
-    if subtitle:
+    if subtitles:
         # Wait for stream to start
         start_time = time.time()
         while not player.isPlaying() and time.time() - start_time < 10:
             time.sleep(1.)
-        player.setSubtitles(subtitle)
         if xbmcaddon.Addon().getSetting('showsubtitles') != '1':
             player.showSubtitles(False)
 
