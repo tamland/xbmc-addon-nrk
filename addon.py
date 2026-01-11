@@ -27,6 +27,7 @@ from xbmcgui import ListItem
 import routing
 import nrktv
 import subs
+import inputstreamhelper
 
 plugin = routing.Plugin()
 
