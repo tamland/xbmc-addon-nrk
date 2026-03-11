@@ -1,3 +1,6 @@
+[B]4.11.1[/B]
+- restore python 3.11 compatibility for addon
+
 [B]4.11.0[/B]
 - add on-demand radio categories
 
