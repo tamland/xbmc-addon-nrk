@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Self, override
+from typing import Any, Self
 import nrk
 from nrk import deep_get_str, deep_get_dict, deep_get_list
 
@@ -144,7 +144,6 @@ class ChannelPlug(BasePlug):
 
 
 class PodcastEpisodePlug(BasePlug):
-    @override
     def _extract(self) -> PlugInfo:
         podcastEpisode: dict[Any, Any] = deep_get_dict(self.response, "podcastEpisode")
         podcast_title: str | None = deep_get_str(
@@ -171,14 +170,12 @@ class PodcastEpisodePlug(BasePlug):
             images=images,
         )
 
-    @override
     def add_images(self, images: str) -> None:
         self.thumb = images
         self.fanart = images
 
 
 class StandaloneProgramPlug(BasePlug):
-    @override
     def _extract(self) -> PlugInfo:
         standaloneProgram: dict[Any, Any] = deep_get_dict(self.response, "program")
         program_title: str | None = deep_get_str(standaloneProgram, "titles", "title")
@@ -204,7 +201,6 @@ class StandaloneProgramPlug(BasePlug):
 
 
 class PodcastPlug(BasePlug):
-    @override
     def _extract(self) -> PlugInfo:
         podcast: dict[Any, Any] = deep_get_dict(self.response, "podcast")
         podcast_title: str | None = deep_get_str(podcast, "titles", "title")
@@ -224,14 +220,12 @@ class PodcastPlug(BasePlug):
             images=images,
         )
 
-    @override
     def add_images(self, images: str) -> None:
         self.thumb = images
         self.fanart = images
 
 
 class EpisodePlug(BasePlug):
-    @override
     def _extract(self) -> PlugInfo:
         episode: dict[Any, Any] = deep_get_dict(self.response, "episode")
         series_title: str | None = deep_get_str(episode, "series", "titles", "title")
@@ -442,7 +436,6 @@ class Season(nrk.Base):  # can be podcast or series season
         return cls(title, url, images)
 
     @property
-    @override
     def children(self) -> list[nrk.Base]:
         if self.manifest_url and not super().children:
             response: dict[str, Any] = nrk.get(path=f"{self.manifest_url}")
