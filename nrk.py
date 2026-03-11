@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, override
+from typing import Any
 
 
 from requests.models import Response
@@ -76,7 +76,6 @@ class Base(object):
 
 
 class BasePage(Base):
-    @override
     def add_images(self, images) -> None:
         self.thumb = deep_get_str(images, 0, "uri")
         self.fanart = deep_get_str(images, -1, "uri")

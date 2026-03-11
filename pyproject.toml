@@ -1,0 +1,13 @@
+[project]
+name = "plugin-video-nrk"
+version = "0.0.0"
+requires-python = ">= 3.11"
+license = "GPL-3.0-or-later"
+
+dependencies = [
+  "kodistubs",
+  "pytest",
+  "pytest-cov",
+  "requests",
+  "black"
+]
